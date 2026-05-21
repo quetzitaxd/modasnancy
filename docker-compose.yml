@@ -5,14 +5,13 @@ services:
     image: nginx:alpine
     container_name: modasnancy-frontend
     restart: always
-    ports:
-      - "8080:80"
+    # NO expongas puertos — Nginx Proxy Manager hace el proxy interno
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
       - ./data/products:/products_data:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
-      - proxy
+      - nginx_proxy_manager_default
       - modasnancy-net
 
   backend:
@@ -26,7 +25,7 @@ services:
     volumes:
       - ./data:/app/data
     networks:
-      - proxy
+      - nginx_proxy_manager_default
       - modasnancy-net
     depends_on:
       - db
@@ -47,7 +46,7 @@ services:
       - modasnancy-net
 
 networks:
-  proxy:
+  nginx_proxy_manager_default:
     external: true
   modasnancy-net:
     driver: bridge
