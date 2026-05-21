@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#ffffff">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Modas Nancy">
     <meta name="description" content="Instala Modas Nancy en tu telefono para una experiencia mas rapida.">
@@ -363,32 +363,24 @@
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             if (isIOS) {
                 iosInstructions.classList.add('visible');
+                if (installBtn) installBtn.classList.add('hidden');
                 return;
             }
 
-            // 3. Detect HTTPS requirement
+            // 3. Not HTTPS and not localhost?
             const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
             const isSecure = location.protocol === 'https:' || isLocalhost;
-
             if (!isSecure) {
-                // Chrome requiere HTTPS para mostrar el prompt de instalacion
-                installBtn.classList.remove('hidden');
-                installBtn.disabled = true;
-                installBtn.innerHTML = '<i class="fas fa-lock"></i> Requiere HTTPS para instalar';
-                installBtn.title = 'Usa una URL con HTTPS (ej: ngrok) para instalar la app';
+                if (installBtn) {
+                    installBtn.classList.remove('hidden');
+                    installBtn.disabled = true;
+                    installBtn.innerHTML = '<i class="fas fa-lock"></i> Requiere HTTPS para instalar';
+                }
                 return;
             }
 
-            // 4. Android / Desktop — wait for beforeinstallprompt
-            // The pwa.js setupInstallPrompt handles the button visibility.
-            // If the button doesn't appear after a few seconds, show a fallback message.
-            setTimeout(() => {
-                if (installBtn && installBtn.classList.contains('hidden')) {
-                    installBtn.classList.remove('hidden');
-                    installBtn.disabled = true;
-                    installBtn.innerHTML = '<i class="fas fa-info-circle"></i> Usa Chrome o Edge para instalar';
-                }
-            }, 3000);
+            // 4. Let pwa.js handle beforeinstallprompt (Android/Desktop)
+            // The button starts hidden; pwa.js will show it when the event fires.
         })();
     </script>
 </body>
