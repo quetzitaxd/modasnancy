@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modas Nancy | Panel de Vendedor</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260420">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/theme-tokens.css?v=20260520">
+    <link rel="stylesheet" href="/css/admin-theme.css?v=20260520">
+    <style>
+        /* Overrides */
+        .container { max-width: 1100px; }
+        .tabs { gap: 1rem; padding: 0.5rem; margin-bottom: 2rem; }
+        .tab-btn { flex: initial; min-height: initial; padding: 0.8rem 1.5rem; }
+        label { font-weight: 600; }
+        input, select, textarea { font-size: 1rem; box-sizing: border-box; }
+        td { padding: 1rem; }
+        .status-badge { padding: 0.25rem 0.6rem; font-size: 0.7rem; }
+
+        /* Vendedor-specific */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; gap: 0.5rem; } }
+
+        .sale-item { display: grid; grid-template-columns: 2fr 1fr 80px 40px; gap: 0.8rem; align-items: end; margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px dashed var(--border-color); }
+        @media (max-width: 600px) { .sale-item { grid-template-columns: 1fr 1fr 60px 40px; } }
+        .sale-item .form-group { margin-bottom: 0; }
+        .sale-item .remove-btn { background: #ffe5e5; color: #d63031; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+        .sale-item .remove-btn:hover { background: #d63031; color: white; }
+
+        .total-section { background: #f8fafc; border-radius: 12px; padding: 1.2rem; margin-top: 1.5rem; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .total-main { font-size: 1.3rem; font-weight: 700; color: var(--primary-color); margin-top: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 0.5rem; }
+
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 1rem; }
+
+        @media (max-width: 768px) {
+            .tabs { overflow-x: auto; white-space: nowrap; padding: 0.3rem; gap: 0.5rem; }
+            .tab-btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-view">
+        <div class="login-card">
+            <a href="/" class="logo">MODAS<span>NANCY</span></a>
+            <h2 style="margin: 1.5rem 0 2rem;">Panel Vendedor</h2>
+            <div id="login-error" class="error-message"></div>
+            <form id="login-form">
+                <div class="form-group" style="text-align: left;">
+                    <label>Usuario</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Contraseña</label>
+                    <input type="password" id="password" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-view" style="display: none;">
+        <nav class="admin-nav">
+            <a href="/" class="logo">Modas<span>Nancy</span></a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span id="seller-name" style="color: var(--text-gray); font-size: 0.9rem;"></span>
+                <button class="btn btn-outline" id="btn-logout" style="padding: 0.5rem 1rem;">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-target="nueva-venta">Nueva Venta</button>
+                <button class="tab-btn" data-target="mis-pedidos">Mis Pedidos</button>
+            </div>
+
+            <div id="nueva-venta" class="tab-pane active">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-plus-circle" style="color: var(--primary-color);"></i> Registrar Venta Externa</h3>
+                    <div id="sale-error" class="error-message"></div>
+                    <div id="sale-success" class="success-message"></div>
+
+                    <form id="sale-form">
+                        <div class="form-section-title" style="font-weight: 600; margin-bottom: 1rem; color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Información del Cliente</div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre Completo <span style="color:#d63031">*</span></label>
+                                <input type="text" id="customer_name" placeholder="Ej: Ana García" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono (WhatsApp) <span style="color:#d63031">*</span></label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <select id="phone_country" style="width: 100px; flex-shrink: 0;">
+                                        <option value="+502" selected>+502 🇬🇹</option>
+                                        <option value="+503">+503 🇸🇻</option>
+                                        <option value="+504">+504 🇭🇳</option>
+                                        <option value="+505">+505 🇳🇮</option>
+                                        <option value="+506">+506 🇨🇷</option>
+                                        <option value="+507">+507 🇵🇦</option>
+                                        <option value="+52">+52 🇲🇽</option>
+                                        <option value="+1">+1 🇺🇸</option>
+                                    </select>
+                                    <input type="tel" id="phone_number" placeholder="55551234" maxlength="8" required style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="customer_email" placeholder="Ej: ana@ejemplo.com">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Dirección <span style="color:#d63031">*</span></label>
+                                <input type="text" id="address" placeholder="Dirección exacta" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Ciudad <span style="color:#d63031">*</span></label>
+                                <input type="text" id="city" placeholder="Ciudad / Departamento" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Notas adicionales</label>
+                            <textarea id="order_notes" rows="2" placeholder="Instrucciones de entrega, referencias..."></textarea>
+                        </div>
+
+                        <div class="form-section-title" style="font-weight: 600; margin: 1.5rem 0 1rem; color: var(--text-gray); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Productos</div>
+                        <div id="sale-items">
+                            <!-- Items se agregan dinámicamente -->
+                        </div>
+                        <button type="button" class="btn btn-outline" id="btn-add-item" style="margin-top: 0.5rem;"><i class="fas fa-plus"></i> Agregar Producto</button>
+
+                        <div class="total-section">
+                            <div class="total-row">
+                                <span>Subtotal</span>
+                                <span id="sale-subtotal">Q0.00</span>
+                            </div>
+                            <div class="total-row total-main">
+                                <span>Total</span>
+                                <span id="sale-total">Q0.00</span>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="payment_method" value="efectivo">
+                        <div class="form-group" style="margin-top: 1.5rem;">
+                            <label>Método de Pago</label>
+                            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+                                <i class="fas fa-money-bill-wave" style="color:#00b894;"></i>
+                                <span style="font-weight:600;color:#166534;">Contra Entrega (Efectivo)</span>
+                            </div>
+                            <span style="font-size:0.8rem;color:#64748b;">Todas las ventas externas se registran como pago contra entrega.</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem; padding: 1rem;">
+                            <i class="fas fa-check"></i> Confirmar Venta
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="mis-pedidos" class="tab-pane">
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                        <h3 style="margin:0;">Mis Pedidos Registrados</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width:60px;"># ID</th>
+                                    <th style="width:120px;">Fecha</th>
+                                    <th>Cliente</th>
+                                    <th style="width:80px;">Total</th>
+                                    <th style="width:90px;">Estado</th>
+                                    <th style="width:80px;">Origen</th>
+                                </tr>
+                            </thead>
+                            <tbody id="seller-orders-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/vendedor.js?v=20260505-3"></script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Panel de Stock — Modas Nancy</title>
+    <link rel="stylesheet" href="/css/theme-tokens.css?v=20260520">
+    <link rel="stylesheet" href="/css/admin-theme.css?v=20260520">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Overrides específicos del panel Stock */
+        .container { max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem; }
+        .tabs { gap: 0.5rem; padding: 0.4rem; }
+        .tab-btn { flex: 1; min-height: 48px; }
+        .card { padding: 1.5rem; }
+        .header-actions { margin-bottom: 1.2rem; }
+        .form-group label { font-weight: 500; }
+        .search-bar input { flex: 1; }
+
+        th { padding: 0.9rem 0.7rem; }
+        td { padding: 0.8rem 0.7rem; font-size: 0.9rem; }
+
+        .modal-content { max-width: 640px; padding: 2rem; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .login-card { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); max-width: 400px; width: 90%; text-align: center; margin: 5rem auto; }
+
+        .color-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; }
+        .color-row input[type="text"] { flex: 1; }
+        .color-row input[type="color"] { width: 44px; height: 44px; border: none; padding: 0; border-radius: 6px; cursor: pointer; }
+
+        .confirm-input { font-size: 1.1rem; letter-spacing: 1px; text-align: center; font-weight: 600; color: var(--secondary-color); }
+
+        .stock-adjust-preview { background: #f0faf5; border-radius: 10px; padding: 1rem; text-align: center; margin: 1rem 0; }
+        .stock-adjust-preview .arrow { color: #00b894; font-size: 1.2rem; margin: 0 0.6rem; }
+
+        .product-select-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--admin-border); border-radius: 10px; }
+        .product-select-item { padding: 0.8rem 1rem; border-bottom: 1px solid var(--admin-border); cursor: pointer; display: flex; align-items: center; gap: 0.8rem; transition: background 0.15s; }
+        .product-select-item:hover { background: #f8fafc; }
+        .product-select-item:last-child { border-bottom: none; }
+        .product-select-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; }
+
+        /* iPad / tablet */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container { padding: 0 1rem; margin: 1rem auto; max-width: 100%; }
+            .tabs { gap: 0.4rem; padding: 0.3rem; }
+            .tab-btn { padding: 0.7rem 1rem; font-size: 0.9rem; }
+            .btn { min-height: 48px; }
+            .modal-content { padding: 1.5rem; }
+        }
+        @media (max-width: 640px) {
+            .container { margin: 1rem auto; }
+            .tabs { gap: 0.3rem; }
+            .tab-btn { padding: 0.6rem 0.8rem; font-size: 0.85rem; }
+            .card { padding: 1rem; }
+            .modal-content { padding: 1.2rem; border-radius: 14px; }
+            th, td { padding: 0.6rem 0.4rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LOGIN ========== -->
+    <div id="login-view">
+        <div class="login-card">
+            <a href="/" class="logo">MODAS<span>NANCY</span></a>
+            <h2 style="margin: 1.5rem 0 0.5rem; font-size: 1.3rem;">Panel de Stock</h2>
+            <p style="color: var(--text-gray); margin-bottom: 1.5rem; font-size: 0.9rem;">Ingresa tus credenciales para continuar</p>
+            <div id="login-error" class="error-message"></div>
+            <form id="login-form">
+                <div class="form-group" style="text-align: left;">
+                    <label>Usuario</label>
+                    <input type="text" id="username" required autocomplete="username">
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Contraseña</label>
+                    <input type="password" id="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== DASHBOARD ========== -->
+    <div id="dashboard-view" style="display: none;">
+        <nav class="admin-nav">
+            <a href="/" class="logo">Modas<span>Nancy</span></a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <span id="user-name" style="color: var(--text-gray); font-size: 0.9rem;"></span>
+                <button class="btn btn-outline" id="btn-logout" style="padding: 0.5rem 1rem;">Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn active" data-target="productos" onclick="setTab('productos')">
+                    <i class="fas fa-box-open"></i> Productos
+                </button>
+                <button class="tab-btn" data-target="stock-tab" onclick="setTab('stock-tab')">
+                    <i class="fas fa-warehouse"></i> Stock
+                </button>
+            </div>
+
+            <!-- ====== TAB: PRODUCTOS ====== -->
+            <div id="productos" class="tab-pane active">
+                <div class="header-actions">
+                    <h3 style="margin:0; font-size: 1.1rem;">Productos</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-outline" id="btn-new-product" onclick="startNewProduct()">
+                            <i class="fas fa-plus"></i> Nuevo
+                        </button>
+                        <button class="btn btn-outline" id="btn-edit-product" onclick="startEditProduct()">
+                            <i class="fas fa-pen"></i> Editar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product List for editing -->
+                <div id="product-list-section" style="display:none;">
+                    <div class="search-bar">
+                        <input type="text" id="product-search-input" placeholder="Buscar producto..." oninput="filterProductList()">
+                    </div>
+                    <div class="product-select-list" id="product-select-list"></div>
+                </div>
+
+                <!-- Product Form -->
+                <div id="product-form-section" style="display:none;">
+                    <div class="card">
+                        <h4 id="form-title" style="margin-bottom: 1.2rem;">Nuevo Producto</h4>
+                        <form id="product-form">
+                            <input type="hidden" id="prod-edit-id">
+                            <div class="form-group">
+                                <label>ID / Slug (ej: vestido-rojo-1)</label>
+                                <input type="text" id="prod-id" required pattern="[a-zA-Z0-9\-]+" title="Solo letras, números y guiones">
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="prod-name" required>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Categoría</label>
+                                    <input type="text" id="prod-category" list="category-suggestions">
+                                    <datalist id="category-suggestions"></datalist>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Precio (Q)</label>
+                                    <input type="number" step="0.01" id="prod-price" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <textarea id="prod-desc" rows="3"></textarea>
+                            </div>
+                            <div class="grid-2">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Tallas (separadas por coma, ej: S,M,L)</label>
+                                    <input type="text" id="prod-sizes" required>
+                                </div>
+                                <div style="margin-bottom:0;">
+                                    <label>Colores</label>
+                                    <div id="prod-colors-list"></div>
+                                    <button type="button" class="btn btn-outline" id="btn-add-color" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                                        <i class="fas fa-plus"></i> Añadir Color
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Variant Stock -->
+                            <div id="prod-variant-stock-section" style="display:none; background: #f0fdf4; padding: 1.2rem; border-radius: 10px; border: 1px solid #bbf7d0; margin: 1.2rem 0;">
+                                <h4 style="margin:0 0 0.4rem 0; color: var(--success-color); font-size: 0.95rem;">
+                                    <i class="fas fa-boxes-stacked"></i> Stock por Variante
+                                </h4>
+                                <p style="font-size: 0.8rem; color: var(--admin-text-light); margin-bottom: 0.6rem;">Solo para productos nuevos. Al editar, usa la pestaña Stock.</p>
+                                <div id="prod-variant-placeholder" style="text-align: center; padding: 1rem; color: var(--admin-text-light); font-size: 0.85rem;">
+                                    <i class="fas fa-info-circle"></i> Ingresa tallas y colores para configurar stock.
+                                </div>
+                                <div id="prod-variant-table-wrap" style="display: none;">
+                                    <div style="margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                                        <label style="margin:0; font-size: 0.82rem; white-space: nowrap;">Stock por defecto:</label>
+                                        <input type="number" id="prod-default-stock" min="0" step="1" value="0" style="width: 70px; padding: 0.4rem; font-size: 0.9rem; text-align: center;">
+                                        <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;" onclick="applyDefaultStock()">Aplicar a todos</button>
+                                    </div>
+                                    <div style="overflow-x: auto;">
+                                        <table class="variant-stock-table">
+                                            <thead>
+                                                <tr><th>Variante</th><th>Color</th><th>Stock</th></tr>
+                                            </thead>
+                                            <tbody id="prod-variant-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--admin-text-light);" id="prod-variant-summary"></div>
+                            </div>
+
+                            <!-- Images -->
+                            <div class="form-group">
+                                <label>Imágenes Actuales</label>
+                                <div id="prod-images-container" class="image-preview-grid"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Añadir / Reemplazar Imágenes</label>
+                                <input type="file" id="prod-images" multiple accept="image/*">
+                                <p style="font-size: 0.8rem; color: var(--admin-text-light); margin-top: 0.3rem;">Selecciona una o más imágenes. Se comprimirán automáticamente.</p>
+                            </div>
+
+                            <!-- Wholesale -->
+                            <div style="background: var(--bg-color); padding: 1.2rem; border-radius: 10px; border: 1px solid var(--primary-light); margin: 1.2rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                                    <input type="checkbox" id="prod-wholesale-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+                                    <label for="prod-wholesale-enabled" style="margin: 0; cursor: pointer; font-weight: 500;">Habilitar descuento mayorista</label>
+                                </div>
+                                <div id="wholesale-details" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label>Mínimo de compra (unidades)</label>
+                                        <input type="number" id="prod-wholesale-min" min="1" placeholder="Ej: 6">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label>Porcentaje de descuento (%)</label>
+                                        <input type="number" id="prod-wholesale-percent" min="0" max="100" step="0.5" placeholder="Ej: 15">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sale -->
+                            <div style="background: #fff8e6; padding: 1.2rem; border-radius: 10px; border: 1px solid var(--warning-color); margin: 1.2rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                                    <input type="checkbox" id="prod-sale-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+                                    <label for="prod-sale-enabled" style="margin: 0; cursor: pointer; font-weight: 500;">En oferta</label>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Precio de oferta (Q)</label>
+                                    <input type="number" id="prod-sale-price" min="0.01" step="0.01" placeholder="Ej: 99.99">
+                                </div>
+                            </div>
+
+                            <!-- Bundle 2x -->
+                            <div style="background: #e8f4fd; padding: 1.2rem; border-radius: 10px; border: 1px solid #bae6fd; margin: 1.2rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;">
+                                    <input type="checkbox" id="prod-bundle-2x-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+                                    <label for="prod-bundle-2x-enabled" style="margin: 0; cursor: pointer; font-weight: 500;">Oferta 2x (precio fijo por 2 unidades)</label>
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label>Precio por 2 unidades (Q)</label>
+                                    <input type="number" id="prod-bundle-2x-price" min="0.01" step="0.01" placeholder="Ej: 149.99">
+                                </div>
+                            </div>
+
+                            <div id="prod-error" class="error-message"></div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                                <button type="button" class="btn btn-outline" onclick="cancelProductForm()">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="btn-preview-product" onclick="showProductSummary()">
+                                    <i class="fas fa-eye"></i> Ver Resumen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ====== TAB: STOCK ====== -->
+            <div id="stock-tab" class="tab-pane">
+                <div class="header-actions">
+                    <h3 style="margin:0; font-size: 1.1rem;">Gestión de Stock</h3>
+                    <button class="btn btn-outline" onclick="loadStockVariants()">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="stock-search" placeholder="Buscar por producto o SKU..." oninput="filterStockVariants()">
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>SKU</th>
+                                    <th>Talla</th>
+                                    <th>Color</th>
+                                    <th style="text-align:center;">Stock</th>
+                                    <th style="text-align:center;">Mínimo</th>
+                                    <th style="text-align:center; width:90px;">Estado</th>
+                                    <th style="width:100px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: RESUMEN PRODUCTO ========== -->
+    <div id="product-summary-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeProductSummary()"><i class="fas fa-times"></i></button>
+            <h3 style="margin-top:0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-clipboard-check" style="color: var(--secondary-color);"></i>
+                Confirmar Producto
+            </h3>
+            <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1rem;">Revisa los datos antes de guardar. Esta acción quedará registrada en auditoría.</p>
+
+            <div id="summary-content"></div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeProductSummary()">Volver a editar</button>
+                <button class="btn btn-primary" id="btn-confirm-product" onclick="submitProductForm()">
+                    <i class="fas fa-check"></i> Confirmar y Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: AJUSTAR STOCK ========== -->
+    <div id="stock-adjust-modal" class="modal">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="modal-close" onclick="closeStockAdjustModal()"><i class="fas fa-times"></i></button>
+            <h3 style="margin-top:0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-sliders" style="color: var(--secondary-color);"></i>
+                Ajustar Stock
+            </h3>
+
+            <div style="background: #f8fafc; border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="font-size: 0.8rem; color: var(--admin-text-light);">Producto</div>
+                <div style="font-weight: 600;" id="adj-product-name">-</div>
+                <div style="font-size: 0.8rem; color: var(--admin-text-light); margin-top: 0.4rem;">SKU</div>
+                <div style="font-family: monospace; font-size: 0.85rem;" id="adj-sku">-</div>
+            </div>
+
+            <div style="background: var(--accent-soft); border-radius: 10px; padding: 1rem; margin-bottom: 1rem; text-align: center;">
+                <div style="font-size: 0.75rem; color: var(--admin-text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem;">Stock Actual</div>
+                <div style="font-size: 2rem; font-weight: 700; color: var(--accent-color);" id="adj-current">0</div>
+            </div>
+
+            <!-- Mode tabs -->
+            <div style="display: flex; gap: 0; margin-bottom: 1.2rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                <button type="button" id="adj-mode-add" class="inv-mode-btn" onclick="setAdjMode('add')" style="flex:1; padding: 0.7rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; background: var(--admin-primary); color:white;"><i class="fas fa-plus"></i> Agregar</button>
+                <button type="button" id="adj-mode-remove" class="inv-mode-btn" onclick="setAdjMode('remove')" style="flex:1; padding: 0.7rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; background: white; color: var(--admin-text-light);"><i class="fas fa-minus"></i> Retirar</button>
+                <button type="button" id="adj-mode-adjust" class="inv-mode-btn" onclick="setAdjMode('adjust')" style="flex:1; padding: 0.7rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; background: white; color: var(--admin-text-light);"><i class="fas fa-sliders"></i> Fijar</button>
+            </div>
+
+            <div id="adj-input-section">
+                <div class="form-group">
+                    <label id="adj-input-label">Cantidad a agregar</label>
+                    <input type="number" id="adj-qty" min="0" step="1" value="" oninput="updateAdjPreview()">
+                </div>
+            </div>
+
+            <div class="stock-adjust-preview" id="adj-preview" style="display:none;">
+                <div style="font-size: 0.75rem; color: var(--admin-text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem;">Resultado</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.6rem; flex-wrap: wrap;">
+                    <span id="adj-preview-current" style="font-size: 1.1rem; color: var(--admin-text-light);">-</span>
+                    <i class="fas fa-arrow-right arrow"></i>
+                    <span id="adj-preview-new" style="font-size: 1.3rem; font-weight: 700; color: #00b894;">-</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Motivo</label>
+                <input type="text" id="adj-reason" placeholder="Ej: Reabastecimiento, conteo físico...">
+            </div>
+
+            <div style="background: #fff8e6; border-radius: 10px; padding: 1rem; margin: 1rem 0; border: 1px solid var(--warning-color);">
+                <p style="font-size: 0.85rem; color: var(--secondary-color); margin-bottom: 0.6rem;"><i class="fas fa-exclamation-triangle"></i> Para confirmar, escribe <strong>confirmar</strong> en el campo de abajo:</p>
+                <input type="text" id="adj-confirm-text" class="confirm-input" placeholder="Escribe confirmar" oninput="checkAdjConfirm()">
+            </div>
+
+            <div id="adj-error" class="error-message"></div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" onclick="closeStockAdjustModal()">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-save-adjust" onclick="saveStockAdjustment()" disabled>
+                    <i class="fas fa-check"></i> Guardar Cambio
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL: ÉXITO ========== -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #e6fffa; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <i class="fas fa-check" style="font-size: 1.5rem; color: var(--success-color);"></i>
+            </div>
+            <h3 style="margin-top: 0; margin-bottom: 0.5rem;" id="success-title">¡Listo!</h3>
+            <p id="success-message" style="color: var(--admin-text-light); margin-bottom: 1.5rem;">La operación se completó correctamente.</p>
+            <button class="btn btn-primary" onclick="closeSuccessModal()" style="min-width: 120px;">Aceptar</button>
+        </div>
+    </div>
+
+    <script src="/js/stock.js?v=20260506-1"></script>
+</body>
+</html>

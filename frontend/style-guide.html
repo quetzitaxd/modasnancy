@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260420">
+    <title>Guía de Estilo - Diseñador (Tienda Nancy)</title>
+    <link rel="stylesheet" href="css/theme-tokens.css?v=20260420.v2">
+    <link rel="stylesheet" href="css/style.css?v=20260420.v2">
+    <style>
+        body { padding: 3rem 1rem; max-width: 1000px; margin: 0 auto; background: #fdfdfd !important; }
+        .guide-section { margin-bottom: 4rem; padding: 2rem; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .guide-section h2 { border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 2rem; font-family: sans-serif; text-transform: uppercase; font-size: 1rem; color: #666; }
+        
+        .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; }
+        .color-item { text-align: center; }
+        .color-swatch { height: 80px; border-radius: 10px; margin-bottom: 0.5rem; border: 1px solid #eee; }
+        .color-name { font-size: 0.8rem; font-weight: bold; }
+        .color-hex { font-size: 0.7rem; color: #888; }
+
+        .type-sample { margin-bottom: 1rem; }
+        .type-label { font-size: 0.7rem; color: #999; margin-bottom: 0.2rem; display: block; }
+
+        .btn-sample { display: flex; gap: 1rem; flex-wrap: wrap; }
+        
+        .component-preview { border: 1px solid var(--border-color); padding: 2rem; border-radius: var(--border-radius); background: var(--bg-color); }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center; margin-bottom: 3rem;">Guía de Estilo Dinámica</h1>
+
+    <!-- SECCIÓN DE COLORES -->
+    <section class="guide-section">
+        <h2>Paleta de Colores</h2>
+        <div class="color-grid">
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--primary-color);"></div>
+                <div class="color-name">Primary Color</div>
+                <div class="color-hex">--primary-color</div>
+            </div>
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--primary-light);"></div>
+                <div class="color-name">Primary Light</div>
+                <div class="color-hex">--primary-light</div>
+            </div>
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--secondary-color);"></div>
+                <div class="color-name" style="color: white; background: #333; display: inline-block; padding: 0 4px;">Secondary</div>
+                <div class="color-hex">--secondary-color</div>
+            </div>
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--accent-color);"></div>
+                <div class="color-name">Accent Color</div>
+                <div class="color-hex">--accent-color</div>
+            </div>
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--bg-color);"></div>
+                <div class="color-name">Background Color</div>
+                <div class="color-hex">--bg-color</div>
+            </div>
+            <div class="color-item">
+                <div class="color-swatch" style="background: var(--text-main);"></div>
+                <div class="color-name">Text Main</div>
+                <div class="color-hex">--text-main</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIPOGRAFÍA -->
+    <section class="guide-section">
+        <h2>Tipografía y Escala</h2>
+        <div class="type-sample">
+            <span class="type-label">H1 - Hero Title (Headline Font)</span>
+            <h1>Título de Impacto Hero</h1>
+        </div>
+        <div class="type-sample">
+            <span class="type-label">H2 - Section Title (Headline Font)</span>
+            <h2>Título de Sección Elegante</h2>
+        </div>
+        <div class="type-sample">
+            <span class="type-label">H3 - Subtitle</span>
+            <h3>Subtítulo de Componente</h3>
+        </div>
+        <div class="type-sample">
+            <span class="type-label">P - Body Text (Body Font)</span>
+            <p>Este es el texto principal del sitio. La legibilidad es fundamental. "El éxito no es el final, el fracaso no es fatal: lo que cuenta es el valor para continuar."</p>
+        </div>
+        <div class="type-sample">
+            <span class="type-label">Logo Style (Logo Font)</span>
+            <div class="logo" style="position: static;">NANCY<span>.</span></div>
+        </div>
+    </section>
+
+    <!-- BOTONES -->
+    <section class="guide-section">
+        <h2>Botones</h2>
+        <div class="btn-sample">
+            <button class="btn btn-primary">Botón Primario</button>
+            <button class="btn btn-outline">Botón Outline</button>
+        </div>
+    </section>
+
+    <!-- COMPONENTES -->
+    <section class="guide-section">
+        <h2>Muestras de Componentes</h2>
+        <div class="component-preview">
+            <div class="product-card" style="max-width: 300px; margin: 0 auto;">
+                <div class="product-image-wrap">
+                    <div style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center;">Preview Imagen</div>
+                </div>
+                <div class="product-info">
+                    <span class="product-title">Nombre del Producto</span>
+                    <span class="product-price">Q150.00</span>
+                    <button class="btn btn-primary btn-block">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="text-align: center; color: #888; font-size: 0.8rem; margin-top: 2rem;">
+        Nota: Modifica <b>theme-tokens.css</b> para ver los cambios reflejados aquí.
+    </div>
+
+    <script src="/js/notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260420">
+    <title>Modas Nancy | Políticas de Envío</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/theme-tokens.css?v=20260420.v2">
+    <link rel="stylesheet" href="/css/style.css?v=20260420.v2">
+    <style>
+        .info-card { background: var(--card-bg); padding: 2.5rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); margin-bottom: 2rem; box-shadow: var(--shadow-card); }
+        .info-card h2 { color: var(--primary-color); font-family: var(--font-display); margin-top: 0; }
+        .shipping-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="container">
+        <h1 style="font-family: var(--font-display); text-align: center; font-size: 3rem; margin: 4rem 0;">Información de Envío</h1>
+
+        <div class="shipping-grid">
+            <div class="info-card">
+                <h2>🏙️ Entregas en Capital</h2>
+                <p>Las entregas en la Ciudad de Guatemala y áreas aledañas (Mixco, Villa Nueva, Amatitlán) se realizan en un tiempo de 24 a 48 horas hábiles.</p>
+                <p><strong>Costo:</strong> <span id="ship-capital-info">Q25.00 (Gratis en compras mayores a Q500)</span>.</p>
+            </div>
+            <div class="info-card">
+                <h2>🇬🇹 Departamentos</h2>
+                <p>Realizamos envíos a todo el país a través de Cargo Expreso o Guatex. El tiempo aproximado es de 2 a 4 días hábiles dependiendo del destino.</p>
+                <p><strong>Costo:</strong> <span id="ship-dept-info">Q40.00 tarifa fija</span>.</p>
+            </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 2rem;">
+            <h2>💡 Pago Contra Entrega</h2>
+            <p>Para tu seguridad, puedes pagar al momento de recibir tu pedido. Aceptamos efectivo y tarjeta de débito/crédito en la Ciudad Capital. Para departamentos, el pago es únicamente en efectivo al transportista.</p>
+        </div>
+    </main>
+
+    <footer class="footer-premium">
+        <div class="footer-content">
+            <div class="footer-col footer-brand">
+                <a href="/" class="logo footer-logo">Modas<span>Nancy</span></a>
+                <p class="footer-intro">Boutique exclusiva de moda femenina. Envíos a todo el país con la mejor calidad y servicio garantizado.</p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Navegación</h3>
+                <a href="/catalogo.html">Catálogo</a>
+                <a href="/ofertas.html">Ofertas</a>
+                <a href="/nosotros.html">Nosotros</a>
+                <a href="/tallas.html">Guía de Tallas</a>
+                <a href="/envios.html">Envíos</a>
+            </div>
+            <div class="footer-col">
+                <h3>Servicio al Cliente</h3>
+                <a href="/devoluciones.html">Cambios y Devoluciones</a>
+                <a href="/faq.html">Preguntas Frecuentes</a>
+                <a href="/privacidad.html">Política de Privacidad</a>
+            </div>
+            <div class="footer-col">
+                <h3>Contacto</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Ciudad de Guatemala</p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:soporte@modasnancy.com">soporte@modasnancy.com</a></p>
+            </div>
+            <div class="footer-col footer-payments-col">
+                <h3>Métodos de Pago</h3>
+                <div class="payment-list">
+                    <p><i class="fas fa-credit-card"></i> Pago con tarjeta</p>
+                    <p><i class="fas fa-university"></i> Depósito / Transferencia</p>
+                    <p><i class="fas fa-hand-holding-usd"></i> Pago contra entrega</p>
+                </div>
+                <div class="secure-badge">
+                    <i class="fas fa-lock"></i>
+                    <span>Sitio Seguro <strong>SSL</strong></span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <a href="/privacidad.html">Política de Privacidad</a>
+            <p>&copy; 2026 Modas Nancy. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/navbar.js?v=20260507c"></script>
+    <script src="/js/app.js?v=20260507c"></script>
+    <script src="/js/notifications.js?v=20260507c"></script>
+    <script>
+        (function() {
+            const capitalEl = document.getElementById('ship-capital-info');
+            const deptEl = document.getElementById('ship-dept-info');
+            if (capitalEl && typeof SHIPPING_CONFIG !== 'undefined') {
+                capitalEl.textContent = `${formatMoney(SHIPPING_CONFIG.CAPITAL_COST)} (Gratis en compras mayores a ${formatMoney(SHIPPING_CONFIG.CAPITAL_FREE_THRESHOLD)})`;
+            }
+            if (deptEl && typeof SHIPPING_CONFIG !== 'undefined') {
+                deptEl.textContent = `${formatMoney(SHIPPING_CONFIG.DEPARTMENT_COST)} tarifa fija`;
+            }
+        })();
+    </script>
+</body>
+</html>

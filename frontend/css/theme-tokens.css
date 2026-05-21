@@ -1,0 +1,78 @@
+/* 
+   DESIGN TOKENS - CONFIGURACIÓN PARA EL DISEÑADOR
+   Modifica los valores de este archivo para cambiar el diseño de toda la tienda.
+*/
+
+:root {
+  /* --- COLORES PRINCIPALES --- */
+  --primary-color: #e85c8a;
+  --primary-light: #f9b8c8;
+  --secondary-color: #c97a7a;
+  --accent-color: #b07cc9;
+  --accent-soft: #eddaf2;
+  --rose-deep: #a8557a;
+  --logo-dot-color: #f091a8;
+  /* Punto rojo del logo */
+
+  /* --- HERO SECTION --- */
+  --hero-text: #ffffff;
+  --hero-soft-bg: var(--primary-color);
+  --hero-soft-text: #ffffff;
+  --hero-soft-border: transparent;
+
+  /* --- COLORES DE FONDO Y TEXTO --- */
+  --bg-color: #fdf2f5;
+  --card-bg: #ffffff;
+  --white: #ffffff;
+  --text-main: #4a3540;
+  --text-light: #7a6570;
+
+  /* --- TIPOGRAFÍA (Fuentes) --- */
+  /* Deben estar importadas en style.css o ser del sistema */
+  --font-logo: 'Bebas Neue', sans-serif;
+  --font-headings: 'Poppins', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  /* Alias para páginas de producto */
+  --font-body: 'Poppins', sans-serif;
+
+  /* --- TAMAÑOS DE FUENTE --- */
+  --fs-logo: 2.8rem;
+  --fs-h1: clamp(2.4rem, 5vw, 4.2rem);
+  --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
+  --fs-h3: 1.5rem;
+  --fs-h4: 1.25rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-tiny: 0.75rem;
+  --ls-logo: 0.08em;
+  /* Letter spacing del logo */
+
+  /* --- BORDES Y SOMBRAS --- */
+  --border-color: #f0dde3;
+  --border-radius: 20px;
+  --border-radius-btn: 50px;
+  --shadow-soft: 0 10px 40px rgba(212, 165, 180, 0.15);
+  --shadow-card: 0 8px 30px rgba(199, 155, 176, 0.12);
+
+  /* --- COLORES LEGO (Compatibilidad) --- */
+  --text-dark: var(--secondary-color);
+  --text-gray: var(--text-light);
+
+  /* --- ANIMACIONES --- */
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- NUEVOS TOKENS PREMIUM (Rediseño 2026) --- */
+  --gold-primary: #FFD700;
+  --gold-deep: #FFA500;
+  --gold-light: #FFE066;
+  --gold-gradient: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+  --gold-gradient-shine: linear-gradient(90deg, #FFD700 0%, #FFF5B3 40%, #FFA500 60%, #FFD700 100%);
+  --gold-text-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FFE066);
+  --dark-overlay: rgba(20, 10, 15, 0.55);
+  --dark-overlay-strong: rgba(20, 10, 15, 0.75);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --shadow-premium: 0 20px 60px rgba(120, 78, 98, 0.18);
+  --shadow-elevated: 0 24px 48px rgba(80, 50, 65, 0.22);
+  --shadow-gold: 0 10px 30px rgba(255, 165, 0, 0.25);
+}

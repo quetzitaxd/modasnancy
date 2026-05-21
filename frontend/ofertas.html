@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Modas Nancy">
+    <meta name="description" content="Ofertas especiales en moda femenina. Los mejores precios en Guatemala.">
+    <title>Ofertas — Modas Nancy</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/logo-icon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme-tokens.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body style="background:#f5f5f5;">
+
+    <!-- SEARCH BAR -->
+    <section class="search-section">
+        <div class="search-bar">
+            <div class="search-input-wrap">
+                <input type="text" placeholder="Buscar productos..." id="search-input" autocomplete="off">
+                <div class="search-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+            </div>
+            <button class="search-camera" aria-label="Buscar por foto">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- CATEGORY TABS -->
+    <nav class="cat-tabs" aria-label="Categorias">
+        <button class="cat-tab" type="button" data-filter="all">Mujer</button>
+        <button class="cat-tab active" type="button" data-filter="sale">Ofertas</button>
+        <button class="cat-tab" type="button" data-filter="new">Nuevo</button>
+        <button class="cat-tab" type="button" data-filter="vestidos">Vestidos</button>
+        <button class="cat-tab" type="button" data-filter="blusas">Blusas</button>
+        <button class="cat-tab" type="button" data-filter="faldas">Faldas</button>
+        <button class="cat-tab" type="button" data-filter="pantalones">Pants</button>
+        <button class="cat-tab" type="button" data-filter="accesorios">Accesorios</button>
+    </nav>
+
+    <!-- TRUST BANNER -->
+    <div class="trust-banner">
+        <div class="trust-item-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Envio gratis
+        </div>
+        <div style="width:1px; height:14px; background:#d9f7be; flex-shrink:0;"></div>
+        <div class="trust-item-inline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Reembolso por 30 dias
+        </div>
+        <svg class="trust-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <main id="main-content">
+        <!-- CATEGORY CIRCLES -->
+        <section class="cat-circles" aria-label="Categorias populares">
+            <div class="cat-circle cat-circle--all" data-category="all">
+                <div class="cat-circle__img"><span class="cat-circle__icon">☰</span></div>
+                <span class="cat-circle__label">Todos</span>
+            </div>
+            <div class="cat-circle" data-category="sale">
+                <div class="cat-circle__img" style="background:#fff2f0;"><span class="cat-circle__icon">🏷️</span></div>
+                <span class="cat-circle__label">Ofertas</span>
+            </div>
+            <div class="cat-circle" data-category="ropa">
+                <div class="cat-circle__img" style="background:#f0f5ff;"><span class="cat-circle__icon">👚</span></div>
+                <span class="cat-circle__label">Ropa</span>
+            </div>
+            <div class="cat-circle" data-category="vestidos">
+                <div class="cat-circle__img" style="background:#fdf2f8;"><span class="cat-circle__icon">👗</span></div>
+                <span class="cat-circle__label">Vestidos</span>
+            </div>
+            <div class="cat-circle" data-category="blusas">
+                <div class="cat-circle__img" style="background:#f6ffed;"><span class="cat-circle__icon">🎽</span></div>
+                <span class="cat-circle__label">Blusas</span>
+            </div>
+            <div class="cat-circle" data-category="faldas">
+                <div class="cat-circle__img" style="background:#fff7e6;"><span class="cat-circle__icon">🩳</span></div>
+                <span class="cat-circle__label">Faldas</span>
+            </div>
+            <div class="cat-circle" data-category="pantalones">
+                <div class="cat-circle__img" style="background:#e6fffb;"><span class="cat-circle__icon">👖</span></div>
+                <span class="cat-circle__label">Pants</span>
+            </div>
+            <div class="cat-circle" data-category="accesorios">
+                <div class="cat-circle__img" style="background:#f9f0ff;"><span class="cat-circle__icon">💍</span></div>
+                <span class="cat-circle__label">Accesorios</span>
+            </div>
+        </section>
+
+        <!-- PRODUCT GRID -->
+        <section aria-label="Productos en oferta">
+            <div id="loading" class="loader" style="padding:2rem; background:white; margin:0.5rem; border-radius:8px;">
+                <div class="loader__spinner"></div>
+            </div>
+            <div id="products-grid" class="products-temu"></div>
+        </section>
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav-temu" aria-label="Navegacion">
+        <a href="/" class="bottom-nav-temu__item" aria-label="Inicio">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Inicio</span>
+        </a>
+        <a href="/catalogo.html" class="bottom-nav-temu__item" aria-label="Categorias">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>Categorias</span>
+        </a>
+        <a href="/ofertas.html" class="bottom-nav-temu__item active" aria-label="Ofertas">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Ofertas</span>
+        </a>
+        <a href="/instalar.html" class="bottom-nav-temu__item" aria-label="Instalar app">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Instalar</span>
+        </a>
+        <a href="/carrito.html" class="bottom-nav-temu__item" aria-label="Carrito" style="position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Carrito</span>
+            <span class="bottom-nav-temu__badge" data-cart-count style="display:none;">0</span>
+            <span class="bottom-nav-temu__tag">Envio gratis</span>
+        </a>
+    </nav>
+
+    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Scripts -->
+    <script>window.INITIAL_FILTER = 'sale';</script>
+    <script src="/js/config.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/pwa.js"></script>
+    <script src="/js/home.js"></script>
+</body>
+</html>

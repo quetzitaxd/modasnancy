@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Modas Nancy">
+    <title>Checkout — Modas Nancy</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/assets/brand/logo-icon.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme-tokens.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <style>
+        .checkout-page { background: #f5f5f5; min-height: 100vh; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+
+        /* Top bar */
+        .checkout-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            height: 48px;
+        }
+        .checkout-topbar__btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #f5f5f5;
+            display: flex; align-items: center; justify-content: center;
+            color: #333;
+            cursor: pointer;
+        }
+        .checkout-topbar__title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .checkout-topbar__spacer { width: 36px; }
+
+        /* Section cards */
+        .checkout-section {
+            background: white;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+        }
+        .checkout-section__title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .checkout-section__title svg { color: #999; }
+
+        /* Cart items compact */
+        .checkout-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .checkout-item:last-child { border-bottom: none; }
+        .checkout-item__img {
+            width: 64px; height: 64px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f8f8f8;
+            flex-shrink: 0;
+        }
+        .checkout-item__img img { width: 100%; height: 100%; object-fit: cover; }
+        .checkout-item__info { flex: 1; min-width: 0; }
+        .checkout-item__name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.3;
+            margin-bottom: 0.15rem;
+        }
+        .checkout-item__meta {
+            font-size: 0.7rem;
+            color: #999;
+            margin-bottom: 0.2rem;
+        }
+        .checkout-item__price {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #000;
+        }
+        .checkout-item__price-old {
+            font-size: 0.7rem;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 0.3rem;
+        }
+
+        /* Form compact */
+        .form-group { margin-bottom: 0.75rem; }
+        .form-group:last-child { margin-bottom: 0; }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        .form-group label .required { color: #d63031; }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: white;
+            transition: border-color 0.15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #333;
+        }
+        .form-group input::placeholder { color: #bbb; }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .form-hint {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 0.2rem;
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        @media (max-width: 400px) { .form-row { grid-template-columns: 1fr; } }
+
+        /* Phone row */
+        .phone-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .phone-row select {
+            width: 80px;
+            flex-shrink: 0;
+            padding: 0.6rem 0.4rem;
+        }
+        .phone-row input { flex: 1; }
+
+        /* Shipping info */
+        .shipping-info {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            background: #f6ffed;
+            border-radius: 8px;
+            border: 1px solid #d9f7be;
+            font-size: 0.75rem;
+            color: #52c41a;
+            font-weight: 500;
+        }
+        .shipping-info--paid {
+            background: #fff2f0;
+            border-color: #ffccc7;
+            color: #ff4d4f;
+        }
+
+        /* Payment options */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .payment-option.active {
+            border-color: #000;
+            background: #fafafa;
+        }
+        .payment-option input {
+            width: 18px; height: 18px;
+            accent-color: #000;
+            flex-shrink: 0;
+            margin: 0;
+        }
+        .payment-option__icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .payment-option__info { flex: 1; }
+        .payment-option__label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+        .payment-option__hint {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        /* Card form */
+        .card-form {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #fafafa;
+            border-radius: 10px;
+            border: 1px solid #e8e8e8;
+        }
+        .card-form__secure {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: #52c41a;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Totals */
+        .checkout-totals {
+            background: white;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .total-row--main {
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #f0f0f0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #000;
+        }
+        .total-row--free { color: #52c41a; font-weight: 600; }
+
+        /* Error */
+        .form-error {
+            display: none;
+            padding: 0.6rem 0.75rem;
+            background: #fff2f0;
+            border: 1px solid #ffccc7;
+            border-radius: 8px;
+            color: #ff4d4f;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.75rem;
+        }
+        .form-error.visible { display: block; }
+
+        /* Bottom action */
+        .checkout-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 920;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .checkout-bottom__total {
+            display: flex;
+            flex-direction: column;
+        }
+        .checkout-bottom__label {
+            font-size: 0.65rem;
+            color: #999;
+        }
+        .checkout-bottom__amount {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #000;
+        }
+        .checkout-bottom__btn {
+            flex: 1;
+            max-width: 220px;
+            height: 46px;
+            border-radius: 23px;
+            border: none;
+            background: #000;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+        .checkout-bottom__btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Empty state */
+        .checkout-empty {
+            text-align: center;
+            padding: 4rem 1.5rem;
+        }
+        .checkout-empty svg {
+            width: 80px; height: 80px;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+        .checkout-empty h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .checkout-empty p {
+            font-size: 0.8rem;
+            color: #999;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Success state */
+        .checkout-success {
+            text-align: center;
+            padding: 4rem 1.5rem;
+        }
+        .checkout-success svg {
+            width: 64px; height: 64px;
+            color: #52c41a;
+            margin-bottom: 1rem;
+        }
+        .checkout-success h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .checkout-success p {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        @media (min-width: 768px) {
+            .checkout-section, .checkout-totals { max-width: 600px; margin-left: auto; margin-right: auto; margin-bottom: 0.5rem; }
+            .checkout-bottom { justify-content: center; gap: 2rem; }
+        }
+    </style>
+</head>
+<body style="background:#f5f5f5;">
+
+    <!-- TOP BAR -->
+    <div class="checkout-topbar">
+        <button class="checkout-topbar__btn" onclick="history.back()" aria-label="Atras">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span class="checkout-topbar__title">Checkout</span>
+        <div class="checkout-topbar__spacer"></div>
+    </div>
+
+    <div class="checkout-page">
+        <!-- EMPTY -->
+        <div id="empty-cart-view" style="display:none;">
+            <div class="checkout-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <h2>Tu carrito esta vacio</h2>
+                <p>Agrega productos antes de finalizar tu compra.</p>
+                <a href="/catalogo.html" class="btn btn--primary">Ver productos</a>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div id="success-view" style="display:none;">
+            <div class="checkout-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <h2 id="success-title">Pedido Realizado</h2>
+                <p id="success-detail">Gracias por tu compra. Nos pondremos en contacto contigo pronto via WhatsApp.</p>
+                <a href="/catalogo.html" class="btn btn--primary">Volver a la Tienda</a>
+            </div>
+        </div>
+
+        <!-- CHECKOUT -->
+        <div id="checkout-view">
+            <form id="order-form">
+                <!-- ITEMS -->
+                <div class="checkout-section">
+                    <div class="checkout-section__title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        Productos
+                    </div>
+                    <div id="cart-items"></div>
+                </div>
+
+                <!-- SHIPPING -->
+                <div class="checkout-section">
+                    <div class="checkout-section__title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        Datos de Envio
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre Completo <span class="required">*</span></label>
+                        <input type="text" id="customer_name" placeholder="Ej: Ana Garcia" required autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefono (WhatsApp) <span class="required">*</span></label>
+                        <div class="phone-row">
+                            <select id="phone_country">
+                                <option value="+502" selected>+502</option>
+                                <option value="+503">+503</option>
+                                <option value="+504">+504</option>
+                                <option value="+505">+505</option>
+                                <option value="+506">+506</option>
+                                <option value="+507">+507</option>
+                            </select>
+                            <input type="tel" id="phone_number" placeholder="55551234" maxlength="8" required autocomplete="tel">
+                        </div>
+                        <span class="form-hint">8 digitos. Ej: 55551234</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electronico</label>
+                        <input type="email" id="customer_email" placeholder="Ej: ana@ejemplo.com" autocomplete="email">
+                        <span class="form-hint">Opcional. Te enviaremos el comprobante.</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Departamento <span class="required">*</span></label>
+                            <select id="departamento" required><option value="">Selecciona...</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Municipio <span class="required">*</span></label>
+                            <select id="municipio" required disabled><option value="">Selecciona...</option></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Direccion Exacta <span class="required">*</span></label>
+                        <input type="text" id="address" placeholder="Avenida, Calle, zona, No. de casa..." required autocomplete="street-address">
+                        <span class="form-hint">Ej: 7a Avenida 12-45, Zona 1, Colonia El Carmen</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Notas adicionales</label>
+                        <textarea id="order_notes" rows="2" placeholder="Instrucciones de entrega, referencias..."></textarea>
+                    </div>
+                    <div id="shipping-cost-info" class="shipping-info">
+                        <span id="shipping-cost-text">Costo de envio calculado</span>
+                    </div>
+                </div>
+
+                <!-- PAYMENT -->
+                <div class="checkout-section">
+                    <div class="checkout-section__title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                        Metodo de Pago
+                    </div>
+                    <div class="payment-options">
+                        <label class="payment-option active">
+                            <input type="radio" name="payment_method" value="efectivo" checked>
+                            <div class="payment-option__icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+                            </div>
+                            <div class="payment-option__info">
+                                <div class="payment-option__label">Contra Entrega</div>
+                                <div class="payment-option__hint">Paga al recibir tu pedido</div>
+                            </div>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="cubopago">
+                            <div class="payment-option__icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <div class="payment-option__info">
+                                <div class="payment-option__label">Tarjeta de Credito / Debito</div>
+                                <div class="payment-option__hint">Pago seguro via CuboPago</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div id="card-form" class="card-form" style="display:none;">
+                        <div class="card-form__secure">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Tus datos estan protegidos por CuboPago
+                        </div>
+                        <div class="form-group">
+                            <label>Numero de Tarjeta</label>
+                            <input type="text" id="card_number" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Expiracion</label>
+                                <input type="text" id="card_expiry" placeholder="MM / AA" maxlength="7" autocomplete="cc-exp">
+                            </div>
+                            <div class="form-group">
+                                <label>CVC</label>
+                                <input type="text" id="card_cvc" placeholder="123" maxlength="4" autocomplete="cc-csc">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Nombre en la Tarjeta</label>
+                            <input type="text" id="card_name" placeholder="Como aparece en la tarjeta" autocomplete="cc-name">
+                        </div>
+                    </div>
+
+                    <div id="form-error" class="form-error"></div>
+                </div>
+
+                <!-- TOTALS -->
+                <div class="checkout-totals" style="margin-bottom: calc(80px + env(safe-area-inset-bottom));">
+                    <div class="total-row">
+                        <span>Subtotal</span>
+                        <span id="checkout-subtotal">Q0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Envio</span>
+                        <span id="shipping-cost">Q0.00</span>
+                    </div>
+                    <div class="total-row total-row--main">
+                        <span>Total</span>
+                        <span id="checkout-total">Q0.00</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BOTTOM ACTION -->
+    <div class="checkout-bottom" id="checkout-bottom" style="display:none;">
+        <div class="checkout-bottom__total">
+            <span class="checkout-bottom__label">Total a pagar</span>
+            <span class="checkout-bottom__amount" id="bottom-total">Q0.00</span>
+        </div>
+        <button class="checkout-bottom__btn" type="button" id="btn-submit" onclick="document.getElementById('order-form').dispatchEvent(new Event('submit'))">
+            Confirmar Pedido
+        </button>
+    </div>
+
+    <script src="/js/config.js"></script>
+    <script src="/js/guatemala-data.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/pwa.js"></script>
+    <script>
+        let freshProducts = [];
+        let currentPaymentMethod = 'efectivo';
+        let shippingCost = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/products');
+                if (res.ok) freshProducts = await res.json();
+            } catch (err) {
+                console.warn('No se pudieron cargar productos frescos:', err);
+            }
+
+            renderCheckoutCart();
+            setupPaymentToggle();
+            setupCardFormatting();
+            setupPhoneFormatting();
+            setupGuatemalaSelects();
+            setupFormSubmit();
+        });
+
+        function renderCheckoutCart() {
+            const cart = getCart();
+            const checkoutView = document.getElementById('checkout-view');
+            const emptyView = document.getElementById('empty-cart-view');
+            const itemsContainer = document.getElementById('cart-items');
+            const bottomEl = document.getElementById('checkout-bottom');
+
+            if (cart.length === 0) {
+                if (checkoutView) checkoutView.style.display = 'none';
+                if (emptyView) emptyView.style.display = 'block';
+                if (bottomEl) bottomEl.style.display = 'none';
+                return;
+            }
+
+            if (checkoutView) checkoutView.style.display = 'block';
+            if (emptyView) emptyView.style.display = 'none';
+            if (bottomEl) bottomEl.style.display = 'flex';
+
+            itemsContainer.innerHTML = '';
+            const qtyByProduct = {};
+            cart.forEach((item) => {
+                const pid = item.product_id || item.sku;
+                qtyByProduct[pid] = (qtyByProduct[pid] || 0) + (Number(item.quantity) || 0);
+            });
+
+            cart.forEach((item) => {
+                const fresh = freshProducts.find((p) => p.id === item.product_id);
+                const price = Number(fresh ? fresh.price : item.price) || 0;
+                const qty = Number(item.quantity) || 1;
+                const pid = item.product_id || item.sku;
+                const totalQty = qtyByProduct[pid] || 0;
+
+                let finalPrice = price;
+                const wEnabled = fresh ? fresh.wholesale_enabled : item.wholesale_enabled;
+                const wMin = fresh ? fresh.wholesale_min_qty : item.wholesale_min_qty;
+                const wDisc = fresh ? fresh.wholesale_discount_percent : item.wholesale_discount_percent;
+                const bEnabled = fresh ? fresh.bundle_2x_enabled : item.bundle_2x_enabled;
+                const bPrice = fresh ? fresh.bundle_2x_price : item.bundle_2x_price;
+
+                if (wEnabled && totalQty >= wMin && wDisc > 0) {
+                    finalPrice = price * (1 - wDisc / 100);
+                } else if (bEnabled && bPrice > 0 && totalQty >= 2) {
+                    const pairs = Math.floor(totalQty / 2);
+                    const singles = totalQty % 2;
+                    finalPrice = (pairs * bPrice + singles * price) / totalQty;
+                }
+
+                const isSale = fresh ? fresh.sale_enabled : item.sale_enabled;
+                const originalPrice = Number(fresh ? fresh.original_price : item.original_price) || 0;
+
+                const div = document.createElement('div');
+                div.className = 'checkout-item';
+                div.innerHTML = `
+                    <div class="checkout-item__img">
+                        <img src="${safeImageUrl(item.image, '/assets/placeholder.svg')}" alt="${safeText(item.name)}" loading="lazy" onerror="this.src='/assets/placeholder.svg'">
+                    </div>
+                    <div class="checkout-item__info">
+                        <div class="checkout-item__name">${safeText(item.name)}</div>
+                        <div class="checkout-item__meta">${item.color_name ? item.color_name + ' / ' : ''}${(item.size || 'Unica').toUpperCase()} x${qty}</div>
+                        <div class="checkout-item__price">
+                            ${formatMoney(finalPrice * qty)}
+                            ${isSale && originalPrice > finalPrice ? `<span class="checkout-item__price-old">${formatMoney(originalPrice * qty)}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                itemsContainer.appendChild(div);
+            });
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            const subtotal = calculateCartTotal(freshProducts);
+            document.getElementById('checkout-subtotal').textContent = formatMoney(subtotal);
+            document.getElementById('shipping-cost').textContent = formatMoney(shippingCost);
+            document.getElementById('checkout-total').textContent = formatMoney(subtotal + shippingCost);
+            document.getElementById('bottom-total').textContent = formatMoney(subtotal + shippingCost);
+        }
+
+        function setupPaymentToggle() {
+            const radios = document.querySelectorAll('input[name="payment_method"]');
+            const cardForm = document.getElementById('card-form');
+            const btn = document.getElementById('btn-submit');
+
+            radios.forEach((radio) => {
+                radio.addEventListener('change', () => {
+                    currentPaymentMethod = radio.value;
+                    const isCard = currentPaymentMethod === 'cubopago';
+                    if (cardForm) cardForm.style.display = isCard ? 'block' : 'none';
+                    if (btn) btn.textContent = isCard ? 'Pagar Ahora' : 'Confirmar Pedido';
+
+                    document.querySelectorAll('.payment-option').forEach((opt) => {
+                        opt.classList.toggle('active', opt.querySelector('input').checked);
+                    });
+                });
+            });
+        }
+
+        function setupCardFormatting() {
+            const numberInput = document.getElementById('card_number');
+            const expiryInput = document.getElementById('card_expiry');
+            const cvcInput = document.getElementById('card_cvc');
+
+            if (numberInput) {
+                numberInput.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '').substring(0, 16);
+                    v = v.match(/.{1,4}/g)?.join(' ') || v;
+                    e.target.value = v;
+                });
+            }
+            if (expiryInput) {
+                expiryInput.addEventListener('input', (e) => {
+                    let v = e.target.value.replace(/\D/g, '').substring(0, 4);
+                    if (v.length >= 2) v = v.substring(0, 2) + ' / ' + v.substring(2);
+                    e.target.value = v;
+                });
+            }
+            if (cvcInput) {
+                cvcInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+                });
+            }
+        }
+
+        function setupPhoneFormatting() {
+            const phoneInput = document.getElementById('phone_number');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 8);
+                });
+            }
+        }
+
+        function setupGuatemalaSelects() {
+            if (typeof window.GUATEMALA_DATA === 'undefined') return;
+
+            const deptoSelect = document.getElementById('departamento');
+            const muniSelect = document.getElementById('municipio');
+            const shippingInfo = document.getElementById('shipping-cost-info');
+            const shippingText = document.getElementById('shipping-cost-text');
+
+            window.GUATEMALA_DATA.initializeSelects('departamento', 'municipio', (departamento) => {
+                if (!departamento) {
+                    shippingCost = 0;
+                    shippingInfo.style.display = 'none';
+                    updateTotals();
+                    return;
+                }
+
+                const isCapital = SHIPPING_CONFIG.CAPITAL_DEPARTMENTS.includes(departamento);
+                const subtotal = calculateCartTotal(freshProducts);
+
+                if (isCapital) {
+                    if (subtotal >= SHIPPING_CONFIG.CAPITAL_FREE_THRESHOLD) {
+                        shippingCost = 0;
+                        shippingText.textContent = `Envio gratis! (Compra mayor a ${formatMoney(SHIPPING_CONFIG.CAPITAL_FREE_THRESHOLD)})`;
+                        shippingInfo.classList.remove('shipping-info--paid');
+                    } else {
+                        shippingCost = SHIPPING_CONFIG.CAPITAL_COST;
+                        shippingText.textContent = `Envio en Capital: ${formatMoney(shippingCost)}`;
+                        shippingInfo.classList.add('shipping-info--paid');
+                    }
+                } else {
+                    shippingCost = SHIPPING_CONFIG.DEPARTMENT_COST;
+                    shippingText.textContent = `Envio a ${departamento}: ${formatMoney(shippingCost)}`;
+                    shippingInfo.classList.add('shipping-info--paid');
+                }
+
+                shippingInfo.style.display = 'block';
+                updateTotals();
+            });
+        }
+
+        function validateCardData() {
+            const number = document.getElementById('card_number')?.value || '';
+            const expiry = document.getElementById('card_expiry')?.value || '';
+            const cvc = document.getElementById('card_cvc')?.value || '';
+            const name = document.getElementById('card_name')?.value || '';
+
+            if (number.replace(/\s/g, '').length < 15) throw new Error('Numero de tarjeta invalido');
+            if (!expiry.match(/^\d{2}\s*\/\s*\d{2}$/)) throw new Error('Fecha de expiracion invalida');
+            if (!cvc || cvc.length < 3) throw new Error('CVC invalido');
+            if (!name.trim()) throw new Error('Nombre en tarjeta requerido');
+
+            const [month, year] = expiry.split(' / ').map((s) => s.trim());
+            return { holder: name.trim(), number: number.replace(/\s/g, ''), cvv: cvc.trim(), month, year };
+        }
+
+        function setupFormSubmit() {
+            const form = document.getElementById('order-form');
+            if (!form) return;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-submit');
+                const errorEl = document.getElementById('form-error');
+
+                btn.disabled = true;
+                btn.textContent = 'Procesando...';
+                if (errorEl) { errorEl.textContent = ''; errorEl.classList.remove('visible'); }
+
+                try {
+                    const cart = getCart();
+                    if (cart.length === 0) { window.location.reload(); return; }
+
+                    const validSkus = new Set();
+                    if (Array.isArray(freshProducts)) {
+                        freshProducts.forEach((p) => {
+                            if (Array.isArray(p.variants)) p.variants.forEach((v) => validSkus.add(v.sku));
+                        });
+                    }
+                    const validCart = cart.filter((item) => item?.sku && validSkus.has(item.sku));
+                    if (validCart.length === 0) throw new Error('Los productos ya no estan disponibles.');
+                    if (validCart.length < cart.length) saveCart(validCart);
+
+                    const name = document.getElementById('customer_name')?.value || '';
+                    const phoneCountry = document.getElementById('phone_country')?.value || '+502';
+                    const phoneNumber = document.getElementById('phone_number')?.value || '';
+                    const phone = phoneCountry + phoneNumber.replace(/\s/g, '');
+                    const email = document.getElementById('customer_email')?.value || '';
+                    const notes = document.getElementById('order_notes')?.value || '';
+                    const depto = document.getElementById('departamento')?.value || '';
+                    const muni = document.getElementById('municipio')?.value || '';
+                    const address = document.getElementById('address')?.value || '';
+
+                    let error = '';
+                    if (!name.trim()) error = 'El nombre es obligatorio.';
+                    else if (!phoneNumber.trim()) error = 'El telefono es obligatorio.';
+                    else if (!/^\d{8}$/.test(phoneNumber.replace(/\s/g, ''))) error = 'El telefono debe tener 8 digitos.';
+                    else if (email.trim() && !email.includes('@')) error = 'El correo no es valido.';
+                    else if (!depto) error = 'El departamento es obligatorio.';
+                    else if (!muni) error = 'El municipio es obligatorio.';
+                    else if (!address.trim()) error = 'La direccion es obligatoria.';
+
+                    let cardData = null;
+                    if (!error && currentPaymentMethod === 'cubopago') {
+                        try { cardData = validateCardData(); } catch (cErr) { error = cErr.message; }
+                    }
+
+                    if (error) throw new Error(error);
+
+                    const payload = {
+                        customer_name: name,
+                        phone: phone,
+                        ...(email.trim() ? { email: email.trim() } : {}),
+                        address: address,
+                        city: `${muni}, ${depto}`,
+                        ...(notes.trim() ? { notes: notes.trim() } : {}),
+                        payment_method: currentPaymentMethod,
+                        items: validCart.map((item) => ({ sku: item?.sku, quantity: item?.quantity }))
+                    };
+
+                    btn.textContent = 'Creando pedido...';
+
+                    const orderData = await createOrder(payload);
+
+                    if (currentPaymentMethod === 'cubopago' && cardData) {
+                        btn.textContent = 'Procesando pago...';
+                        const payData = await payOrder(orderData.orderId, cardData, email.trim() || undefined);
+
+                        clearCart();
+                        document.getElementById('checkout-view').style.display = 'none';
+                        document.getElementById('checkout-bottom').style.display = 'none';
+                        document.getElementById('success-view').style.display = 'block';
+                        document.getElementById('success-title').textContent = 'Pago Aprobado!';
+                        document.getElementById('success-detail').textContent = 'Tu pago con tarjeta fue procesado exitosamente.';
+                    } else {
+                        clearCart();
+                        document.getElementById('checkout-view').style.display = 'none';
+                        document.getElementById('checkout-bottom').style.display = 'none';
+                        document.getElementById('success-view').style.display = 'block';
+                    }
+                } catch (err) {
+                    if (errorEl) { errorEl.textContent = err.message; errorEl.classList.add('visible'); }
+                    btn.disabled = false;
+                    btn.textContent = currentPaymentMethod === 'cubopago' ? 'Pagar Ahora' : 'Confirmar Pedido';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
