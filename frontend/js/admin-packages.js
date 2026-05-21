@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exponer globales
 window.loadPackages = loadPackages;
-window.openPackageModal = () => openPackageModal(null);
+window.openPackageModal = openPackageModal;
 window.closePackageModal = closePackageModal;
 window.editPackage = editPackage;
 window.togglePackageStatus = togglePackageStatus;
