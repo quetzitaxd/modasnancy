@@ -24,7 +24,7 @@ modasnancy.com/
 │   ├── server.js         # Entry point Express
 │   ├── config.js         # Config central (marca, moneda, envíos, CuboPago)
 │   ├── db.js             # Pool de conexiones MariaDB
-│   ├── *-service.js      # Lógica de negocio (products, orders, payments, etc.)
+│   ├── *-service.js      # Lógica de negocio (products, orders, payments, packages, etc.)
 │   ├── scripts/          # Migraciones y utilidades DB
 │   └── tests/            # Tests unitarios
 ├── frontend/             # Sitio público + paneles admin
@@ -33,6 +33,7 @@ modasnancy.com/
 │   ├── ofertas.html      # Solo productos en promoción
 │   ├── producto.html     # Detalle de producto
 │   ├── checkout.html     # Carrito + pago
+│   ├── live.html         # Formulario de compra en vivo (live shopping)
 │   ├── admin.html        # Panel admin (roles: admin)
 │   ├── pedidos.html      # Panel operador de pedidos
 │   ├── stock.html        # Panel operador de stock
@@ -53,6 +54,8 @@ modasnancy.com/
 │   │   ├── guatemala-data.js  # Departamentos/municipios + selects
 │   │   ├── navbar.js     # Navbar dinámico (legacy, no usado en Temu)
 │   │   ├── footer.js     # Footer dinámico (legacy)
+│   │   ├── live.js       # Formulario multi-paquete, envío fijo Q25
+│   │   ├── admin-packages.js # CRUD de paquetes en admin.html
 │   │   └── *.js          # Admin panels (admin.js, pedidos.js, stock.js, vendedor.js)
 │   ├── assets/
 │   │   ├── brand/        # Logo, íconos, imágenes de marca
@@ -65,6 +68,7 @@ modasnancy.com/
 │   └── migrar_*.sql      # Migraciones
 ├── data/                 # Datos persistentes (montado en Docker)
 │   ├── products/         # Imágenes de productos por ID
+│   ├── packages/         # Imágenes de paquetes para live shopping
 │   └── banners.json
 ├── scripts/              # Scripts de utilidad (host)
 │   ├── backup.sh
@@ -94,8 +98,10 @@ modasnancy.com/
 - Todo cambio en productos/pedidos/inventario debe quedar en `audit_logs`.
 
 ### Base de Datos (MariaDB)
-- Tablas principales: `products`, `product_variants`, `inventory`, `orders`, `order_items`, `customers`, `users`, `audit_logs`.
+- Tablas principales: `products`, `product_variants`, `inventory`, `orders`, `order_items`, `customers`, `users`, `audit_logs`, `live_packages`.
 - Inventario por SKU (no por producto).
+- `live_packages`: paquetes independientes para venta en directo (code, name, price, stock, image_url, is_active).
+- `orders.source` admite: `catalogo`, `vendedor`, `live`.
 - Productos tienen `sale_enabled`, `bundle_2x_enabled`, `wholesale_enabled` como flags.
 
 ---
@@ -126,6 +132,13 @@ modasnancy.com/
 - **Efectivo (contra entrega):** Crea orden directamente.
 - **Tarjeta (CuboPago):** Crea orden → procesa pago vía `/api/orders/:id/pay`.
 - Envío: Q25 capital (gratis > Q500), Q40 departamentos. Hardcodeado en `backend/config.js` y `frontend/js/config.js`.
+
+### Venta en Vivo (Live Shopping)
+- **Paquetes:** Productos independientes (`live_packages`) con código propio, precio fijo, imagen y stock propio. Se gestionan desde el panel admin (pestaña "Paquetes").
+- **Compra:** El cliente entra a `live.modasnancy.com`, escribe el código del paquete y lo agrega a su pedido. Puede agregar varios paquetes con cantidades.
+- **Envío live:** Fijo Q25 (no aplica gratis > Q500).
+- **Pedidos live:** Se guardan en `orders` con `source = 'live'` y aparecen en el panel de pedidos con badge morado "Live".
+- **Stock:** Al confirmar el pedido se descuenta stock de `live_packages`; al cancelar se restaura automáticamente.
 
 ---
 
@@ -181,4 +194,4 @@ node scripts/download-images.js      # Descarga placeholders si faltan
 
 ---
 
-*Última actualización: 2026-05-20 (sesion de reconstruccion Temu)*
+*Última actualización: 2026-05-21 (modulo live shopping + paquetes)*

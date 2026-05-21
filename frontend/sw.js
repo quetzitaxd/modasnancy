@@ -6,7 +6,7 @@
  * - Stale-While-Revalidate: HTML
  */
 
-const CACHE_NAME = 'modasnancy-cache-v5';
+const CACHE_NAME = 'modasnancy-cache-v6';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -15,6 +15,7 @@ const STATIC_ASSETS = [
   '/producto.html',
   '/carrito.html',
   '/checkout.html',
+  '/live.html',
   '/instalar.html',
   '/offline.html',
   '/css/theme-tokens.css',
@@ -27,6 +28,7 @@ const STATIC_ASSETS = [
   '/js/cart.js',
   '/js/ui.js',
   '/js/home.js',
+  '/js/live.js',
   '/js/pwa.js',
   '/js/guatemala-data.js',
   '/manifest.json',

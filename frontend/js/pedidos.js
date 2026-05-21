@@ -421,10 +421,14 @@ function renderOrdersTable(orders) {
                 sourceBadge.style.background = '#e6fffa';
                 sourceBadge.style.color = '#2c7a7b';
                 sourceBadge.textContent = 'Vendedor';
+            } else if (source === 'live') {
+                sourceBadge.style.background = '#f3e8ff';
+                sourceBadge.style.color = '#7c3aed';
+                sourceBadge.textContent = 'Live';
             } else {
                 sourceBadge.style.background = '#e8f4fd';
                 sourceBadge.style.color = '#2b6cb0';
-                sourceBadge.textContent = 'Catálogo';
+                sourceBadge.textContent = 'Catalogo';
             }
             tdSource.appendChild(sourceBadge);
 
@@ -576,7 +580,9 @@ function renderOrdersTable(orders) {
 
             const sourceBadgeHtml = source === 'vendedor'
                 ? `<span class="source-badge" style="background:#e6fffa;color:#2c7a7b;">Vendedor</span>`
-                : `<span class="source-badge" style="background:#e8f4fd;color:#2b6cb0;">Catálogo</span>`;
+                : source === 'live'
+                ? `<span class="source-badge" style="background:#f3e8ff;color:#7c3aed;">Live</span>`
+                : `<span class="source-badge" style="background:#e8f4fd;color:#2b6cb0;">Catalogo</span>`;
 
             card.innerHTML = `
                 <div class="mobile-card-header">

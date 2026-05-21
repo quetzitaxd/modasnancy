@@ -79,6 +79,10 @@
                     <i class="fas fa-box"></i>
                     <span>Productos</span>
                 </button>
+                <button class="admin-sidebar-item" data-target="paquetes">
+                    <i class="fas fa-gift"></i>
+                    <span>Paquetes</span>
+                </button>
                 <button class="admin-sidebar-item" data-target="inventario">
                     <i class="fas fa-boxes-stacked"></i>
                     <span>Inventario</span>
@@ -106,6 +110,7 @@
                 <button class="tab-btn active" data-target="dashboard">Dashboard</button>
                 <button class="tab-btn" data-target="pedidos">Pedidos</button>
                 <button class="tab-btn" data-target="productos">Productos</button>
+                <button class="tab-btn" data-target="paquetes">Paquetes</button>
                 <button class="tab-btn" data-target="inventario">Inventario</button>
                 <button class="tab-btn" data-target="usuarios">Usuarios</button>
                 <button class="tab-btn" data-target="clientes">Clientes</button>
@@ -287,6 +292,32 @@
                         </table>
                     </div>
                     <div class="mobile-cards" id="products-cards"></div>
+                </div>
+            </div>
+
+            <div id="paquetes" class="tab-pane">
+                <div class="header-actions">
+                    <h3 style="margin:0;">Paquetes para Directo</h3>
+                    <button class="btn btn-primary" onclick="openPackageModal()"><i class="fas fa-plus"></i> Nuevo Paquete</button>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="table-container desktop-only">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width:56px;">IMG</th>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Stock</th>
+                                    <th style="width:80px;">Estado</th>
+                                    <th style="width:120px;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packages-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="mobile-cards" id="packages-cards"></div>
                 </div>
             </div>
 
@@ -964,6 +995,55 @@
         </div>
     </div>
 
+    <!-- Package Modal -->
+    <div id="package-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <h3 id="package-modal-title" style="margin-top:0;">Nuevo Paquete</h3>
+            <div id="package-modal-error" class="error-message" style="display:none;"></div>
+            <form id="package-form">
+                <div style="text-align:center; margin-bottom:1rem;">
+                    <img id="package-image-preview" src="/assets/placeholder.svg" alt="Preview" style="width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--border-color);">
+                </div>
+                <div class="form-group">
+                    <label>Imagen</label>
+                    <input type="file" id="pkg-image" accept="image/*" onchange="handlePackageImagePreview()">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Codigo <span style="color:#d63031">*</span></label>
+                        <input type="text" id="pkg-code" placeholder="Ej: 24" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre <span style="color:#d63031">*</span></label>
+                        <input type="text" id="pkg-name" placeholder="Ej: Paquete 6 piezas" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripcion</label>
+                    <textarea id="pkg-desc" rows="2" placeholder="Contenido del paquete..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio (Q) <span style="color:#d63031">*</span></label>
+                        <input type="number" id="pkg-price" step="0.01" min="0" placeholder="120.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock <span style="color:#d63031">*</span></label>
+                        <input type="number" id="pkg-stock" step="1" min="0" placeholder="10" required>
+                    </div>
+                </div>
+                <div class="form-group" style="display:flex;align-items:center;gap:0.5rem;">
+                    <input type="checkbox" id="pkg-active" checked style="width:18px;height:18px;accent-color:#000;">
+                    <label for="pkg-active" style="margin:0;font-size:0.9rem;">Activo (visible en live)</label>
+                </div>
+                <div style="margin-top:1.5rem;display:flex;gap:1rem;justify-content:flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closePackageModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Product Settings Modal -->
     <div id="product-settings-modal" class="modal">
         <div class="modal-content">
@@ -1008,6 +1088,7 @@
     </div>
 
     <script src="/js/admin.js?v=20260505-sale"></script>
+    <script src="/js/admin-packages.js?v=20260521"></script>
     <script src="/js/notifications.js"></script>
 </body>
 </html>

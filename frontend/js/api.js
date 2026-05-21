@@ -66,8 +66,26 @@ async function payOrder(orderId, cardData, email) {
     });
 }
 
+async function getLivePackages() {
+    return apiFetch('/api/live/packages');
+}
+
+async function getLivePackage(code) {
+    return apiFetch(`/api/live/packages/${encodeURIComponent(code)}`);
+}
+
+async function createLiveOrder(payload) {
+    return apiFetch('/api/live/orders', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    });
+}
+
 window.apiFetch = apiFetch;
 window.getProducts = getProducts;
 window.getProduct = getProduct;
 window.createOrder = createOrder;
 window.payOrder = payOrder;
+window.getLivePackages = getLivePackages;
+window.getLivePackage = getLivePackage;
+window.createLiveOrder = createLiveOrder;

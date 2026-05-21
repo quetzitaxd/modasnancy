@@ -9,6 +9,7 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
       - ./data/products:/products_data:ro
+      - ./data/packages:/packages_data:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - nginx_proxy_manager_default

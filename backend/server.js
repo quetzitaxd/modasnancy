@@ -18,6 +18,7 @@ const usersService = require('./users-service');
 const auditService = require('./audit-service');
 const customersService = require('./customers-service');
 const dashboardService = require('./dashboard-service');
+const packagesService = require('./packages-service');
 const db = require('./db');
 
 const app = express();
@@ -426,6 +427,99 @@ app.put('/api/orders/:id', auth.requireAuth(['admin','operador_pedidos']), async
     } catch (err) {
         const status = err.status || 500;
         return res.status(status).json({ error: err.message || 'No se pudo actualizar el pedido' });
+    }
+});
+
+// ─── Live / Packages endpoints (Admin) ────────────────────────────────────────
+
+app.get('/api/packages', auth.requireAdmin, async (req, res) => {
+    try {
+        const packages = await packagesService.getAllPackages();
+        return res.json(packages);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error al cargar paquetes' });
+    }
+});
+
+app.post('/api/packages', auth.requireAdmin, uploadProductImages, async (req, res) => {
+    try {
+        const data = { ...(req.body || {}) };
+        if (req.files && req.files.length > 0) {
+            data.image_file = req.files[0].path;
+        }
+        const pkg = await packagesService.createPackage(data, { createdBy: req.user?.username || req.user?.name || 'admin' });
+        return res.status(201).json(pkg);
+    } catch (err) {
+        await productsService.cleanupTempFiles(req.files || []);
+        const status = err.status || 400;
+        return res.status(status).json({ error: err.message || 'Error al crear paquete' });
+    }
+});
+
+app.put('/api/packages/:id', auth.requireAdmin, uploadProductImages, async (req, res) => {
+    try {
+        const data = { ...(req.body || {}) };
+        if (req.files && req.files.length > 0) {
+            data.image_file = req.files[0].path;
+        }
+        const pkg = await packagesService.updatePackage(req.params.id, data);
+        return res.json(pkg);
+    } catch (err) {
+        await productsService.cleanupTempFiles(req.files || []);
+        const status = err.status || (err.message === 'Paquete no encontrado' ? 404 : 400);
+        return res.status(status).json({ error: err.message || 'Error al actualizar paquete' });
+    }
+});
+
+app.delete('/api/packages/:id', auth.requireAdmin, async (req, res) => {
+    try {
+        await packagesService.deletePackage(req.params.id);
+        return res.json({ success: true });
+    } catch (err) {
+        const status = err.status || (err.message === 'Paquete no encontrado' ? 404 : 400);
+        return res.status(status).json({ error: err.message || 'Error al eliminar paquete' });
+    }
+});
+
+// ─── Live shopping (public endpoints) ─────────────────────────────────────────
+
+app.get('/api/live/packages', async (req, res) => {
+    try {
+        const packages = await packagesService.getActivePackages();
+        return res.json(packages);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error al cargar paquetes' });
+    }
+});
+
+app.get('/api/live/packages/:code', async (req, res) => {
+    try {
+        const pkg = await packagesService.getPackageByCode(req.params.code);
+        if (!pkg || !pkg.is_active) {
+            return res.status(404).json({ error: 'Paquete no encontrado o inactivo' });
+        }
+        return res.json(pkg);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error al cargar paquete' });
+    }
+});
+
+const liveOrdersLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `live_orders:${req.ip}`,
+    message: { error: 'Demasiadas solicitudes de pedido. Intenta mas tarde.' }
+});
+
+app.post('/api/live/orders', liveOrdersLimiter, async (req, res) => {
+    try {
+        const { orderId, total, payment_method } = await ordersService.createLiveOrder(req.body || {});
+        return res.status(201).json({ success: true, orderId, total, payment_method });
+    } catch (err) {
+        const status = err.status || 500;
+        return res.status(status).json({ error: err.message || 'Error guardando pedido' });
     }
 });
 

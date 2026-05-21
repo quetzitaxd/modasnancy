@@ -14,6 +14,7 @@ const db = require('./db');
 const config = require('./config');
 const inventoryService = require('./inventory-service');
 const customersService = require('./customers-service');
+const packagesService = require('./packages-service');
 
 const ALLOWED_STATUSES = new Set(['pendiente', 'confirmado', 'enviado', 'cancelado']);
 
@@ -478,7 +479,27 @@ const updateOrderStatus = async (orderId, status, trackingNumber, { force = fals
     // Restaurar stock al cancelar (solo si no estaba ya cancelado)
     if (cleanStatus === 'cancelado' && currentStatus !== 'cancelado') {
         try {
-            await inventoryService.restoreStockForOrder(orderId);
+            // Verificar si es pedido live para restaurar stock de paquetes
+            const [orderInfo] = await pool.query('SELECT source FROM orders WHERE id = ?', [orderId]);
+            const orderSource = orderInfo.length > 0 ? orderInfo[0].source : null;
+
+            if (orderSource === 'live') {
+                const [liveItems] = await pool.query(
+                    'SELECT variant_sku, quantity FROM order_items WHERE order_id = ?',
+                    [orderId]
+                );
+                const packageItems = liveItems
+                    .filter((item) => item.variant_sku && item.variant_sku.startsWith('PAQUETE-'))
+                    .map((item) => ({
+                        code: item.variant_sku.replace('PAQUETE-', ''),
+                        quantity: item.quantity
+                    }));
+                if (packageItems.length > 0) {
+                    await packagesService.restoreStock(packageItems);
+                }
+            } else {
+                await inventoryService.restoreStockForOrder(orderId);
+            }
         } catch (restoreErr) {
             console.error(`[Orders] Error restaurando stock para orden ${orderId}:`, restoreErr.message);
         }
@@ -566,10 +587,32 @@ const processOrderPayment = async (orderId, card, customerEmail) => {
                 [orderId]
             );
             if (orderItems.length > 0) {
-                await inventoryService.deductStockForOrder(orderItems, {
-                    orderId,
-                    createdBy: 'system:retry'
-                });
+                if (order.source === 'live') {
+                    const packageItems = orderItems
+                        .filter((item) => item.sku && item.sku.startsWith('PAQUETE-'))
+                        .map((item) => ({
+                            package_code: item.sku.replace('PAQUETE-', ''),
+                            quantity: item.quantity
+                        }));
+                    if (packageItems.length > 0) {
+                        const conn = await pool.getConnection();
+                        try {
+                            await conn.beginTransaction();
+                            await packagesService.deductStockWithConnection(conn, packageItems);
+                            await conn.commit();
+                        } catch (err) {
+                            await conn.rollback();
+                            throw err;
+                        } finally {
+                            conn.release();
+                        }
+                    }
+                } else {
+                    await inventoryService.deductStockForOrder(orderItems, {
+                        orderId,
+                        createdBy: 'system:retry'
+                    });
+                }
             }
         }
 
@@ -591,7 +634,23 @@ const processOrderPayment = async (orderId, card, customerEmail) => {
         // Solo restaurar stock si no es retry (en retry el stock no fue descontado aún)
         if (!isRetry) {
             try {
-                await inventoryService.restoreStockForOrder(orderId);
+                if (order.source === 'live') {
+                    const [liveItems] = await pool.query(
+                        'SELECT variant_sku, quantity FROM order_items WHERE order_id = ?',
+                        [orderId]
+                    );
+                    const packageItems = liveItems
+                        .filter((item) => item.variant_sku && item.variant_sku.startsWith('PAQUETE-'))
+                        .map((item) => ({
+                            code: item.variant_sku.replace('PAQUETE-', ''),
+                            quantity: item.quantity
+                        }));
+                    if (packageItems.length > 0) {
+                        await packagesService.restoreStock(packageItems);
+                    }
+                } else {
+                    await inventoryService.restoreStockForOrder(orderId);
+                }
             } catch (restoreErr) {
                 console.error(`Error restaurando stock para orden ${orderId}:`, restoreErr.message);
             }
@@ -653,10 +712,140 @@ const confirmPaymentByWebhook = async (referenceId, webhookData) => {
     return { found: true, orderId: order.id, alreadyPaid: false };
 };
 
+// ─── Crear pedido desde Live (paquetes) ─────────────────────────────────────
+
+/**
+ * Crea un pedido de venta en directo (live shopping).
+ * El cliente compra uno o mas paquetes predefinidos con stock propio.
+ * Envio fijo Q25.
+ *
+ * Payload esperado:
+ * {
+ *   customer_name, phone, email?, address, city, notes?,
+ *   payment_method,
+ *   packages: [ { code, quantity }, ... ]
+ * }
+ */
+const createLiveOrder = async (body) => {
+    if (!(await db.verifyConnection())) {
+        throw new OrderError('Base de datos no disponible', 503);
+    }
+
+    const customer_name = requireString(body?.customer_name, 'customer_name');
+    const phone         = requireString(body?.phone, 'phone');
+    const address       = requireString(body?.address, 'address');
+    const city          = requireString(body?.city, 'city');
+    const email         = body?.email ? String(body.email).trim() : null;
+    const notes         = body?.notes ? String(body.notes).trim() : null;
+
+    const rawPackages = body?.packages;
+    if (!Array.isArray(rawPackages) || rawPackages.length === 0) {
+        throw new OrderError('Debes incluir al menos un paquete');
+    }
+
+    const paymentMethod = String(body?.payment_method || 'efectivo').toLowerCase().trim();
+    if (!ALLOWED_PAYMENT_METHODS.has(paymentMethod)) {
+        throw new OrderError('Metodo de pago invalido');
+    }
+
+    // Resolver paquetes y calcular total
+    const resolvedPackages = [];
+    let subtotalCents = 0;
+
+    for (const entry of rawPackages) {
+        const code = toSafeString(entry?.code || entry?.package_code);
+        const qty  = requirePositiveInt(entry?.quantity, 'quantity');
+
+        const pkg = await packagesService.getPackageByCode(code);
+        if (!pkg) {
+            throw new OrderError(`Paquete no encontrado: "${code}"`, 400);
+        }
+        if (!pkg.is_active) {
+            throw new OrderError(`Paquete inactivo: "${code}"`, 400);
+        }
+
+        resolvedPackages.push({
+            code: pkg.code,
+            name: pkg.name,
+            price: Number(pkg.price),
+            quantity: qty
+        });
+
+        subtotalCents += Math.round(Number(pkg.price) * 100) * qty;
+    }
+
+    // Envio fijo Q25
+    const SHIPPING_CENTS = 25 * 100;
+    const totalCents = subtotalCents + SHIPPING_CENTS;
+    const total = centsToDecimal(totalCents);
+    const shippingCost = centsToDecimal(SHIPPING_CENTS);
+
+    const pool = db.createPool();
+    const conn = await pool.getConnection();
+
+    try {
+        await conn.beginTransaction();
+
+        // Descontar stock de paquetes
+        const stockItems = resolvedPackages.map((p) => ({
+            package_code: p.code,
+            quantity: p.quantity
+        }));
+        await packagesService.deductStockWithConnection(conn, stockItems);
+
+        // Insertar orden
+        const paymentStatus = paymentMethod === 'efectivo' ? 'pendiente' : 'pendiente';
+        const [orderResult] = await conn.query(
+            `INSERT INTO orders (customer_name, phone, email, address, city, notes, total, status, payment_method, payment_status, shipping_cost, created_by, source)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?, ?, ?, 'live')`,
+            [customer_name, phone, email, address, city, notes, total, paymentMethod, paymentStatus, shippingCost, null]
+        );
+
+        const orderId = orderResult.insertId;
+
+        // Insertar order_items (snapshot de paquetes)
+        for (const pkg of resolvedPackages) {
+            await conn.query(
+                `INSERT INTO order_items (order_id, variant_sku, product_id, product_name, size, color_name, price, quantity)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    orderId,
+                    `PAQUETE-${pkg.code}`,
+                    `PKG-${pkg.code}`,
+                    pkg.name,
+                    'N/A',
+                    'N/A',
+                    pkg.price,
+                    pkg.quantity
+                ]
+            );
+        }
+
+        await conn.commit();
+
+        // Guardar/actualizar cliente
+        try {
+            await customersService.upsertCustomer({
+                customer_name, phone, email, address, city, notes, total
+            });
+        } catch (custErr) {
+            console.warn(`[Orders] No se pudo guardar cliente para orden live ${orderId}: ${custErr.message}`);
+        }
+
+        return { orderId, total, payment_method: paymentMethod };
+    } catch (err) {
+        await conn.rollback();
+        throw err;
+    } finally {
+        conn.release();
+    }
+};
+
 // ─── Exports ──────────────────────────────────────────────────────────────────
 
 module.exports = {
     createOrder,
+    createLiveOrder,
     getAllOrders,
     getOrdersBySeller,
     updateOrderStatus,
