@@ -41,3 +41,10 @@ Thumbs.db
 # --- Build artifacts ---
 dist/
 build/
+
+# --- Python / Scripts locales ---
+venv/
+*.pyc
+__pycache__/
+generate-icons.py
+generate-screenshots.py

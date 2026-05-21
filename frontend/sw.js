@@ -30,6 +30,9 @@ const STATIC_ASSETS = [
   '/js/pwa.js',
   '/js/guatemala-data.js',
   '/manifest.json',
+  '/assets/icons/icon-192x192.png',
+  '/assets/icons/icon-512x512.png',
+  '/assets/brand/logo-icon.svg',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 

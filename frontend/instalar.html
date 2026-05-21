@@ -14,7 +14,7 @@
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/assets/brand/logo-icon.svg">
-    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.svg">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,12 +93,12 @@
         }
         .install-btn:active { transform: scale(0.98); }
         .install-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-        .install-btn.hidden { display: none; }
+        .hidden { display: none !important; }
 
         /* Already installed */
         .installed-card {
@@ -256,9 +256,9 @@
         </div>
 
         <!-- Android Install Button -->
-        <button id="pwa-install-btn" class="install-btn hidden" type="button">
+        <button id="pwa-install-btn" class="install-btn" type="button" disabled style="opacity:0.6;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Instalar en mi telefono
+            <span id="install-btn-text">Verificando...</span>
         </button>
 
         <!-- Already installed message -->
