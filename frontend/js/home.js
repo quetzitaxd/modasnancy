@@ -304,6 +304,27 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeCategorySidebar();
 });
 
+// Category circles (circulitos del home)
+function setupCategoryCircles() {
+    const circles = document.querySelectorAll('.cat-circle');
+    circles.forEach((circle) => {
+        circle.addEventListener('click', () => {
+            const filter = circle.dataset.category || 'all';
+            currentCategoryFilter = filter;
+            applyFilter(filter);
+            updateActiveFilterBar(filter);
+
+            // Visual feedback
+            circles.forEach((c) => c.classList.remove('active'));
+            circle.classList.add('active');
+
+            // Limpiar busqueda
+            const input = document.getElementById('search-input');
+            if (input) input.value = '';
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadHomeProducts().then(() => {
         if (window.INITIAL_FILTER) {
@@ -314,6 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     setupSearch();
+    setupCategoryCircles();
 });
 
 window.allProducts = allProducts;
