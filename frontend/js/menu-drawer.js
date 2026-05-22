@@ -160,7 +160,7 @@
             transition: background 0.15s;
         }
         .menu-sidebar__link:hover, .menu-sidebar__link:active { background: #f5f5f5; }
-        .menu-sidebar__link--highlight { color: #e85c8a; font-weight: 600; }
+        .menu-sidebar__link--highlight { color: #a855f7; font-weight: 600; }
         .menu-sidebar__link svg { flex-shrink: 0; stroke-width: 2; }
     </style>`;
 
