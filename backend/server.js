@@ -382,7 +382,7 @@ app.delete('/api/products/:id/images/:filename', auth.requireAdmin, async (req, 
 const receiptStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = config.PATHS.RECEIPT_DIR;
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        if (!fsSync.existsSync(dir)) fsSync.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
     filename: (req, file, cb) => {
