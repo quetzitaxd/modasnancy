@@ -135,7 +135,12 @@ function renderPackagesTable() {
 function openPackageModal(pkgId) {
     console.log('[admin-packages.js] openPackageModal llamado con pkgId:', pkgId);
     editingPackageId = pkgId || null;
+    
+    // Log de diagnóstico extremo
     const modal = document.getElementById('package-modal');
+    console.log('[admin-packages.js] Modal element:', modal);
+    console.log('[admin-packages.js] Modal computed display (antes):', modal ? getComputedStyle(modal).display : 'no modal');
+    
     const title = document.getElementById('package-modal-title');
     const form = document.getElementById('package-form');
     const errorEl = document.getElementById('package-modal-error');
@@ -143,11 +148,14 @@ function openPackageModal(pkgId) {
 
     if (errorEl) { errorEl.textContent = ''; errorEl.style.display = 'none'; }
     if (preview) preview.src = '/assets/placeholder.svg';
-    form?.reset();
+    if (form) form.reset();
 
     if (pkgId) {
         const pkg = adminPackages.find((p) => p.id === pkgId);
-        if (!pkg) return;
+        if (!pkg) {
+            console.warn('[admin-packages.js] Paquete no encontrado:', pkgId);
+            return;
+        }
         if (title) title.textContent = 'Editar Paquete';
         document.getElementById('pkg-code').value = pkg.code;
         document.getElementById('pkg-name').value = pkg.name;
@@ -156,14 +164,20 @@ function openPackageModal(pkgId) {
         document.getElementById('pkg-stock').value = pkg.stock_quantity;
         document.getElementById('pkg-active').checked = pkg.is_active === 1 || pkg.is_active === true;
         if (preview && pkg.image_url) preview.src = pkg.image_url;
-        // No se permite editar codigo
         document.getElementById('pkg-code').disabled = true;
     } else {
         if (title) title.textContent = 'Nuevo Paquete';
-        document.getElementById('pkg-code').disabled = false;
+        const codeInput = document.getElementById('pkg-code');
+        if (codeInput) codeInput.disabled = false;
     }
 
-    if (modal) modal.style.display = 'flex';
+    if (modal) {
+        modal.style.display = 'flex';
+        console.log('[admin-packages.js] Modal display set to flex. Computed (después):', getComputedStyle(modal).display);
+        console.log('[admin-packages.js] Modal visible:', modal.offsetParent !== null);
+    } else {
+        console.error('[admin-packages.js] ERROR: No se encontró el modal #package-modal');
+    }
 }
 
 function closePackageModal() {
