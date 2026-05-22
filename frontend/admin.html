@@ -1088,7 +1088,22 @@
     </div>
 
     <script src="/js/admin.js?v=20260505-sale"></script>
-    <script src="/js/admin-packages.js?v=20260521-1"></script>
+    <script src="/js/admin-packages.js?v=20260521-2" defer></script>
     <script src="/js/notifications.js"></script>
+    <!-- Fallback: si admin-packages no cargo (SW cache), cargarlo dinamicamente -->
+    <script>
+        (function() {
+            setTimeout(function() {
+                if (typeof window.openPackageModal !== 'function') {
+                    console.warn('[Admin] admin-packages.js no cargo correctamente, reintentando...');
+                    var s = document.createElement('script');
+                    s.src = '/js/admin-packages.js?v=' + Date.now();
+                    s.onload = function() { console.log('[Admin] admin-packages.js cargado via fallback'); };
+                    s.onerror = function() { console.error('[Admin] Fallo carga fallback de admin-packages.js'); };
+                    document.head.appendChild(s);
+                }
+            }, 500);
+        })();
+    </script>
 </body>
 </html>
