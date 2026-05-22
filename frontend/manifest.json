@@ -51,17 +51,17 @@
   ],
   "shortcuts": [
     {
-      "name": "Catalogo",
-      "short_name": "Catalogo",
+      "name": "Tienda",
+      "short_name": "Tienda",
       "description": "Ver todos los productos",
-      "url": "/catalogo.html",
+      "url": "/",
       "icons": [{ "src": "/assets/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Ofertas",
       "short_name": "Ofertas",
       "description": "Ver ofertas especiales",
-      "url": "/ofertas.html",
+      "url": "/?filter=sale",
       "icons": [{ "src": "/assets/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {

@@ -32,7 +32,8 @@ const STATIC_ASSETS = [
   '/manifest.json',
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-512x512.png',
-  '/assets/brand/logo-icon.svg',
+  '/assets/brand/logo.png',
+  '/assets/brand/favicon.ico',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
