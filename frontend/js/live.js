@@ -9,6 +9,9 @@ let addedPackages = []; // { code, name, price, image_url, quantity }
 let currentPaymentMethod = 'efectivo';
 const SHIPPING_COST = 25;
 
+// Alias por compatibilidad (algunas versiones cacheadas usaban toSafeString)
+const toSafeString = safeText;
+
 document.addEventListener('DOMContentLoaded', () => {
     setupPaymentToggle();
     setupCardFormatting();
