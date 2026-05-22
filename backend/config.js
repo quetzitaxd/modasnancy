@@ -49,7 +49,7 @@ const CURRENCY = {
 const SHIPPING = {
     CAPITAL_COST: toInt(process.env.SHIPPING_CAPITAL_COST, 25),
     CAPITAL_FREE_THRESHOLD: toInt(process.env.SHIPPING_CAPITAL_FREE_THRESHOLD, 500),
-    DEPARTMENT_COST: toInt(process.env.SHIPPING_DEPARTMENT_COST, 40),
+    DEPARTMENT_COST: toInt(process.env.SHIPPING_DEPARTMENT_COST, 25),
     CAPITAL_DEPARTMENTS: (process.env.SHIPPING_CAPITAL_DEPARTMENTS || 'Guatemala').split(',').map(s => s.trim()).filter(Boolean)
 };
 
