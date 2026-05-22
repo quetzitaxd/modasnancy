@@ -407,10 +407,35 @@ app.post('/api/upload-receipt', receiptUpload.single('receipt'), async (req, res
         if (!req.file) {
             return res.status(400).json({ error: 'No se recibio ningun archivo' });
         }
-        const url = `/receipts/${req.file.filename}`;
+        const url = `/api/receipts/${req.file.filename}`;
         return res.json({ success: true, url });
     } catch (err) {
         return res.status(500).json({ error: err.message || 'Error subiendo comprobante' });
+    }
+});
+
+app.get('/api/receipts/:filename', async (req, res) => {
+    try {
+        const filename = path.basename(req.params.filename);
+        const filePath = path.join(config.PATHS.RECEIPT_DIR, filename);
+        if (!fsSync.existsSync(filePath)) {
+            return res.status(404).json({ error: 'Comprobante no encontrado' });
+        }
+        const ext = path.extname(filename).toLowerCase();
+        const mimeTypes = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg',
+            '.png': 'image/png',
+            '.webp': 'image/webp',
+            '.gif': 'image/gif',
+            '.pdf': 'application/pdf'
+        };
+        res.setHeader('Content-Type', mimeTypes[ext] || 'application/octet-stream');
+        res.setHeader('Cache-Control', 'public, max-age=604800');
+        const stream = fsSync.createReadStream(filePath);
+        stream.pipe(res);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error leyendo comprobante' });
     }
 });
 
