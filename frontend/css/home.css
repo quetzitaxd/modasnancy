@@ -174,17 +174,11 @@
     overflow: hidden;
 }
 .cat-circle--all .cat-circle__img {
-    background: #1a1a1a;
-    border-color: #1a1a1a;
+    background: #f5f5f5;
+    border-color: #e8e8e8;
 }
 .cat-circle--all .cat-circle__label {
-    background: #1a1a1a;
-    color: white;
-    padding: 2px 10px;
-    border-radius: 10px;
-    font-size: 0.6rem;
-    margin-top: -6px;
-    z-index: 2;
+    color: #333;
 }
 .cat-circle.active .cat-circle__img {
     box-shadow: 0 0 0 2.5px var(--primary-color);
