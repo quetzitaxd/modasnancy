@@ -17,7 +17,7 @@
         .tallas-container { max-width: 800px; margin: 0 auto; padding: 4rem 1.5rem; }
     </style>
 </head>
-<body>
+<body style="padding-bottom: 80px;">
     <div id="navbar-root"></div>
 
     <main class="container">
@@ -49,53 +49,27 @@
         </div>
     </main>
 
-    <footer class="footer-premium">
-        <div class="footer-content">
-            <div class="footer-col footer-brand">
-                <a href="/" class="logo footer-logo">Modas<span>Nancy</span></a>
-                <p class="footer-intro">Boutique exclusiva de moda femenina. Envíos a todo el país con la mejor calidad y servicio garantizado.</p>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h3>Navegación</h3>
-                <a href="/">Catálogo</a>
-                <a href="/nosotros.html">Nosotros</a>
-                <a href="/tallas.html">Guía de Tallas</a>
-                <a href="/envios.html">Envíos</a>
-            </div>
-            <div class="footer-col">
-                <h3>Servicio al Cliente</h3>
-                <a href="/devoluciones.html">Cambios y Devoluciones</a>
-                <a href="/faq.html">Preguntas Frecuentes</a>
-                <a href="/privacidad.html">Política de Privacidad</a>
-            </div>
-            <div class="footer-col">
-                <h3>Contacto</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Ciudad de Guatemala</p>
-                <p><i class="fas fa-envelope"></i> <a href="mailto:soporte@modasnancy.com">soporte@modasnancy.com</a></p>
-            </div>
-            <div class="footer-col footer-payments-col">
-                <h3>Métodos de Pago</h3>
-                <div class="payment-list">
-                    <p><i class="fas fa-credit-card"></i> Pago con tarjeta</p>
-                    <p><i class="fas fa-university"></i> Depósito / Transferencia</p>
-                    <p><i class="fas fa-hand-holding-usd"></i> Pago contra entrega</p>
-                </div>
-                <div class="secure-badge">
-                    <i class="fas fa-lock"></i>
-                    <span>Sitio Seguro <strong>SSL</strong></span>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <a href="/privacidad.html">Política de Privacidad</a>
-            <p>&copy; 2026 Modas Nancy. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav-temu" aria-label="Navegacion">
+        <a href="/" class="bottom-nav-temu__item" aria-label="Inicio">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Inicio</span>
+        </a>
+        <button type="button" class="bottom-nav-temu__item" aria-label="Categorias" onclick="if(window.openCategorySidebar)window.openCategorySidebar();">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span>Categorias</span>
+        </button>
+        <a href="/instalar.html" class="bottom-nav-temu__item" aria-label="Instalar app">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Instalar</span>
+        </a>
+        <a href="/carrito.html" class="bottom-nav-temu__item" aria-label="Carrito" style="position:relative;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Carrito</span>
+            <span class="bottom-nav-temu__badge" data-cart-count style="display:none;">0</span>
+            <span class="bottom-nav-temu__tag">Envio gratis</span>
+        </a>
+    </nav>
 
     <script src="/js/navbar.js?v=20260507c"></script>
     <script src="/js/app.js?v=20260507c"></script>
