@@ -382,7 +382,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            z-index: 920;
+            z-index: 960;
             background: white;
             border-top: 1px solid #f0f0f0;
             padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
@@ -874,7 +874,14 @@
             }
 
             area.classList.add('has-file');
-            if (text) text.innerHTML = 'Archivo seleccionado: <strong>' + safeText(file.name) + '</strong>';
+            if (text) text.innerHTML = 'Comprobante listo: <strong>' + safeText(file.name) + '</strong><br><span style="color:#52c41a;font-size:0.75rem;">Puedes confirmar tu pedido ahora</span>';
+
+            // Rehabilitar botón si estaba deshabilitado por error previo
+            const btn = document.getElementById('btn-submit');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Confirmar Pedido';
+            }
         }
 
         function setupCardFormatting() {
