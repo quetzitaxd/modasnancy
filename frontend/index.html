@@ -197,7 +197,7 @@
         }
         function animate() {
             if (!paused) {
-                pos -= 0.7;
+                pos -= 0.35;
                 var half = track.scrollWidth / 2;
                 if (half > 0 && Math.abs(pos) >= half) {
                     pos = 0;
@@ -228,12 +228,11 @@
             will-change: transform;
         }
         .mq-item {
-            color: #FFC107;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            text-shadow: 0 0 6px rgba(255, 193, 7, 0.5);
+            color: #FFD700;
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
             flex-shrink: 0;
         }
         .mq-dot {
@@ -242,7 +241,7 @@
             flex-shrink: 0;
         }
         @media (max-width: 480px) {
-            .mq-item { font-size: 0.68rem; }
+            .mq-item { font-size: 0.75rem; }
             .marquee-track-js { gap: 1.5rem; }
         }
     </style>
