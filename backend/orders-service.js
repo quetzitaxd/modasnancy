@@ -39,6 +39,8 @@ class OrderError extends Error {
 /**
  * Devuelve un string limpio o lanza OrderError si está vacío.
  */
+const toSafeString = (value) => String(value || '').trim();
+
 const requireString = (value, fieldName) => {
     const raw = value === null || value === undefined ? '' : String(value);
     const clean = raw.trim();
