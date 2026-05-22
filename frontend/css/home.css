@@ -124,12 +124,13 @@
 /* ── CATEGORY CIRCLES ────────────────────────────────────────────────────── */
 .cat-circles {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.6rem;
     overflow-x: auto;
     padding: 0.75rem 1rem;
     background: white;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    border-bottom: 1px solid #f5f5f5;
 }
 .cat-circles::-webkit-scrollbar { display: none; }
 .cat-circle {
@@ -137,21 +138,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     text-align: center;
-    width: 72px;
+    width: 76px;
     cursor: pointer;
+    transition: transform 0.15s ease;
 }
+.cat-circle:active { transform: scale(0.92); }
 .cat-circle__img {
-    width: 56px;
-    height: 56px;
+    width: 58px;
+    height: 58px;
     border-radius: 50%;
     overflow: hidden;
-    border: 1.5px solid #f0f0f0;
-    background: #f8f8f8;
+    border: 2px solid rgba(0,0,0,0.04);
+    background: linear-gradient(135deg, #f8f8f8, #f0f0f0);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s ease;
+}
+.cat-circle:hover .cat-circle__img {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 .cat-circle__img img {
     width: 100%;
@@ -159,23 +167,29 @@
     object-fit: cover;
 }
 .cat-circle__icon {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
 }
 .cat-circle__label {
-    font-size: 0.6rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #444;
     line-height: 1.2;
-    max-width: 64px;
+    max-width: 68px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+.cat-circle.active .cat-circle__img {
+    box-shadow: 0 0 0 2.5px var(--primary-color), 0 4px 12px rgba(0,0,0,0.1);
+}
+.cat-circle.active .cat-circle__label {
+    color: var(--primary-color);
+}
 .cat-circle--all .cat-circle__img {
-    background: #f5f5f5;
-    border-color: #e8e8e8;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
 }
 .cat-circle--all .cat-circle__label {
     color: #333;
