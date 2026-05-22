@@ -163,13 +163,12 @@ function openPackageModal(pkgId) {
         document.getElementById('pkg-code').disabled = false;
     }
 
-    if (modal) modal.classList.add('active');
+    if (modal) modal.style.display = 'flex';
 }
 
 function closePackageModal() {
     const modal = document.getElementById('package-modal');
-    if (modal) modal.classList.remove('active');
-    editingPackageId = null;
+    if (modal) modal.style.display = 'none';
 }
 
 function handlePackageImagePreview() {
