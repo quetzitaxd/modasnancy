@@ -307,9 +307,11 @@ document.addEventListener('keydown', (e) => {
 // Category circles (circulitos del home)
 function setupCategoryCircles() {
     const circles = document.querySelectorAll('.cat-circle');
+    console.log('[home.js] setupCategoryCircles: encontrados', circles.length, 'circulos');
     circles.forEach((circle) => {
         circle.addEventListener('click', () => {
             const filter = circle.dataset.category || 'all';
+            console.log('[home.js] Click en categoria:', filter);
             currentCategoryFilter = filter;
             applyFilter(filter);
             updateActiveFilterBar(filter);
