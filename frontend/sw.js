@@ -6,7 +6,7 @@
  * - Stale-While-Revalidate: HTML
  */
 
-const CACHE_NAME = 'modasnancy-cache-v9';
+const CACHE_NAME = 'modasnancy-cache-v10';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -29,6 +29,7 @@ const STATIC_ASSETS = [
   '/js/live.js',
   '/js/pwa.js',
   '/js/guatemala-data.js',
+  '/js/menu-drawer.js?v=1',
   '/manifest.json',
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-512x512.png',
