@@ -6,6 +6,8 @@
 let adminPackages = [];
 let editingPackageId = null;
 
+console.log('[admin-packages.js] Script cargado correctamente v20260521-1');
+
 function toSafeText(value) {
     if (value === null || value === undefined) return '';
     return String(value).trim();
@@ -131,6 +133,7 @@ function renderPackagesTable() {
 // ─── Modal ─────────────────────────────────────────────────────────────────
 
 function openPackageModal(pkgId) {
+    console.log('[admin-packages.js] openPackageModal llamado con pkgId:', pkgId);
     editingPackageId = pkgId || null;
     const modal = document.getElementById('package-modal');
     const title = document.getElementById('package-modal-title');
