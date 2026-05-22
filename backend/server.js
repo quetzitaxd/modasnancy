@@ -377,6 +377,43 @@ app.delete('/api/products/:id/images/:filename', auth.requireAdmin, async (req, 
     }
 });
 
+// ─── Receipt upload endpoint ───────────────────────────────────────────────
+
+const receiptStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = config.PATHS.RECEIPT_DIR;
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
+    },
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname || '').toLowerCase();
+        cb(null, `recibo-${crypto.randomUUID()}${ext}`);
+    }
+});
+const receiptUpload = multer({
+    storage: receiptStorage,
+    limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+    fileFilter: (req, file, cb) => {
+        const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+        if (!allowed.has(file.mimetype)) {
+            return cb(new Error('Solo se permiten imagenes JPG, PNG, WEBP o PDF'));
+        }
+        cb(null, true);
+    }
+});
+
+app.post('/api/upload-receipt', receiptUpload.single('receipt'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No se recibio ningun archivo' });
+        }
+        const url = `/receipts/${req.file.filename}`;
+        return res.json({ success: true, url });
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error subiendo comprobante' });
+    }
+});
+
 // ─── Orders endpoints (DB-backed) ────────────────────────────────────────────
 
 app.post('/api/orders', ordersLimiter, async (req, res) => {

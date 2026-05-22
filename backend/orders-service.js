@@ -24,7 +24,7 @@ const VALID_TRANSITIONS = {
     enviado: new Set([]),
     cancelado: new Set([])
 };
-const ALLOWED_PAYMENT_METHODS = new Set(['efectivo', 'cubopago']);
+const ALLOWED_PAYMENT_METHODS = new Set(['efectivo', 'cubopago', 'transferencia']);
 const ALLOWED_PAYMENT_STATUSES = new Set(['pendiente', 'pagado', 'fallido', 'reembolsado']);
 
 class OrderError extends Error {
@@ -93,8 +93,10 @@ const validateOrderPayload = (body) => {
     // Opcionales
     const email = body?.email ? String(body.email).trim() : null;
     const notes = body?.notes ? String(body.notes).trim() : null;
+    const discount_amount = parseFloat(body?.discount_amount) || 0;
+    const payment_receipt_url = body?.payment_receipt_url ? String(body.payment_receipt_url).trim() : null;
 
-    return { customer_name, phone, email, address, city, notes, items, payment_method };
+    return { customer_name, phone, email, address, city, notes, items, payment_method, discount_amount, payment_receipt_url };
 };
 
 // ─── Resolución de precio (igual que products-service) ────────────────────────
@@ -277,14 +279,16 @@ const createOrder = async (body, { createdBy, source } = {}) => {
         }
 
         const total = centsToDecimal(totalCents);
+        const discount = Math.min(payload.discount_amount, total);
+        const finalTotal = Math.max(total - discount, 0);
 
         // ── Paso 3: insertar order ─────────────────────────────────────────
-        const paymentStatus = payload.payment_method === 'efectivo' ? 'pendiente' : 'pendiente';
+        const paymentStatus = payload.payment_method === 'transferencia' ? 'pendiente' : 'pendiente';
 
         const [orderResult] = await conn.query(
-            `INSERT INTO orders (customer_name, phone, email, address, city, notes, total, status, payment_method, payment_status, created_by, source)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?, ?, ?)`,
-            [payload.customer_name, payload.phone, payload.email, payload.address, payload.city, payload.notes, total, payload.payment_method, paymentStatus, createdBy || null, source || 'catalogo']
+            `INSERT INTO orders (customer_name, phone, email, address, city, notes, total, discount_amount, payment_method, payment_status, payment_receipt_url, created_by, source)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [payload.customer_name, payload.phone, payload.email, payload.address, payload.city, payload.notes, finalTotal, discount, payload.payment_method, paymentStatus, payload.payment_receipt_url, createdBy || null, source || 'catalogo']
         );
 
         const orderId = orderResult.insertId;

@@ -89,8 +89,9 @@ const DB = {
 const UPLOAD = {
     MAX_FILE_SIZE: 20 * 1024 * 1024, // 20MB
     MAX_FILES: 10,
-    ALLOWED_MIME: new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+    ALLOWED_MIME: new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'])
 };
+const RECEIPT_DIR = path.join(DATA_DIR, 'receipts');
 
 // ── Rate Limits ─────────────────────────────────────────────────────────────
 const RATE_LIMITS = {
@@ -147,6 +148,7 @@ module.exports = {
     PATHS: {
         DATA_DIR,
         TMP_DIR,
+        RECEIPT_DIR,
         ORDERS_FILE: path.join(DATA_DIR, 'orders.json')
     },
     getCorsOrigins

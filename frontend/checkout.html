@@ -248,6 +248,97 @@
             font-weight: 500;
         }
 
+        /* Transferencia panel */
+        .transfer-panel {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #f6ffed;
+            border-radius: 10px;
+            border: 1px solid #d9f7be;
+        }
+        .transfer-panel__discount {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: #52c41a;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: #d9f7be;
+            border-radius: 8px;
+        }
+        .transfer-panel__accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .transfer-account {
+            background: white;
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #e8e8e8;
+        }
+        .transfer-account__bank {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.15rem;
+        }
+        .transfer-account__detail {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        .transfer-account__detail strong { color: #000; }
+        .transfer-upload {
+            margin-top: 0.75rem;
+        }
+        .transfer-upload__label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        .transfer-upload__area {
+            border: 2px dashed #b7eb8f;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: white;
+        }
+        .transfer-upload__area:hover { border-color: #52c41a; background: #f6ffed; }
+        .transfer-upload__area.has-file {
+            border-color: #52c41a;
+            background: #f6ffed;
+        }
+        .transfer-upload__icon {
+            color: #52c41a;
+            margin-bottom: 0.3rem;
+        }
+        .transfer-upload__text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .transfer-upload__text strong { color: #000; }
+        .transfer-upload__hint {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+        .transfer-upload__preview {
+            margin-top: 0.5rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            display: none;
+        }
+        .transfer-upload__preview.visible { display: block; }
+
         /* Totals */
         .checkout-totals {
             background: white;
@@ -501,6 +592,16 @@
                             </div>
                         </label>
                         <label class="payment-option">
+                            <input type="radio" name="payment_method" value="transferencia">
+                            <div class="payment-option__icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            </div>
+                            <div class="payment-option__info">
+                                <div class="payment-option__label">Transferencia / Deposito</div>
+                                <div class="payment-option__hint" style="color:#52c41a;font-weight:600;">4% de descuento por tu confianza</div>
+                            </div>
+                        </label>
+                        <label class="payment-option">
                             <input type="radio" name="payment_method" value="cubopago">
                             <div class="payment-option__icon">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -510,6 +611,35 @@
                                 <div class="payment-option__hint">Pago seguro via CuboPago</div>
                             </div>
                         </label>
+                    </div>
+
+                    <div id="transfer-panel" class="transfer-panel" style="display:none;">
+                        <div class="transfer-panel__discount">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Agradecemos tu confianza con un descuento del 4%
+                        </div>
+                        <div class="transfer-panel__accounts">
+                            <div class="transfer-account">
+                                <div class="transfer-account__bank">Banrural — Cuenta de Ahorro GTQ</div>
+                                <div class="transfer-account__detail">Numero: <strong>4811051579</strong><br>Titular: Nancy Marisol de Paz Muralles</div>
+                            </div>
+                            <div class="transfer-account">
+                                <div class="transfer-account__bank">Banco Industrial — Cuenta Monetaria</div>
+                                <div class="transfer-account__detail">Numero: <strong>6550110347</strong><br>Titular: Nancy Marisol de Paz Muralles de Estrada</div>
+                            </div>
+                        </div>
+                        <div class="transfer-upload">
+                            <label class="transfer-upload__label">Comprobante de pago</label>
+                            <div class="transfer-upload__area" id="transfer-upload-area" onclick="document.getElementById('receipt-file').click()">
+                                <div class="transfer-upload__icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <div class="transfer-upload__text">Toca para <strong>subir comprobante</strong></div>
+                                <div class="transfer-upload__hint">JPG, PNG, PDF hasta 5MB</div>
+                                <img class="transfer-upload__preview" id="receipt-preview" alt="Vista previa">
+                            </div>
+                            <input type="file" id="receipt-file" accept="image/*,.pdf" style="display:none;" onchange="handleReceiptFile(this)">
+                        </div>
                     </div>
 
                     <div id="card-form" class="card-form" style="display:none;">
@@ -546,6 +676,10 @@
                         <span>Subtotal</span>
                         <span id="checkout-subtotal">Q0.00</span>
                     </div>
+                    <div class="total-row" id="discount-row" style="display:none;">
+                        <span style="color:#52c41a;">Descuento transferencia (-4%)</span>
+                        <span id="checkout-discount" style="color:#52c41a;font-weight:600;">-Q0.00</span>
+                    </div>
                     <div class="total-row">
                         <span>Envio</span>
                         <span id="shipping-cost">Q0.00</span>
@@ -580,6 +714,8 @@
         let freshProducts = [];
         let currentPaymentMethod = 'efectivo';
         let shippingCost = 0;
+        let receiptFile = null;
+        const TRANSFER_DISCOUNT_PERCENT = 4;
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
@@ -670,29 +806,75 @@
 
         function updateTotals() {
             const subtotal = calculateCartTotal(freshProducts);
+            const isTransfer = currentPaymentMethod === 'transferencia';
+            const discount = isTransfer ? subtotal * (TRANSFER_DISCOUNT_PERCENT / 100) : 0;
+            const total = subtotal - discount + shippingCost;
+
             document.getElementById('checkout-subtotal').textContent = formatMoney(subtotal);
             document.getElementById('shipping-cost').textContent = formatMoney(shippingCost);
-            document.getElementById('checkout-total').textContent = formatMoney(subtotal + shippingCost);
-            document.getElementById('bottom-total').textContent = formatMoney(subtotal + shippingCost);
+            document.getElementById('checkout-total').textContent = formatMoney(total);
+            document.getElementById('bottom-total').textContent = formatMoney(total);
+
+            const discountRow = document.getElementById('discount-row');
+            const discountEl = document.getElementById('checkout-discount');
+            if (discountRow && discountEl) {
+                discountRow.style.display = isTransfer ? 'flex' : 'none';
+                discountEl.textContent = '-' + formatMoney(discount);
+            }
         }
 
         function setupPaymentToggle() {
             const radios = document.querySelectorAll('input[name="payment_method"]');
             const cardForm = document.getElementById('card-form');
+            const transferPanel = document.getElementById('transfer-panel');
             const btn = document.getElementById('btn-submit');
 
             radios.forEach((radio) => {
                 radio.addEventListener('change', () => {
                     currentPaymentMethod = radio.value;
                     const isCard = currentPaymentMethod === 'cubopago';
+                    const isTransfer = currentPaymentMethod === 'transferencia';
                     if (cardForm) cardForm.style.display = isCard ? 'block' : 'none';
+                    if (transferPanel) transferPanel.style.display = isTransfer ? 'block' : 'none';
                     if (btn) btn.textContent = isCard ? 'Pagar Ahora' : 'Confirmar Pedido';
 
                     document.querySelectorAll('.payment-option').forEach((opt) => {
                         opt.classList.toggle('active', opt.querySelector('input').checked);
                     });
+                    updateTotals();
                 });
             });
+        }
+
+        function handleReceiptFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('El archivo es muy grande. Maximo 5MB.');
+                input.value = '';
+                return;
+            }
+
+            receiptFile = file;
+            const area = document.getElementById('transfer-upload-area');
+            const preview = document.getElementById('receipt-preview');
+            const text = area.querySelector('.transfer-upload__text');
+
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.classList.add('visible');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.remove('visible');
+            }
+
+            area.classList.add('has-file');
+            if (text) text.innerHTML = 'Archivo seleccionado: <strong>' + safeText(file.name) + '</strong>';
         }
 
         function setupCardFormatting() {
@@ -836,7 +1018,25 @@
                         try { cardData = validateCardData(); } catch (cErr) { error = cErr.message; }
                     }
 
+                    if (!error && currentPaymentMethod === 'transferencia' && !receiptFile) {
+                        error = 'Por favor sube el comprobante de tu transferencia o deposito.';
+                    }
+
                     if (error) throw new Error(error);
+
+                    let receiptUrl = null;
+                    if (currentPaymentMethod === 'transferencia' && receiptFile) {
+                        btn.textContent = 'Subiendo comprobante...';
+                        const formData = new FormData();
+                        formData.append('receipt', receiptFile);
+                        const uploadRes = await fetch('/api/upload-receipt', { method: 'POST', body: formData });
+                        if (!uploadRes.ok) throw new Error('No se pudo subir el comprobante. Intenta de nuevo.');
+                        const uploadData = await uploadRes.json();
+                        receiptUrl = uploadData.url;
+                    }
+
+                    const subtotal = calculateCartTotal(freshProducts);
+                    const discount = currentPaymentMethod === 'transferencia' ? subtotal * (TRANSFER_DISCOUNT_PERCENT / 100) : 0;
 
                     const payload = {
                         customer_name: name,
@@ -846,7 +1046,9 @@
                         city: `${muni}, ${depto}`,
                         ...(notes.trim() ? { notes: notes.trim() } : {}),
                         payment_method: currentPaymentMethod,
-                        items: validCart.map((item) => ({ sku: item?.sku, quantity: item?.quantity }))
+                        items: validCart.map((item) => ({ sku: item?.sku, quantity: item?.quantity })),
+                        ...(discount > 0 ? { discount_amount: discount } : {}),
+                        ...(receiptUrl ? { payment_receipt_url: receiptUrl } : {})
                     };
 
                     btn.textContent = 'Creando pedido...';
