@@ -225,7 +225,9 @@ function buildOrderSummary(order) {
         return color ? `- ${safeQty} x ${name} (${size}, ${color})` : `- ${safeQty} x ${name} (${size})`;
     });
 
-    const isCubopago = toSafeText(safeOrder.payment_method).toLowerCase() === 'cubopago';
+    const pmLower = toSafeText(safeOrder.payment_method).toLowerCase();
+    const isCubopago = pmLower === 'cubopago';
+    const isTransferencia = pmLower === 'transferencia';
     const paymentStatus = toSafeText(safeOrder.payment_status).toLowerCase();
 
     const lines = [
@@ -238,10 +240,28 @@ function buildOrderSummary(order) {
     lines.push(`Dirección: ${toSafeText(safeOrder.address)}, ${toSafeText(safeOrder.city)}`);
     if (safeOrder.notes) lines.push(`Notas: ${toSafeText(safeOrder.notes)}`);
 
+    let methodLabel = 'Efectivo';
+    if (isCubopago) methodLabel = 'Tarjeta';
+    else if (isTransferencia) methodLabel = 'Transferencia / Depósito (-4%)';
+
+    let payStatusLabel = 'Pendiente de cobro';
+    if (isCubopago) {
+        payStatusLabel = paymentStatus === 'pagado' ? 'Aprobado' : paymentStatus === 'fallido' ? 'Rechazado' : 'Pendiente';
+    } else if (isTransferencia) {
+        payStatusLabel = paymentStatus === 'pagado' ? 'Pago confirmado' : 'Esperando confirmación de pago';
+    }
+
     lines.push(
-        `Método de Pago: ${isCubopago ? 'Tarjeta' : 'Efectivo'}`,
-        `Estado del Pago: ${isCubopago ? (paymentStatus === 'pagado' ? 'Aprobado' : paymentStatus === 'fallido' ? 'Rechazado' : 'Pendiente') : 'Pendiente de cobro'}`,
+        `Método de Pago: ${methodLabel}`,
+        `Estado del Pago: ${payStatusLabel}`,
     );
+
+    if (isTransferencia && safeOrder.discount_amount && Number(safeOrder.discount_amount) > 0) {
+        lines.push(`Descuento: -Q${Number(safeOrder.discount_amount).toFixed(2)}`);
+    }
+    if (isTransferencia && safeOrder.payment_receipt_url) {
+        lines.push(`Comprobante: ${toSafeText(safeOrder.payment_receipt_url)}`);
+    }
 
     if (safeOrder.cubopago_transaction_id) lines.push(`Transacción: ${toSafeText(safeOrder.cubopago_transaction_id)}`);
     if (safeOrder.cubopago_authorization) lines.push(`Autorización: ${toSafeText(safeOrder.cubopago_authorization)}`);
@@ -916,6 +936,10 @@ function renderOrdersTable(orders) {
                 methodBadge.style.background = '#e3f2fd';
                 methodBadge.style.color = '#1976d2';
                 methodBadge.textContent = 'Tarjeta';
+            } else if (paymentMethod === 'transferencia') {
+                methodBadge.style.background = '#f3e8ff';
+                methodBadge.style.color = '#7c3aed';
+                methodBadge.textContent = 'Transferencia';
             } else {
                 methodBadge.style.background = '#e8f5e9';
                 methodBadge.style.color = '#388e3c';
@@ -1118,6 +1142,11 @@ function renderOrdersTable(orders) {
                 if (isPaid) { payStatusColor = '#388e3c'; payStatusBg = '#e8f5e9'; payStatusText = 'Aprobado'; }
                 else if (isFailed) { payStatusColor = '#c62828'; payStatusBg = '#ffebee'; payStatusText = 'Rechazado'; }
                 paymentBadges = `<span class="status-badge" style="background:#e3f2fd;color:#1976d2;font-size:0.7rem;">Tarjeta</span><span class="status-badge" style="background:${payStatusBg};color:${payStatusColor};font-size:0.7rem;">${payStatusText}</span>`;
+            } else if (paymentMethod === 'transferencia') {
+                const receiptBadge = order.payment_receipt_url
+                    ? `<span class="status-badge" style="background:#e8f5e9;color:#388e3c;font-size:0.7rem;">Comprobante adjunto</span>`
+                    : `<span class="status-badge" style="background:#fff3e0;color:#ef6c00;font-size:0.7rem;">Sin comprobante</span>`;
+                paymentBadges = `<span class="status-badge" style="background:#f3e8ff;color:#7c3aed;font-size:0.7rem;">Transferencia</span>${receiptBadge}`;
             } else {
                 paymentBadges = `<span class="status-badge" style="background:#e8f5e9;color:#388e3c;font-size:0.7rem;">Efectivo</span>`;
             }
@@ -1317,9 +1346,13 @@ function openOrderModal(orderId) {
     }
 
     // Pago
-    const isCubopago = toSafeText(order.payment_method).toLowerCase() === 'cubopago';
+    const pmLower = toSafeText(order.payment_method).toLowerCase();
+    const isCubopago = pmLower === 'cubopago';
+    const isTransferencia = pmLower === 'transferencia';
     if (paymentMethod) {
-        paymentMethod.textContent = isCubopago ? 'Tarjeta de Crédito/Débito' : 'Pago contra entrega (Efectivo)';
+        if (isCubopago) paymentMethod.textContent = 'Tarjeta de Crédito/Débito';
+        else if (isTransferencia) paymentMethod.textContent = 'Transferencia / Depósito (-4%)';
+        else paymentMethod.textContent = 'Pago contra entrega (Efectivo)';
     }
     if (paymentStatus) {
         const ps = toSafeText(order.payment_status).toLowerCase();
@@ -1331,10 +1364,42 @@ function openOrderModal(orderId) {
             } else {
                 paymentStatus.innerHTML = '<span style="color: #ef6c00; font-weight: 600;">⏳ Pendiente</span>';
             }
+        } else if (isTransferencia) {
+            if (ps === 'pagado') {
+                paymentStatus.innerHTML = '<span style="color: #388e3c; font-weight: 600;">✓ Pago confirmado</span>';
+            } else {
+                paymentStatus.innerHTML = '<span style="color: #ef6c00; font-weight: 600;">⏳ Esperando confirmación de pago</span>';
+            }
         } else {
             paymentStatus.textContent = 'Pendiente de cobro al entregar';
         }
     }
+
+    // Comprobante de transferencia
+    const receiptRow = document.getElementById('order-modal-receipt-row');
+    const receiptLink = document.getElementById('order-modal-receipt');
+    if (receiptRow && receiptLink) {
+        if (order.payment_receipt_url) {
+            receiptLink.href = toSafeText(order.payment_receipt_url);
+            receiptLink.textContent = 'Ver comprobante';
+            receiptRow.style.display = 'block';
+        } else {
+            receiptRow.style.display = 'none';
+        }
+    }
+
+    // Descuento transferencia
+    const discountRow = document.getElementById('order-modal-discount-row');
+    const discountVal = document.getElementById('order-modal-discount');
+    if (discountRow && discountVal) {
+        if (order.discount_amount && Number(order.discount_amount) > 0) {
+            discountVal.textContent = `-Q${Number(order.discount_amount).toFixed(2)}`;
+            discountRow.style.display = 'block';
+        } else {
+            discountRow.style.display = 'none';
+        }
+    }
+
     if (transaction && txRow) {
         if (order.cubopago_transaction_id) {
             transaction.textContent = toSafeText(order.cubopago_transaction_id);
