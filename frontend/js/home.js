@@ -3,6 +3,7 @@
  */
 
 let allProducts = [];
+let currentCategoryFilter = 'all';
 
 const PRODUCT_FALLBACK = '/assets/placeholder.svg';
 
@@ -195,7 +196,6 @@ function applyFilter(filter) {
     if (filter === 'sale') {
         filtered = active.filter((p) => p.sale_enabled || p.bundle_2x_enabled);
     } else if (filter === 'new') {
-        // Como no hay created_at en el frontend, mostramos los ultimos 6
         filtered = active.slice(0, 6);
     } else if (filter !== 'all') {
         filtered = active.filter((p) => safeText(p.category).toLowerCase() === filter.toLowerCase());
@@ -204,44 +204,68 @@ function applyFilter(filter) {
     renderTemuGrid(filtered, 'products-grid', 'No hay productos en esta categoria.');
 }
 
-function updateActiveTab(target) {
-    document.querySelectorAll('.cat-tab').forEach((btn) => btn.classList.remove('active'));
-    if (target) target.classList.add('active');
+// ─── Sidebar de Categorias ────────────────────────────────────────────────
+
+const FILTER_NAMES = {
+    all: 'Todos los productos',
+    sale: 'Ofertas',
+    new: 'Nuevos',
+    vestidos: 'Vestidos',
+    blusas: 'Blusas',
+    faldas: 'Faldas',
+    pantalones: 'Pants',
+    accesorios: 'Accesorios'
+};
+
+function openCategorySidebar() {
+    const sidebar = document.getElementById('cat-sidebar');
+    const overlay = document.getElementById('cat-overlay');
+    if (sidebar) sidebar.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
-function updateActiveCircle(target) {
-    document.querySelectorAll('.cat-circle').forEach((c) => c.classList.remove('active'));
-    if (target) target.classList.add('active');
+function closeCategorySidebar() {
+    const sidebar = document.getElementById('cat-sidebar');
+    const overlay = document.getElementById('cat-overlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
 }
 
-// Category tabs
-function setupCategoryTabs() {
-    const tabs = document.querySelectorAll('.cat-tab');
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            const filter = tab.dataset.filter || 'all';
-            updateActiveTab(tab);
-            updateActiveCircle(null);
-            const input = document.getElementById('search-input');
-            if (input) input.value = '';
-            applyFilter(filter);
-        });
+function updateSidebarActive(filter) {
+    document.querySelectorAll('.cat-sidebar__item').forEach((item) => {
+        item.classList.toggle('active', item.dataset.filter === filter);
     });
 }
 
-// Category circles
-function setupCategoryCircles() {
-    const circles = document.querySelectorAll('.cat-circle');
-    circles.forEach((circle) => {
-        circle.addEventListener('click', () => {
-            const filter = circle.dataset.category || 'all';
-            updateActiveCircle(circle);
-            updateActiveTab(null);
-            const input = document.getElementById('search-input');
-            if (input) input.value = '';
-            applyFilter(filter);
-        });
-    });
+function updateActiveFilterBar(filter) {
+    const bar = document.getElementById('active-filter-bar');
+    const name = document.getElementById('active-filter-name');
+    if (!bar || !name) return;
+
+    if (filter === 'all') {
+        bar.style.display = 'none';
+    } else {
+        bar.style.display = 'flex';
+        name.textContent = FILTER_NAMES[filter] || filter;
+    }
+}
+
+function applyCategoryFilter(filter, btnElement) {
+    currentCategoryFilter = filter;
+    applyFilter(filter);
+    updateSidebarActive(filter);
+    updateActiveFilterBar(filter);
+    closeCategorySidebar();
+
+    // Limpiar busqueda si hay
+    const input = document.getElementById('search-input');
+    if (input) input.value = '';
+}
+
+function clearCategoryFilter() {
+    applyCategoryFilter('all', null);
 }
 
 // Search
@@ -253,11 +277,15 @@ function setupSearch() {
     input.addEventListener('input', (e) => {
         clearTimeout(timeout);
         const query = e.target.value.trim().toLowerCase();
-        updateActiveTab(null);
-        updateActiveCircle(null);
+
+        // Resetear filtro de categoria al buscar
+        updateActiveFilterBar('all');
+        document.querySelectorAll('.cat-sidebar__item').forEach((item) => {
+            item.classList.toggle('active', item.dataset.filter === 'all');
+        });
 
         if (!query) {
-            renderTemuGrid(getActiveProducts(), 'products-grid');
+            applyFilter(currentCategoryFilter);
             return;
         }
         timeout = setTimeout(() => {
@@ -271,22 +299,28 @@ function setupSearch() {
     });
 }
 
+// Cerrar sidebar con Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCategorySidebar();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     loadHomeProducts().then(() => {
         if (window.INITIAL_FILTER) {
+            currentCategoryFilter = window.INITIAL_FILTER;
             applyFilter(window.INITIAL_FILTER);
-            const tab = document.querySelector(`.cat-tab[data-filter="${window.INITIAL_FILTER}"]`);
-            if (tab) updateActiveTab(tab);
-            const circle = document.querySelector(`.cat-circle[data-category="${window.INITIAL_FILTER}"]`);
-            if (circle) updateActiveCircle(circle);
+            updateSidebarActive(window.INITIAL_FILTER);
+            updateActiveFilterBar(window.INITIAL_FILTER);
         }
     });
     setupSearch();
-    setupCategoryTabs();
-    setupCategoryCircles();
 });
 
 window.allProducts = allProducts;
 window.renderTemuGrid = renderTemuGrid;
 window.addTemuToCart = addTemuToCart;
 window.applyFilter = applyFilter;
+window.openCategorySidebar = openCategorySidebar;
+window.closeCategorySidebar = closeCategorySidebar;
+window.applyCategoryFilter = applyCategoryFilter;
+window.clearCategoryFilter = clearCategoryFilter;

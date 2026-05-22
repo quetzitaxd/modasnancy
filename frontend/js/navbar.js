@@ -20,8 +20,7 @@
     const brandShort = window.BRAND_CONFIG?.SHORT_NAME || 'Modas Nancy';
 
     const links = [
-        { href: '/catalogo.html', label: 'Catalogo' },
-        { href: '/ofertas.html', label: 'Ofertas' }
+        { href: '/', label: 'Catalogo' }
     ];
 
     const linksHtml = links.map((link) => {
@@ -87,7 +86,7 @@
             </svg>
             <span>Inicio</span>
         </a>
-        <a href="/catalogo.html" class="bottom-nav__item ${isActive('/catalogo.html') ? 'active' : ''}" aria-label="Catalogo">
+        <a href="/" class="bottom-nav__item ${isActive('/') ? 'active' : ''}" aria-label="Catalogo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
@@ -95,15 +94,6 @@
                 <rect x="3" y="14" width="7" height="7"></rect>
             </svg>
             <span>Catalogo</span>
-        </a>
-        <a href="/ofertas.html" class="bottom-nav__item ${isActive('/ofertas.html') ? 'active' : ''}" aria-label="Ofertas">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M8.56 2.9A7 7 0 0 1 19 9v4m-2 4H2a3 3 0 0 0 3-3V9a7 7 0 0 1 7-7h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-1"></path>
-                <path d="M12 17v4"></path>
-                <path d="M8 17v4"></path>
-                <path d="M16 17v4"></path>
-            </svg>
-            <span>Ofertas</span>
         </a>
         <a href="javascript:void(0)" class="bottom-nav__item" id="bottom-nav-cart" aria-label="Carrito">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

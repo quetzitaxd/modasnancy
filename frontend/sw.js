@@ -10,8 +10,6 @@ const CACHE_NAME = 'modasnancy-cache-v6';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/catalogo.html',
-  '/ofertas.html',
   '/producto.html',
   '/carrito.html',
   '/checkout.html',

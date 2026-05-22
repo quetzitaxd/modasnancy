@@ -28,9 +28,7 @@ modasnancy.com/
 │   ├── scripts/          # Migraciones y utilidades DB
 │   └── tests/            # Tests unitarios
 ├── frontend/             # Sitio público + paneles admin
-│   ├── index.html        # Home (diseño Temu)
-│   ├── catalogo.html     # Catálogo con filtros
-│   ├── ofertas.html      # Solo productos en promoción
+│   ├── index.html        # Home + Catálogo completo con filtros y sidebar de categorías (diseño Temu)
 │   ├── producto.html     # Detalle de producto
 │   ├── checkout.html     # Carrito + pago
 │   ├── live.html         # Formulario de compra en vivo (live shopping)
@@ -133,6 +131,11 @@ modasnancy.com/
 - **Tarjeta (CuboPago):** Crea orden → procesa pago vía `/api/orders/:id/pay`.
 - Envío: Q25 capital (gratis > Q500), Q40 departamentos. Hardcodeado en `backend/config.js` y `frontend/js/config.js`.
 
+### Catálogo (Home)
+- El `index.html` es el catálogo completo con filtros de categoría, búsqueda y grid de productos tipo Temu.
+- El botón **"Categorías"** en el bottom nav abre un **sidebar lateral** con las categorías disponibles.
+- No hay páginas separadas de catálogo ni ofertas; todo vive en el home.
+
 ### Venta en Vivo (Live Shopping)
 - **Paquetes:** Productos independientes (`live_packages`) con código propio, precio fijo, imagen y stock propio. Se gestionan desde el panel admin (pestaña "Paquetes").
 - **Compra:** El cliente entra a `live.modasnancy.com`, escribe el código del paquete y lo agrega a su pedido. Puede agregar varios paquetes con cantidades.
@@ -194,4 +197,4 @@ node scripts/download-images.js      # Descarga placeholders si faltan
 
 ---
 
-*Última actualización: 2026-05-21 (modulo live shopping + paquetes)*
+*Última actualización: 2026-05-22 (consolidacion catalogo en home + sidebar categorias)*

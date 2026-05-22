@@ -22,8 +22,7 @@
             </div>
             <div class="footer__col">
                 <h3>Navegacion</h3>
-                <a href="/catalogo.html">Catalogo</a>
-                <a href="/ofertas.html">Ofertas</a>
+                <a href="/">Catalogo</a>
                 <a href="/nosotros.html">Nosotros</a>
                 <a href="/tallas.html">Guia de Tallas</a>
                 <a href="/envios.html">Envios</a>
