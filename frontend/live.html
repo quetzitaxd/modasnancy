@@ -430,6 +430,97 @@
             color: #999;
         }
 
+        /* Transferencia panel */
+        .transfer-panel {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background: #f6ffed;
+            border-radius: 10px;
+            border: 1px solid #d9f7be;
+        }
+        .transfer-panel__discount {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: #52c41a;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: #d9f7be;
+            border-radius: 8px;
+        }
+        .transfer-panel__accounts {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .transfer-account {
+            background: white;
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #e8e8e8;
+        }
+        .transfer-account__bank {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.15rem;
+        }
+        .transfer-account__detail {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        .transfer-account__detail strong { color: #000; }
+        .transfer-upload {
+            margin-top: 0.75rem;
+        }
+        .transfer-upload__label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        .transfer-upload__area {
+            border: 2px dashed #b7eb8f;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: white;
+        }
+        .transfer-upload__area:hover { border-color: #52c41a; background: #f6ffed; }
+        .transfer-upload__area.has-file {
+            border-color: #52c41a;
+            background: #f6ffed;
+        }
+        .transfer-upload__icon {
+            color: #52c41a;
+            margin-bottom: 0.3rem;
+        }
+        .transfer-upload__text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .transfer-upload__text strong { color: #000; }
+        .transfer-upload__hint {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+        .transfer-upload__preview {
+            margin-top: 0.5rem;
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            display: none;
+        }
+        .transfer-upload__preview.visible { display: block; }
+
         /* Card form */
         .card-form {
             margin-top: 0.5rem;
@@ -590,6 +681,10 @@
                         <span>Envio</span>
                         <span id="live-shipping">Q25.00</span>
                     </div>
+                    <div class="total-row" id="discount-row" style="display:none;color:#52c41a;">
+                        <span>Descuento Transferencia (-4%)</span>
+                        <span id="live-discount">-Q0.00</span>
+                    </div>
                     <div class="total-row total-row--main">
                         <span>Total</span>
                         <span id="live-total">Q25.00</span>
@@ -655,12 +750,48 @@
                             </div>
                         </label>
                         <label class="payment-option">
+                            <input type="radio" name="payment_method" value="transferencia">
+                            <div class="payment-option__info">
+                                <div class="payment-option__label">Transferencia / Deposito</div>
+                                <div class="payment-option__hint" style="color:#52c41a;font-weight:600;">4% de descuento por tu confianza</div>
+                            </div>
+                        </label>
+                        <label class="payment-option">
                             <input type="radio" name="payment_method" value="cubopago">
                             <div class="payment-option__info">
                                 <div class="payment-option__label">Tarjeta de Credito / Debito</div>
                                 <div class="payment-option__hint">Pago seguro via CuboPago</div>
                             </div>
                         </label>
+                    </div>
+
+                    <div id="transfer-panel" class="transfer-panel" style="display:none;">
+                        <div class="transfer-panel__discount">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            Agradecemos tu confianza con un descuento del 4%
+                        </div>
+                        <div class="transfer-panel__accounts">
+                            <div class="transfer-account">
+                                <div class="transfer-account__bank">Banrural — Cuenta de Ahorro GTQ</div>
+                                <div class="transfer-account__detail">Numero: <strong>4811051579</strong><br>Titular: Nancy Marisol de Paz Muralles</div>
+                            </div>
+                            <div class="transfer-account">
+                                <div class="transfer-account__bank">Banco Industrial — Cuenta Monetaria</div>
+                                <div class="transfer-account__detail">Numero: <strong>6550110347</strong><br>Titular: Nancy Marisol de Paz Muralles de Estrada</div>
+                            </div>
+                        </div>
+                        <div class="transfer-upload">
+                            <label class="transfer-upload__label">Comprobante de pago</label>
+                            <div class="transfer-upload__area" id="transfer-upload-area" onclick="document.getElementById('receipt-file').click()">
+                                <div class="transfer-upload__icon">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                </div>
+                                <div class="transfer-upload__text">Toca para <strong>subir comprobante</strong></div>
+                                <div class="transfer-upload__hint">JPG, PNG, PDF hasta 5MB</div>
+                                <img class="transfer-upload__preview" id="receipt-preview" alt="Vista previa">
+                            </div>
+                            <input type="file" id="receipt-file" accept="image/*,.pdf" style="display:none;" onchange="handleReceiptFile(this)">
+                        </div>
                     </div>
 
                     <div id="card-form" class="card-form" style="display:none;">
@@ -742,7 +873,7 @@
                 </div>
                 <div class="help-step">
                     <div class="help-step__num">4</div>
-                    <div class="help-step__text"><strong>Elige tu metodo de pago:</strong> contra entrega (efectivo al recibir) o tarjeta de credito/debito via CuboPago.</div>
+                    <div class="help-step__text"><strong>Elige tu metodo de pago:</strong> contra entrega, transferencia bancaria (4% de descuento) o tarjeta de credito/debito via CuboPago.</div>
                 </div>
                 <div class="help-step">
                     <div class="help-step__num">5</div>
@@ -779,6 +910,6 @@
     <script src="/js/config.js"></script>
     <script src="/js/guatemala-data.js"></script>
     <script src="/js/api.js"></script>
-    <script src="/js/live.js?v=20260521-3"></script>
+    <script src="/js/live.js?v=20260522-1"></script>
 </body>
 </html>

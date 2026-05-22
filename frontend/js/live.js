@@ -7,6 +7,7 @@
 
 let addedPackages = []; // { code, name, price, image_url, quantity }
 let currentPaymentMethod = 'efectivo';
+let receiptFile = null; // archivo seleccionado para comprobante
 const SHIPPING_COST = 25;
 
 // Alias por compatibilidad (algunas versiones cacheadas usaban toSafeString)
@@ -148,11 +149,24 @@ function renderPackagesList() {
 
 function updateTotals() {
     const subtotal = addedPackages.reduce((sum, p) => sum + (p.price * p.quantity), 0);
-    const total = subtotal + SHIPPING_COST;
+    const isTransfer = currentPaymentMethod === 'transferencia';
+    const discount = isTransfer ? Math.round(subtotal * 0.04 * 100) / 100 : 0;
+    const total = subtotal + SHIPPING_COST - discount;
 
     document.getElementById('live-subtotal').textContent = formatMoney(subtotal);
     document.getElementById('live-total').textContent = formatMoney(total);
     document.getElementById('bottom-total').textContent = formatMoney(total);
+
+    const discountRow = document.getElementById('discount-row');
+    const discountEl = document.getElementById('live-discount');
+    if (discountRow && discountEl) {
+        if (isTransfer && discount > 0) {
+            discountRow.style.display = 'flex';
+            discountEl.textContent = '-' + formatMoney(discount);
+        } else {
+            discountRow.style.display = 'none';
+        }
+    }
 }
 
 // ─── Form helpers ──────────────────────────────────────────────────────────
@@ -160,18 +174,22 @@ function updateTotals() {
 function setupPaymentToggle() {
     const radios = document.querySelectorAll('input[name="payment_method"]');
     const cardForm = document.getElementById('card-form');
+    const transferPanel = document.getElementById('transfer-panel');
     const btn = document.getElementById('btn-submit');
 
     radios.forEach((radio) => {
         radio.addEventListener('change', () => {
             currentPaymentMethod = radio.value;
             const isCard = currentPaymentMethod === 'cubopago';
+            const isTransfer = currentPaymentMethod === 'transferencia';
             if (cardForm) cardForm.style.display = isCard ? 'block' : 'none';
+            if (transferPanel) transferPanel.style.display = isTransfer ? 'block' : 'none';
             if (btn) btn.textContent = isCard ? 'Pagar Ahora' : 'Confirmar Pedido';
 
             document.querySelectorAll('.payment-option').forEach((opt) => {
                 opt.classList.toggle('active', opt.querySelector('input').checked);
             });
+            updateTotals();
         });
     });
 }
@@ -229,6 +247,38 @@ function validateCardData() {
 
     const [month, year] = expiry.split(' / ').map((s) => s.trim());
     return { holder: name.trim(), number: number.replace(/\s/g, ''), cvv: cvc.trim(), month, year };
+}
+
+function handleReceiptFile(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+    receiptFile = file;
+
+    const area = document.getElementById('transfer-upload-area');
+    const preview = document.getElementById('receipt-preview');
+    const text = area.querySelector('.transfer-upload__text');
+
+    if (area) area.classList.add('has-file');
+    if (text) text.innerHTML = '<strong>' + escapeHtml(file.name) + '</strong> seleccionado';
+
+    if (preview && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => { preview.src = e.target.result; preview.classList.add('visible'); };
+        reader.readAsDataURL(file);
+    } else if (preview) {
+        preview.classList.remove('visible');
+    }
+}
+
+async function uploadReceipt() {
+    if (!receiptFile) return null;
+    const formData = new FormData();
+    formData.append('receipt', receiptFile);
+    const res = await fetch('/api/upload-receipt', { method: 'POST', body: formData });
+    if (!res.ok) throw new Error('Error subiendo comprobante: ' + res.status);
+    const data = await res.json();
+    if (!data || !data.url) throw new Error('Respuesta invalida del servidor al subir comprobante');
+    return data.url;
 }
 
 function showError(msg) {
@@ -295,7 +345,20 @@ function setupFormSubmit() {
                 try { cardData = validateCardData(); } catch (cErr) { error = cErr.message; }
             }
 
+            if (!error && currentPaymentMethod === 'transferencia' && !receiptFile) {
+                error = 'Adjunta el comprobante de tu transferencia para continuar.';
+            }
+
             if (error) throw new Error(error);
+
+            const subtotal = addedPackages.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+            const discount = currentPaymentMethod === 'transferencia' ? Math.round(subtotal * 0.04 * 100) / 100 : 0;
+
+            let receiptUrl = null;
+            if (currentPaymentMethod === 'transferencia') {
+                btn.textContent = 'Subiendo comprobante...';
+                receiptUrl = await uploadReceipt();
+            }
 
             const payload = {
                 customer_name: name.trim(),
@@ -304,7 +367,9 @@ function setupFormSubmit() {
                 city: `${muni}, ${depto}`,
                 ...(notes.trim() ? { notes: notes.trim() } : {}),
                 payment_method: currentPaymentMethod,
-                packages: addedPackages.map((p) => ({ code: p.code, quantity: p.quantity }))
+                packages: addedPackages.map((p) => ({ code: p.code, quantity: p.quantity })),
+                ...(discount > 0 ? { discount_amount: Number(discount.toFixed(2)) } : {}),
+                ...(receiptUrl ? { payment_receipt_url: receiptUrl } : {})
             };
 
             btn.textContent = 'Creando pedido...';
@@ -337,3 +402,4 @@ window.addPackageByCode = addPackageByCode;
 window.removePackage = removePackage;
 window.changePackageQty = changePackageQty;
 window.setPackageQty = setPackageQty;
+window.handleReceiptFile = handleReceiptFile;

@@ -754,6 +754,12 @@ const createLiveOrder = async (body) => {
         throw new OrderError('Metodo de pago invalido');
     }
 
+    const rawDiscount = body?.discount_amount;
+    const discountAmount = (typeof rawDiscount === 'number' && !isNaN(rawDiscount) && rawDiscount > 0)
+        ? Number(rawDiscount.toFixed(2))
+        : 0;
+    const receiptUrl = body?.payment_receipt_url ? String(body.payment_receipt_url).trim() : null;
+
     // Resolver paquetes y calcular total
     const resolvedPackages = [];
     let subtotalCents = 0;
@@ -782,7 +788,8 @@ const createLiveOrder = async (body) => {
 
     // Envio fijo Q25
     const SHIPPING_CENTS = 25 * 100;
-    const totalCents = subtotalCents + SHIPPING_CENTS;
+    const discountCents = Math.round(discountAmount * 100);
+    const totalCents = subtotalCents + SHIPPING_CENTS - discountCents;
     const total = centsToDecimal(totalCents);
     const shippingCost = centsToDecimal(SHIPPING_CENTS);
 
@@ -802,9 +809,9 @@ const createLiveOrder = async (body) => {
         // Insertar orden
         const paymentStatus = paymentMethod === 'efectivo' ? 'pendiente' : 'pendiente';
         const [orderResult] = await conn.query(
-            `INSERT INTO orders (customer_name, phone, email, address, city, notes, total, status, payment_method, payment_status, shipping_cost, created_by, source)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?, ?, ?, 'live')`,
-            [customer_name, phone, email, address, city, notes, total, paymentMethod, paymentStatus, shippingCost, null]
+            `INSERT INTO orders (customer_name, phone, email, address, city, notes, total, discount_amount, status, payment_method, payment_status, shipping_cost, payment_receipt_url, created_by, source)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, ?, ?, ?, ?, 'live')`,
+            [customer_name, phone, email, address, city, notes, total, discountAmount, paymentMethod, paymentStatus, shippingCost, receiptUrl, null]
         );
 
         const orderId = orderResult.insertId;
