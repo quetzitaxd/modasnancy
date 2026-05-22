@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function addPackageByCode() {
     const input = document.getElementById('package-code-input');
-    const code = toSafeString(input.value);
+    const code = safeText(input.value);
     if (!code) return;
 
     // Verificar si ya esta agregado
