@@ -198,20 +198,22 @@
     </aside>
 
     <!-- HEADER -->
-    <header class="home-header" style="background: white; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; z-index: 900;">
-        <a href="/" style="display: flex; align-items: center; text-decoration: none; flex-shrink: 0;">
-            <img src="/assets/brand/logo.png" alt="Modas Nancy" style="height: 40px; width: auto; object-fit: contain;">
-        </a>
-        <div class="search-input-wrap" style="flex: 1; max-width: 400px; position: relative;">
-            <input type="text" placeholder="Buscar productos..." id="search-input" autocomplete="off" style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1.5px solid #f0f0f0; border-radius: 20px; font-size: 0.85rem; font-family: inherit; background: #f8f8f8; box-sizing: border-box;">
-            <div class="search-icon" style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <header class="home-header" style="background: white; padding: 0.75rem 1rem; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; z-index: 900;">
+        <div style="max-width: 600px; margin: 0 auto; width: 100%; display: flex; align-items: center; gap: 0.75rem;">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none; flex-shrink: 0;">
+                <img src="/assets/brand/logo.png" alt="Modas Nancy" style="height: 40px; width: auto; object-fit: contain;">
+            </a>
+            <div class="search-input-wrap" style="flex: 1; position: relative;">
+                <input type="text" placeholder="Buscar productos..." id="search-input" autocomplete="off" style="width: 100%; padding: 0.6rem 2.5rem 0.6rem 1rem; border: 1.5px solid #f0f0f0; border-radius: 20px; font-size: 0.85rem; font-family: inherit; background: #f8f8f8; box-sizing: border-box;">
+                <div class="search-icon" style="position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
             </div>
+            <a href="/carrito.html" style="position: relative; color: #333; text-decoration: none; flex-shrink: 0; display: flex; align-items: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                <span class="bottom-nav-temu__badge" data-cart-count style="display:none; position: absolute; top: -4px; right: -4px; background: #e85c8a; color: white; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 700;">0</span>
+            </a>
         </div>
-        <a href="/carrito.html" style="position: relative; color: #333; text-decoration: none; flex-shrink: 0;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            <span class="bottom-nav-temu__badge" data-cart-count style="display:none; position: absolute; top: -4px; right: -4px; background: #e85c8a; color: white; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 700;">0</span>
-        </a>
     </header>
 
     <!-- CATEGORY CIRCLES -->
