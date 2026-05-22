@@ -6,8 +6,6 @@
 let adminPackages = [];
 let editingPackageId = null;
 
-console.log('[admin-packages.js] Script cargado correctamente v20260521-1');
-
 function toSafeText(value) {
     if (value === null || value === undefined) return '';
     return String(value).trim();
@@ -133,14 +131,8 @@ function renderPackagesTable() {
 // ─── Modal ─────────────────────────────────────────────────────────────────
 
 function openPackageModal(pkgId) {
-    console.log('[admin-packages.js] openPackageModal llamado con pkgId:', pkgId);
     editingPackageId = pkgId || null;
-    
-    // Log de diagnóstico extremo
     const modal = document.getElementById('package-modal');
-    console.log('[admin-packages.js] Modal element:', modal);
-    console.log('[admin-packages.js] Modal computed display (antes):', modal ? getComputedStyle(modal).display : 'no modal');
-    
     const title = document.getElementById('package-modal-title');
     const form = document.getElementById('package-form');
     const errorEl = document.getElementById('package-modal-error');
@@ -152,10 +144,7 @@ function openPackageModal(pkgId) {
 
     if (pkgId) {
         const pkg = adminPackages.find((p) => p.id === pkgId);
-        if (!pkg) {
-            console.warn('[admin-packages.js] Paquete no encontrado:', pkgId);
-            return;
-        }
+        if (!pkg) return;
         if (title) title.textContent = 'Editar Paquete';
         document.getElementById('pkg-code').value = pkg.code;
         document.getElementById('pkg-name').value = pkg.name;
@@ -171,13 +160,7 @@ function openPackageModal(pkgId) {
         if (codeInput) codeInput.disabled = false;
     }
 
-    if (modal) {
-        modal.style.display = 'flex';
-        console.log('[admin-packages.js] Modal display set to flex. Computed (después):', getComputedStyle(modal).display);
-        console.log('[admin-packages.js] Modal visible:', modal.offsetParent !== null);
-    } else {
-        console.error('[admin-packages.js] ERROR: No se encontró el modal #package-modal');
-    }
+    if (modal) modal.style.display = 'flex';
 }
 
 function closePackageModal() {
