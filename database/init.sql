@@ -1,3 +1,13 @@
+-- ============================================================
+-- init.sql — Schema definitivo Modas Nancy (MariaDB)
+-- Este archivo se ejecuta automaticamente cuando el volumen DB
+-- esta vacio (ej: despues de docker compose down -v).
+-- Contiene TODO el schema actualizado; no requiere migraciones.
+-- ============================================================
+
+-- --------------------------------------------------
+-- 1. Tabla: orders
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
   customer_name VARCHAR(150) NOT NULL,
@@ -8,20 +18,22 @@ CREATE TABLE IF NOT EXISTS orders (
   notes TEXT,
   status ENUM('pendiente', 'confirmado', 'enviado', 'cancelado') DEFAULT 'pendiente',
   total DECIMAL(10,2) NOT NULL,
-  payment_method ENUM('efectivo', 'cubopago') DEFAULT 'efectivo',
+  discount_amount DECIMAL(10,2) DEFAULT 0.00,
+  payment_method ENUM('efectivo', 'cubopago', 'transferencia') DEFAULT 'efectivo',
   payment_status ENUM('pendiente', 'pagado', 'fallido', 'reembolsado') DEFAULT 'pendiente',
   cubopago_transaction_id VARCHAR(255),
   cubopago_authorization VARCHAR(255),
   shipping_cost DECIMAL(10,2) DEFAULT 0,
   tracking_number VARCHAR(100) DEFAULT NULL,
+  payment_receipt_url VARCHAR(500) DEFAULT NULL,
   created_by VARCHAR(100) DEFAULT NULL,
-  source ENUM('catalogo','vendedor') DEFAULT 'catalogo',
+  source ENUM('catalogo','vendedor','live') DEFAULT 'catalogo',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS created_by VARCHAR(100) DEFAULT NULL AFTER tracking_number;
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS source ENUM('catalogo','vendedor') DEFAULT 'catalogo' AFTER created_by;
-
+-- --------------------------------------------------
+-- 2. Tabla: order_items
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS order_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
   order_id INT NOT NULL,
@@ -35,6 +47,9 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------
+-- 3. Tabla: products
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS products (
   id VARCHAR(150) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -47,18 +62,16 @@ CREATE TABLE IF NOT EXISTS products (
   wholesale_discount_percent DECIMAL(5,2) DEFAULT 0.00,
   sale_enabled TINYINT(1) DEFAULT 0,
   sale_price DECIMAL(10,2) NULL,
+  bundle_2x_enabled TINYINT(1) DEFAULT 0,
+  bundle_2x_price DECIMAL(10,2) NULL,
   created_by VARCHAR(100) DEFAULT NULL,
   updated_by VARCHAR(100) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE products ADD COLUMN IF NOT EXISTS sale_enabled TINYINT(1) DEFAULT 0 AFTER wholesale_discount_percent;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS sale_price DECIMAL(10,2) NULL AFTER sale_enabled;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS bundle_2x_enabled TINYINT(1) DEFAULT 0 AFTER sale_price;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS bundle_2x_price DECIMAL(10,2) NULL AFTER bundle_2x_enabled;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS created_by VARCHAR(100) DEFAULT NULL AFTER bundle_2x_price;
-ALTER TABLE products ADD COLUMN IF NOT EXISTS updated_by VARCHAR(100) DEFAULT NULL AFTER created_by;
-
+-- --------------------------------------------------
+-- 4. Tabla: product_variants
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS product_variants (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id VARCHAR(150) NOT NULL,
@@ -72,7 +85,9 @@ CREATE TABLE IF NOT EXISTS product_variants (
   UNIQUE KEY unique_variant (product_id, size, color_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de inventario por variante (SKU)
+-- --------------------------------------------------
+-- 5. Tabla: inventory
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS inventory (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id VARCHAR(150) NOT NULL,
@@ -83,7 +98,9 @@ CREATE TABLE IF NOT EXISTS inventory (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de logs de webhooks recibidos
+-- --------------------------------------------------
+-- 6. Tabla: webhook_logs
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS webhook_logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   provider VARCHAR(50) NOT NULL DEFAULT 'cubopago',
@@ -96,7 +113,9 @@ CREATE TABLE IF NOT EXISTS webhook_logs (
   INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de historial de movimientos de inventario
+-- --------------------------------------------------
+-- 7. Tabla: inventory_movements
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS inventory_movements (
   id INT AUTO_INCREMENT PRIMARY KEY,
   product_id VARCHAR(150) NOT NULL,
@@ -114,7 +133,9 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
   INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de usuarios del sistema
+-- --------------------------------------------------
+-- 8. Tabla: users
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(100) NOT NULL UNIQUE,
@@ -127,7 +148,9 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de auditoria (quien hizo y deshizo)
+-- --------------------------------------------------
+-- 9. Tabla: audit_logs
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS audit_logs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   table_name VARCHAR(100) NOT NULL,
@@ -141,7 +164,9 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   INDEX idx_changed_at (changed_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de clientes (persistente, deducida de pedidos)
+-- --------------------------------------------------
+-- 10. Tabla: customers
+-- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS customers (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
@@ -157,3 +182,32 @@ CREATE TABLE IF NOT EXISTS customers (
   INDEX idx_phone (phone),
   INDEX idx_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------
+-- 11. Tabla: live_packages (Live Shopping)
+-- --------------------------------------------------
+CREATE TABLE IF NOT EXISTS live_packages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(50) NOT NULL UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  stock_quantity INT NOT NULL DEFAULT 0,
+  image_url VARCHAR(500) DEFAULT NULL,
+  is_active TINYINT(1) DEFAULT 1,
+  created_by VARCHAR(100) DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_code (code),
+  INDEX idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------
+-- 12. Usuarios iniciales (credenciales de prueba local)
+--    NOTA: En produccion, cambiar estos hashes o usar OAuth.
+-- --------------------------------------------------
+INSERT IGNORE INTO users (username, password_hash, name, email, role, is_active) VALUES
+('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador', 'admin@modasnancy.com', 'admin', 1),
+('vendedor', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Vendedor Externo', 'vendedor@modasnancy.com', 'vendedor', 1),
+('pedidos', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Operador Pedidos', 'pedidos@modasnancy.com', 'operador_pedidos', 1),
+('stock', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Operador Stock', 'stock@modasnancy.com', 'operador_stock', 1);

@@ -168,6 +168,9 @@ docker compose up --build -d
 | Operador Pedidos | `pedidos` | `pedidos123` |
 | Operador Stock | `stock` | `stock123` |
 
+### Schema DB (init.sql)
+`database/init.sql` es el **schema definitivo**. Contiene todas las tablas y columnas actualizadas (incluyendo `live_packages`, `transferencia`, descuentos, etc.). MariaDB lo ejecuta automaticamente solo cuando el volumen de datos esta vacio (primera vez o despues de `docker compose down -v`).
+
 ### Seed de productos de prueba
 ```bash
 node scripts/seed-products.js        # Crea 12 productos
