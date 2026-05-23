@@ -204,10 +204,11 @@ CREATE TABLE IF NOT EXISTS live_packages (
 
 -- --------------------------------------------------
 -- 12. Usuarios iniciales (credenciales de prueba local)
---    NOTA: En produccion, cambiar estos hashes o usar OAuth.
+--    Hashes generados con PBKDF2 (salt:hash) del proyecto.
+--    En produccion, cambiar estas contrasenas.
 -- --------------------------------------------------
 INSERT IGNORE INTO users (username, password_hash, name, email, role, is_active) VALUES
-('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrador', 'admin@modasnancy.com', 'admin', 1),
-('vendedor', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Vendedor Externo', 'vendedor@modasnancy.com', 'vendedor', 1),
-('pedidos', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Operador Pedidos', 'pedidos@modasnancy.com', 'operador_pedidos', 1),
-('stock', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Operador Stock', 'stock@modasnancy.com', 'operador_stock', 1);
+('admin', '2183b0416f4c3264b76543a202796bda:ee797a43edb2e893f8efbc3c338bdb5c60e88a5d9dbd1074d9954385beeedda6d9ff2548f00059773e3b06a506a02e64a6283d347bced7f5757514d90a89a3c9', 'Administrador', 'admin@modasnancy.com', 'admin', 1),
+('vendedor', '6fb879e3b01b095f42566eda7142c92b:6daa48ff1dd0749b9b836d3c870d137abe329a7ff644c2f85d22412b90c52636949debea89de1b427cb1d8e69ca15dd0ccca9bd55d8cc69282c4c9ef934bdf11', 'Vendedor Externo', 'vendedor@modasnancy.com', 'vendedor', 1),
+('pedidos', '81ba67ab0ac1c420311868c3ee2ac37b:e5b2533caff334dd38ff48d73afb19d22f0f909eac81fc4f6b7eb51122fa0a2d496239a473e583e8702235f25e59a83919d12b80c6a83a784fc9ac428633f7f1', 'Operador Pedidos', 'pedidos@modasnancy.com', 'operador_pedidos', 1),
+('stock', '831821adcf99f820ed169d4ae428de34:21e653f653175637c7a397260a0407a7596b1cb0fb26e9ce84952370ba3bf9407c3f524039a961ff226e03dc22e222f08c94c0665dfbdc3b46cbf32d990f8d7e', 'Operador Stock', 'stock@modasnancy.com', 'operador_stock', 1);
