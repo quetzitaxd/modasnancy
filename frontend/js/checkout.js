@@ -29,7 +29,7 @@ function validateCardData(cardData) {
 document.addEventListener('DOMContentLoaded', async () => {
     // Cargar productos para validar precios y promociones frescas
     try {
-        const res = await fetch('/api/products');
+        const res = await fetch(`${API_CONFIG.BASE_URL}/api/products`);
         if (res.ok) {
             freshProducts = await res.json();
         }
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Paso 1: Crear la orden
             if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando pedido...';
 
-            const res = await fetch('/api/orders', {
+            const res = await fetch(`${API_CONFIG.BASE_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (currentPaymentMethod === 'cubopago' && cardData) {
                 if (btn) btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando pago con tarjeta...';
 
-                const payRes = await fetch(`/api/orders/${orderData.orderId}/pay`, {
+                const payRes = await fetch(`${API_CONFIG.BASE_URL}/api/orders/${orderData.orderId}/pay`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -381,7 +381,7 @@ async function retryPayment(orderId) {
             name: cardName
         });
 
-        const payRes = await fetch(`/api/orders/${orderId}/pay`, {
+        const payRes = await fetch(`${API_CONFIG.BASE_URL}/api/orders/${orderId}/pay`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -442,12 +442,15 @@ function safeImageUrl(value, fallback) {
     }
 
     if (raw.startsWith('/')) {
-        return raw;
+        return window.isNativeApp ? `https://modasnancy.com${raw}` : raw;
     }
 
     try {
         const url = new URL(raw, window.location.origin);
         if (url.protocol === 'http:' || url.protocol === 'https:') {
+            if (window.isNativeApp && (url.host === 'localhost' || url.protocol === 'capacitor:')) {
+                return `https://modasnancy.com${url.pathname}${url.search}`;
+            }
             return url.href;
         }
     } catch {

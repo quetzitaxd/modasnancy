@@ -30,10 +30,33 @@ const SHIPPING_CONFIG = {
     CAPITAL_DEPARTMENTS: ['Guatemala']
 };
 
+// Detectar si está corriendo en ambiente de App Nativa (Capacitor)
+const isNativeApp = !!(
+    window.Capacitor ||
+    (window.Android && typeof window.Android === 'object') ||
+    (window.webkit && window.webkit.messageHandlers) ||
+    window.location.origin.startsWith('capacitor://') ||
+    (window.location.origin.startsWith('http://localhost') && !window.location.port) ||
+    window.location.pathname.includes('android_asset')
+);
+window.isNativeApp = isNativeApp;
+
 const API_CONFIG = {
-    BASE_URL: '', // relativo al mismo dominio
+    // Si corre como app nativa, apuntar al servidor de producción.
+    BASE_URL: isNativeApp ? 'https://modasnancy.com' : '',
     TIMEOUT_MS: 15000
 };
+
+// Interceptar fetch global para redirigir rutas relativas al servidor en la App Nativa
+if (isNativeApp) {
+    const originalFetch = window.fetch;
+    window.fetch = function (resource, init) {
+        if (typeof resource === 'string' && resource.startsWith('/')) {
+            resource = `https://modasnancy.com${resource}`;
+        }
+        return originalFetch(resource, init);
+    };
+}
 
 const PWA_CONFIG = {
     CACHE_VERSION: 'v1',
@@ -62,15 +85,26 @@ function safeText(value) {
 function safeImageUrl(value, fallback) {
     const raw = safeText(value);
     if (!raw) return fallback;
-    if (raw.startsWith('/')) return raw;
+    
+    // Si es una ruta relativa en Capacitor, la cargamos desde el servidor de producción
+    if (raw.startsWith('/')) {
+        return isNativeApp ? `https://modasnancy.com${raw}` : raw;
+    }
     try {
         const url = new URL(raw, window.location.origin);
-        if (url.protocol === 'http:' || url.protocol === 'https:') return url.href;
+        if (url.protocol === 'http:' || url.protocol === 'https:') {
+            // Resolver localhost o capacitor local origin al servidor real
+            if (isNativeApp && (url.host === 'localhost' || url.protocol === 'capacitor:')) {
+                return `https://modasnancy.com${url.pathname}${url.search}`;
+            }
+            return url.href;
+        }
     } catch { /* fallback */ }
     return fallback;
 }
 
 // Exportar para modulos (si se usa ES modules) o asignar a window
+window.isNativeApp = isNativeApp;
 window.BRAND_CONFIG = BRAND_CONFIG;
 window.CURRENCY_CONFIG = CURRENCY_CONFIG;
 window.SHIPPING_CONFIG = SHIPPING_CONFIG;
@@ -80,3 +114,4 @@ window.CART_CONFIG = CART_CONFIG;
 window.formatMoney = formatMoney;
 window.safeText = safeText;
 window.safeImageUrl = safeImageUrl;
+

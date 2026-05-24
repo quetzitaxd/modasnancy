@@ -1,0 +1,19 @@
+{
+  "name": "modasnancy-app-wrapper",
+  "version": "1.0.0",
+  "description": "Capacitor wrapper for Modas Nancy PWA",
+  "scripts": {
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@capacitor/cli": "^8.3.4",
+    "@capacitor/core": "^8.3.4"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.3.4"
+  }
+}
