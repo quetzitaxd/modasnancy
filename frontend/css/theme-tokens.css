@@ -1,41 +1,81 @@
 /* 
    DESIGN TOKENS - CONFIGURACIÓN PARA EL DISEÑADOR
    Modifica los valores de este archivo para cambiar el diseño de toda la tienda.
+   
+   Paleta actual: FEMENINA — Blush, Rosa Fucsia, Lila Suave, Crema
+   Última actualización: 2026-05-25
 */
 
 :root {
-  /* --- COLORES PRINCIPALES (LILA) --- */
+  /* ============================================================
+     1. COLORES PRINCIPALES
+     ============================================================ */
+  
+  /* Lila (primario de marca) */
   --primary-color: #a855f7;
   --primary-light: #d8b4fe;
+  --primary-soft: #f3e8ff;
+  
+  /* Rosa / Blush (acento femenino) */
+  --blush-primary: #F48FB1;
+  --blush-light: #FFF0F5;
+  --blush-soft: #F8BBD0;
+  --blush-deep: #F06292;
+  
+  /* Rosa Fucsia / Rose Gold (CTA, precios, énfasis) */
+  --rose-gold: #D81B60;
+  --rose-deep: #C2185B;
+  --rose-light: #FCE4EC;
+  --rose-soft: #F48FB1;
+  
+  /* Lila suave (complementario) */
+  --lilac-soft: #CE93D8;
+  --lilac-light: #F3E5F5;
+  --lilac-deep: #7c3aed;
+  
+  /* Secundarios y acentos */
   --secondary-color: #c084fc;
   --accent-color: #9333ea;
   --accent-soft: #f3e8ff;
-  --lilac-deep: #7c3aed;
   --logo-dot-color: #c77dff;
-  /* Punto del logo */
-
-  /* --- HERO SECTION --- */
+  
+  /* Verde menta (descuentos, éxito — femenino) */
+  --mint-primary: #8BC34A;
+  --mint-light: #F1F8E9;
+  --mint-soft: #DCEDC8;
+  --success-color: #558B2F;
+  
+  /* ============================================================
+     2. HERO SECTION
+     ============================================================ */
   --hero-text: #ffffff;
-  --hero-soft-bg: var(--primary-color);
+  --hero-soft-bg: linear-gradient(135deg, #C2185B, #8E24AA);
   --hero-soft-text: #ffffff;
   --hero-soft-border: transparent;
-
-  /* --- COLORES DE FONDO Y TEXTO --- */
+  
+  /* ============================================================
+     3. COLORES DE FONDO Y TEXTO
+     ============================================================ */
   --bg-color: #faf5ff;
-  --card-bg: #ffffff;
+  --bg-blush: linear-gradient(180deg, #FFF0F5 0%, #FAF5FF 40%, #F3E5F5 100%);
+  --card-bg: rgba(255, 255, 255, 0.92);
   --white: #ffffff;
+  
   --text-main: #3b1e5e;
+  --text-dark: #4a3540;
   --text-light: #8561a8;
-
-  /* --- TIPOGRAFÍA (Fuentes) --- */
-  /* Deben estar importadas en style.css o ser del sistema */
+  --text-muted: #b08da0;
+  --text-gray: var(--text-light);
+  
+  /* ============================================================
+     4. TIPOGRAFÍA (Fuentes)
+     ============================================================ */
   --font-logo: 'Bebas Neue', sans-serif;
   --font-headings: 'Poppins', sans-serif;
   --font-display: 'Playfair Display', serif;
-  /* Alias para páginas de producto */
   --font-body: 'Poppins', sans-serif;
-
-  /* --- TAMAÑOS DE FUENTE --- */
+  
+  /* TAMAÑOS DE FUENTE */
   --fs-logo: 2.8rem;
   --fs-h1: clamp(2.4rem, 5vw, 4.2rem);
   --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
@@ -45,34 +85,66 @@
   --fs-small: 0.875rem;
   --fs-tiny: 0.75rem;
   --ls-logo: 0.08em;
-  /* Letter spacing del logo */
-
-  /* --- BORDES Y SOMBRAS --- */
-  --border-color: #ede9fe;
+  
+  /* ============================================================
+     5. BORDES Y SOMBRAS
+     ============================================================ */
+  --border-color: rgba(232, 121, 168, 0.18);
+  --border-color-light: #F8BBD0;
   --border-radius: 20px;
   --border-radius-btn: 50px;
-  --shadow-soft: 0 10px 40px rgba(168, 85, 247, 0.15);
-  --shadow-card: 0 8px 30px rgba(192, 132, 252, 0.12);
-
-  /* --- COLORES LEGO (Compatibilidad) --- */
-  --text-dark: var(--secondary-color);
-  --text-gray: var(--text-light);
-
-  /* --- ANIMACIONES --- */
-  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* --- NUEVOS TOKENS PREMIUM (Rediseño 2026) --- */
+  --border-radius-card: 18px;
+  
+  /* Sombras femeninas (rosa/lila) */
+  --shadow-soft: 0 10px 40px rgba(168, 85, 247, 0.12);
+  --shadow-card: 0 8px 30px rgba(192, 132, 252, 0.10);
+  --shadow-blush: 0 4px 20px rgba(194, 121, 168, 0.08);
+  --shadow-rose: 0 6px 20px rgba(244, 143, 177, 0.30);
+  --shadow-lilac: 0 4px 12px rgba(206, 147, 216, 0.12);
+  --shadow-premium: 0 20px 60px rgba(120, 78, 140, 0.15);
+  --shadow-elevated: 0 24px 48px rgba(80, 50, 110, 0.18);
+  
+  /* ============================================================
+     6. GRADIENTES FEMENINOS
+     ============================================================ */
+  --gradient-feminine: linear-gradient(135deg, #F48FB1, #CE93D8);
+  --gradient-feminine-soft: linear-gradient(135deg, #FFF0F5, #F3E5F5);
+  --gradient-hero: linear-gradient(90deg, #C2185B, #8E24AA);
+  --gradient-rose-lilac: linear-gradient(135deg, #F48FB1 0%, #CE93D8 50%, #B39DDB 100%);
+  --gradient-bottom-bar: linear-gradient(90deg, #FCE4EC, #F3E5F5);
+  
+  /* ============================================================
+     7. TOKENS DORADOS (Marquee, premium)
+     ============================================================ */
   --gold-primary: #FFD700;
   --gold-deep: #FFA500;
   --gold-light: #FFE066;
   --gold-gradient: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
   --gold-gradient-shine: linear-gradient(90deg, #FFD700 0%, #FFF5B3 40%, #FFA500 60%, #FFD700 100%);
   --gold-text-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FFE066);
+  --shadow-gold: 0 10px 30px rgba(255, 165, 0, 0.25);
+  
+  /* ============================================================
+     8. TOKENS DE ESTADO / UTILIDAD
+     ============================================================ */
+  --error-bg: linear-gradient(135deg, #FFEBEE, #FFF3E0);
+  --error-border: #FFCDD2;
+  --error-text: #C62828;
+  --success-bg: #F1F8E9;
+  --success-border: #C5E1A5;
+  --info-bg: #E3F2FD;
+  
+  /* ============================================================
+     9. OVERLAYS Y GLASSMORPHISM
+     ============================================================ */
   --dark-overlay: rgba(20, 10, 15, 0.55);
   --dark-overlay-strong: rgba(20, 10, 15, 0.75);
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.18);
-  --shadow-premium: 0 20px 60px rgba(120, 78, 140, 0.18);
-  --shadow-elevated: 0 24px 48px rgba(80, 50, 110, 0.22);
-  --shadow-gold: 0 10px 30px rgba(255, 165, 0, 0.25);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(232, 121, 168, 0.25);
+  
+  /* ============================================================
+     10. ANIMACIONES
+     ============================================================ */
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
