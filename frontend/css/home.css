@@ -233,6 +233,58 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   URGENCY BANNER — "¡Apúrese qué sé termina!"
+   ═══════════════════════════════════════════════════════════════════ */
+.urgency-banner {
+    background: linear-gradient(90deg, #FF4B5C, #F25AD9, #FF8B5C, #F25AD9, #FF4B5C);
+    background-size: 300% 100%;
+    animation: urgencyBgMove 4s linear infinite;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.55rem 0;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+@keyframes urgencyBgMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+.urgency-banner__track {
+    display: flex;
+    gap: 3rem;
+    animation: urgencyMarquee 10s linear infinite;
+    width: max-content;
+    align-items: center;
+}
+@keyframes urgencyMarquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.urgency-banner__text {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    flex-shrink: 0;
+}
+.urgency-banner__text svg {
+    flex-shrink: 0;
+    stroke: #FFF8D6;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+    animation: urgencyFlash 0.9s ease-in-out infinite;
+}
+@keyframes urgencyFlash {
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.5; transform: scale(1.35) rotate(-8deg); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    PRODUCT GRID TEMU (fondo blush, cards con borde rosa)
    ═══════════════════════════════════════════════════════════════════ */
 .products-temu {
