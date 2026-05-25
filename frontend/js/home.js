@@ -338,6 +338,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     setupSearch();
     setupCategoryCircles();
+
+    // Urgency banner marquee (JS-driven for guaranteed compatibility)
+    const urgencyTrack = document.querySelector('.urgency-banner__track');
+    if (urgencyTrack) {
+        let pos = 0;
+        function animateUrgency() {
+            pos -= 0.7;
+            const half = urgencyTrack.scrollWidth / 2;
+            if (half > 0 && Math.abs(pos) >= half) {
+                pos = 0;
+            }
+            urgencyTrack.style.transform = 'translateX(' + pos + 'px)';
+            requestAnimationFrame(animateUrgency);
+        }
+        requestAnimationFrame(animateUrgency);
+    }
 });
 
 window.allProducts = allProducts;

@@ -252,14 +252,9 @@
 .urgency-banner__track {
     display: flex;
     gap: 3rem;
-    animation: urgencyMarquee 8s linear infinite;
     width: max-content;
     align-items: center;
     will-change: transform;
-}
-@keyframes urgencyMarquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
 }
 .urgency-banner__text {
     display: flex;
