@@ -6,7 +6,7 @@
  * - Stale-While-Revalidate: HTML
  */
 
-const CACHE_NAME = 'modasnancy-cache-v13';
+const CACHE_NAME = 'modasnancy-cache-v14';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -16,20 +16,20 @@ const STATIC_ASSETS = [
   '/live.html',
   '/instalar.html',
   '/offline.html',
-  '/css/theme-tokens.css?v=20260525',
-  '/css/style.css?v=20260525',
-  '/css/home.css?v=20260525',
+  '/css/theme-tokens.css?v=20260526',
+  '/css/style.css?v=20260526',
+  '/css/home.css?v=20260526',
   '/css/admin-theme.css',
   '/css/admin-dashboard.css',
   '/js/config.js',
   '/js/api.js',
   '/js/cart.js',
   '/js/ui.js',
-  '/js/home.js?v=20260525',
+  '/js/home.js?v=20260526',
   '/js/live.js',
   '/js/pwa.js',
   '/js/guatemala-data.js',
-  '/js/menu-drawer.js?v=20260525',
+  '/js/menu-drawer.js?v=20260526',
   '/manifest.json',
   '/assets/icons/icon-192x192.png',
   '/assets/icons/icon-512x512.png',
