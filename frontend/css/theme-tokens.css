@@ -465,7 +465,7 @@
   --font-headings:          var(--font-heading);
   --font-logo:              var(--font-logo);
   --font-display:           var(--font-display);
-  --font-body:              var(--font-body);
+  --font-body:              'Josefin Sans', 'Inter', -apple-system, sans-serif;
   --fs-logo:                var(--text-3xl);
   --fs-h1:                  var(--text-5xl);
   --fs-h2:                  var(--text-3xl);
