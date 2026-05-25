@@ -42,6 +42,14 @@ Thumbs.db
 dist/
 build/
 
+# --- Infra / VPS docs ---
+vps.txt
+
+# --- Android Studio IDE ---
+android/.idea/misc.xml
+android/.idea/deviceManager.xml
+android/.idea/planningMode.xml
+
 # --- Python / Scripts locales ---
 venv/
 *.pyc
