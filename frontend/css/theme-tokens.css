@@ -1,150 +1,469 @@
-/* 
-   DESIGN TOKENS - CONFIGURACIÓN PARA EL DISEÑADOR
-   Modifica los valores de este archivo para cambiar el diseño de toda la tienda.
-   
-   Paleta actual: FEMENINA — Blush, Rosa Fucsia, Lila Suave, Crema
-   Última actualización: 2026-05-25
+/*
+   ╔══════════════════════════════════════════════════════════════════╗
+   ║  MODAS NANCY — DESIGN SYSTEM v2.0                               ║
+   ║  Generado desde el logo: colores, tipografía, sombras,           ║
+   ║  gradientes y componentes.                                       ║
+   ║  Última actualización: 2026-05-25                               ║
+   ╚══════════════════════════════════════════════════════════════════╝
+
+   INSPIRACIÓN VISUAL DEL LOGO:
+   ─────────────────────────────
+   • Fondo rosa intenso        →  Primary Pink  #F25AD9
+   • Percha dorada             →  Gold Accent   #F6E36B
+   • Tacones rojos             →  Fashion Red   #FF4B5C
+   • Jeans oscuros             →  Denim Blue    #1D3557
+   • Script negro elegante     →  Elegant Black #111111
+   • Pincelada dorada          →  Luxury Gold   #E8D25F
+   • Blanco suave              →  Soft White    #FFF8FC
+
+   SENTIMIENTO DE MARCA:
+   fashion boutique • premium • femenino • juvenil • TikTok aesthetic
+   elegante pero accesible • mobile-first • brillante • comercial
 */
 
+/* ═════════════════════════════════════════════════════════════════
+   1. PALETA DE COLORES PRINCIPAL
+   ═════════════════════════════════════════════════════════════════ */
+
 :root {
-  /* ============================================================
-     1. COLORES PRINCIPALES
-     ============================================================ */
-  
-  /* Lila (primario de marca) */
-  --primary-color: #a855f7;
-  --primary-light: #d8b4fe;
-  --primary-soft: #f3e8ff;
-  
-  /* Rosa / Blush (acento femenino) */
-  --blush-primary: #F48FB1;
-  --blush-light: #FFF0F5;
-  --blush-soft: #F8BBD0;
-  --blush-deep: #F06292;
-  
-  /* Rosa Fucsia / Rose Gold (CTA, precios, énfasis) */
-  --rose-gold: #D81B60;
-  --rose-deep: #C2185B;
-  --rose-light: #FCE4EC;
-  --rose-soft: #F48FB1;
-  
-  /* Lila suave (complementario) */
-  --lilac-soft: #CE93D8;
-  --lilac-light: #F3E5F5;
-  --lilac-deep: #7c3aed;
-  
-  /* Secundarios y acentos */
-  --secondary-color: #c084fc;
-  --accent-color: #9333ea;
-  --accent-soft: #f3e8ff;
-  --logo-dot-color: #c77dff;
-  
-  /* Verde menta (descuentos, éxito — femenino) */
-  --mint-primary: #8BC34A;
-  --mint-light: #F1F8E9;
-  --mint-soft: #DCEDC8;
-  --success-color: #558B2F;
-  
-  /* ============================================================
-     2. HERO SECTION
-     ============================================================ */
-  --hero-text: #ffffff;
-  --hero-soft-bg: linear-gradient(135deg, #C2185B, #8E24AA);
-  --hero-soft-text: #ffffff;
-  --hero-soft-border: transparent;
-  
-  /* ============================================================
-     3. COLORES DE FONDO Y TEXTO
-     ============================================================ */
-  --bg-color: #faf5ff;
-  --bg-blush: linear-gradient(180deg, #FFF0F5 0%, #FAF5FF 40%, #F3E5F5 100%);
-  --card-bg: rgba(255, 255, 255, 0.92);
-  --white: #ffffff;
-  
-  --text-main: #3b1e5e;
-  --text-dark: #4a3540;
-  --text-light: #8561a8;
-  --text-muted: #b08da0;
-  --text-gray: var(--text-light);
-  
-  /* ============================================================
-     4. TIPOGRAFÍA (Fuentes)
-     ============================================================ */
-  --font-logo: 'Bebas Neue', sans-serif;
-  --font-headings: 'Poppins', sans-serif;
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Poppins', sans-serif;
-  
-  /* TAMAÑOS DE FUENTE */
-  --fs-logo: 2.8rem;
-  --fs-h1: clamp(2.4rem, 5vw, 4.2rem);
-  --fs-h2: clamp(1.8rem, 4vw, 2.8rem);
-  --fs-h3: 1.5rem;
-  --fs-h4: 1.25rem;
-  --fs-body: 1rem;
-  --fs-small: 0.875rem;
-  --fs-tiny: 0.75rem;
-  --ls-logo: 0.08em;
-  
-  /* ============================================================
-     5. BORDES Y SOMBRAS
-     ============================================================ */
-  --border-color: rgba(232, 121, 168, 0.18);
-  --border-color-light: #F8BBD0;
-  --border-radius: 20px;
-  --border-radius-btn: 50px;
-  --border-radius-card: 18px;
-  
-  /* Sombras femeninas (rosa/lila) */
-  --shadow-soft: 0 10px 40px rgba(168, 85, 247, 0.12);
-  --shadow-card: 0 8px 30px rgba(192, 132, 252, 0.10);
-  --shadow-blush: 0 4px 20px rgba(194, 121, 168, 0.08);
-  --shadow-rose: 0 6px 20px rgba(244, 143, 177, 0.30);
-  --shadow-lilac: 0 4px 12px rgba(206, 147, 216, 0.12);
-  --shadow-premium: 0 20px 60px rgba(120, 78, 140, 0.15);
-  --shadow-elevated: 0 24px 48px rgba(80, 50, 110, 0.18);
-  
-  /* ============================================================
-     6. GRADIENTES FEMENINOS
-     ============================================================ */
-  --gradient-feminine: linear-gradient(135deg, #F48FB1, #CE93D8);
-  --gradient-feminine-soft: linear-gradient(135deg, #FFF0F5, #F3E5F5);
-  --gradient-hero: linear-gradient(90deg, #C2185B, #8E24AA);
-  --gradient-rose-lilac: linear-gradient(135deg, #F48FB1 0%, #CE93D8 50%, #B39DDB 100%);
-  --gradient-bottom-bar: linear-gradient(90deg, #FCE4EC, #F3E5F5);
-  
-  /* ============================================================
-     7. TOKENS DORADOS (Marquee, premium)
-     ============================================================ */
-  --gold-primary: #FFD700;
-  --gold-deep: #FFA500;
-  --gold-light: #FFE066;
-  --gold-gradient: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
-  --gold-gradient-shine: linear-gradient(90deg, #FFD700 0%, #FFF5B3 40%, #FFA500 60%, #FFD700 100%);
-  --gold-text-gradient: linear-gradient(135deg, #FFD700, #FFA500, #FFE066);
-  --shadow-gold: 0 10px 30px rgba(255, 165, 0, 0.25);
-  
-  /* ============================================================
-     8. TOKENS DE ESTADO / UTILIDAD
-     ============================================================ */
-  --error-bg: linear-gradient(135deg, #FFEBEE, #FFF3E0);
-  --error-border: #FFCDD2;
-  --error-text: #C62828;
-  --success-bg: #F1F8E9;
-  --success-border: #C5E1A5;
-  --info-bg: #E3F2FD;
-  
-  /* ============================================================
-     9. OVERLAYS Y GLASSMORPHISM
-     ============================================================ */
-  --dark-overlay: rgba(20, 10, 15, 0.55);
-  --dark-overlay-strong: rgba(20, 10, 15, 0.75);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(232, 121, 168, 0.25);
-  
-  /* ============================================================
-     10. ANIMACIONES
-     ============================================================ */
-  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* ── Primary Pink (corazón de la marca) ── */
+  --color-primary:          #F25AD9;
+  --color-primary-dark:     #D93CBF;
+  --color-primary-light:    #F8B6EA;
+  --color-primary-soft:     #FFF0F9;
+  --color-primary-50:       #FFF0F9;
+  --color-primary-100:      #FDE0F3;
+  --color-primary-200:      #F8B6EA;
+  --color-primary-300:      #F585D9;
+  --color-primary-400:      #F25AD9;
+  --color-primary-500:      #E036C0;
+  --color-primary-600:      #D93CBF;
+  --color-primary-700:      #B82EA3;
+  --color-primary-800:      #942484;
+  --color-primary-900:      #781E6B;
+
+  /* ── Gold Accent (elegancia, premium, percha dorada) ── */
+  --color-gold:             #F6E36B;
+  --color-gold-dark:        #E8D25F;
+  --color-gold-light:       #FFF8D6;
+  --color-gold-soft:        #FFFBE8;
+  --color-gold-50:          #FFFBE8;
+  --color-gold-100:         #FFF8D6;
+  --color-gold-200:         #F6E36B;
+  --color-gold-300:         #F0D94D;
+  --color-gold-400:         #E8D25F;
+  --color-gold-500:         #D4B93A;
+  --color-gold-600:         #C4A82E;
+
+  /* ── Fashion Red (tacones, énfasis, ofertas) ── */
+  --color-red:              #FF4B5C;
+  --color-red-dark:         #E03345;
+  --color-red-light:        #FFE5E8;
+  --color-red-soft:         #FFF0F2;
+
+  /* ── Denim Blue (jeans, confianza, contraste) ── */
+  --color-denim:            #1D3557;
+  --color-denim-light:      #457B9D;
+  --color-denim-soft:       #E8F0F8;
+
+  /* ── Elegant Black (tipografía principal, contraste) ── */
+  --color-black:            #111111;
+  --color-black-800:        #2A2A2A;
+  --color-black-700:        #3D3D3D;
+  --color-black-600:        #555555;
+
+  /* ── Neutral Gray (soporte, bordes, texto secundario) ── */
+  --color-gray-50:          #FAFAFA;
+  --color-gray-100:         #F4F4F4;
+  --color-gray-200:         #E9E9E9;
+  --color-gray-300:         #D4D4D4;
+  --color-gray-400:         #A3A3A3;
+  --color-gray-500:         #737373;
+  --color-gray-600:         #666666;
+  --color-gray-700:         #404040;
+  --color-gray-800:         #262626;
+  --color-gray-900:         #171717;
+
+  /* ── Soft White (fondos, tarjetas, aire) ── */
+  --color-white:            #FFFFFF;
+  --color-white-soft:       #FFF8FC;
+  --color-white-warm:       #FFFAF5;
+  --color-bg-main:          #FFF8FC;
+  --color-bg-alt:           #FFF0F9;
+  --color-bg-cream:         #FFFAF0;
+
+  /* ── Semantic Colors (estados funcionales) ── */
+  --color-success:          #22C55E;
+  --color-success-bg:       #DCFCE7;
+  --color-success-border:   #BBF7D0;
+  --color-warning:          #F59E0B;
+  --color-warning-bg:       #FEF3C7;
+  --color-warning-border:   #FDE68A;
+  --color-error:            #FF4B5C;
+  --color-error-bg:         #FFE5E8;
+  --color-error-border:     #FECDD3;
+  --color-info:             #3B82F6;
+  --color-info-bg:          #DBEAFE;
+
+  /* ── Gradients (degradados de marca) ── */
+  --gradient-primary:       linear-gradient(135deg, #F25AD9 0%, #D93CBF 50%, #FF8BEA 100%);
+  --gradient-primary-soft:  linear-gradient(135deg, #FFF0F9 0%, #FDE0F3 100%);
+  --gradient-gold:          linear-gradient(135deg, #F6E36B 0%, #FFD84D 50%, #E8D25F 100%);
+  --gradient-gold-soft:     linear-gradient(135deg, #FFFBE8 0%, #FFF8D6 100%);
+  --gradient-hero:           linear-gradient(135deg, #F25AD9 0%, #FF4B5C 50%, #F6E36B 100%);
+  --gradient-hero-dark:     linear-gradient(135deg, #D93CBF 0%, #1D3557 100%);
+  --gradient-card:          linear-gradient(180deg, #FFFFFF 0%, #FFF8FC 100%);
+  --gradient-shimmer:       linear-gradient(90deg, transparent 0%, rgba(246,227,107,0.3) 50%, transparent 100%);
+  --gradient-overlay:       linear-gradient(180deg, transparent 0%, rgba(17,17,17,0.6) 100%);
+  --gradient-live:          linear-gradient(135deg, #FF4B5C 0%, #F25AD9 100%);
+  --gradient-sale:          linear-gradient(135deg, #FF4B5C 0%, #FF8B5C 100%);
+
+  /* ═════════════════════════════════════════════════════════════════
+     2. TIPOGRAFÍA
+     ═════════════════════════════════════════════════════════════════ */
+
+  /* ── Familias ── */
+  --font-heading:           'Playfair Display', 'Georgia', serif;
+  --font-body:              'Poppins', 'Inter', -apple-system, sans-serif;
+  --font-accent:            'Great Vibes', 'Allura', 'Brush Script MT', cursive;
+  --font-mono:              'SF Mono', 'Fira Code', monospace;
+
+  /* ── Escala tipográfica (mobile-first, 1.25 ratio) ── */
+  --text-xs:     0.75rem;    /* 12px */
+  --text-sm:     0.875rem;   /* 14px */
+  --text-base:   1rem;       /* 16px */
+  --text-lg:     1.125rem;   /* 18px */
+  --text-xl:     1.25rem;    /* 20px */
+  --text-2xl:    1.5rem;     /* 24px */
+  --text-3xl:    1.875rem;   /* 30px */
+  --text-4xl:    2.25rem;    /* 36px */
+  --text-5xl:    3rem;       /* 48px */
+  --text-6xl:    3.75rem;    /* 60px */
+  --text-7xl:    4.5rem;     /* 72px */
+
+  /* ── Pesos ── */
+  --font-light:    300;
+  --font-normal:   400;
+  --font-medium:   500;
+  --font-semibold: 600;
+  --font-bold:     700;
+  --font-black:    900;
+
+  /* ── Altura de línea ── */
+  --leading-tight:   1.2;
+  --leading-snug:    1.375;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:   2;
+
+  /* ── Tracking ── */
+  --tracking-tight:   -0.025em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.025em;
+  --tracking-wider:   0.05em;
+  --tracking-widest:  0.1em;
+
+  /* ═════════════════════════════════════════════════════════════════
+     3. ESPACIADO (4pt / 0.25rem base grid)
+     ═════════════════════════════════════════════════════════════════ */
+
+  --space-0:   0;
+  --space-1:   0.25rem;   /* 4px  */
+  --space-2:   0.5rem;    /* 8px  */
+  --space-3:   0.75rem;   /* 12px */
+  --space-4:   1rem;      /* 16px */
+  --space-5:   1.25rem;   /* 20px */
+  --space-6:   1.5rem;    /* 24px */
+  --space-8:   2rem;      /* 32px */
+  --space-10:  2.5rem;    /* 40px */
+  --space-12:  3rem;      /* 48px */
+  --space-16:  4rem;      /* 64px */
+  --space-20:  5rem;      /* 80px */
+  --space-24:  6rem;      /* 96px */
+
+  /* ═════════════════════════════════════════════════════════════════
+     4. BORDES Y RADIO
+     ═════════════════════════════════════════════════════════════════ */
+
+  --radius-none:  0;
+  --radius-sm:    6px;
+  --radius-md:    10px;
+  --radius-lg:    14px;
+  --radius-xl:    18px;
+  --radius-2xl:   24px;
+  --radius-3xl:   32px;
+  --radius-full:  9999px;
+  --radius-pill:  50px;
+
+  /* ── Bordes de color ── */
+  --border-light:   1px solid var(--color-gray-200);
+  --border-medium:  1px solid var(--color-gray-300);
+  --border-primary: 1.5px solid var(--color-primary-300);
+  --border-gold:    1.5px solid var(--color-gold-200);
+
+  /* ═════════════════════════════════════════════════════════════════
+     5. SOMBRAS (elevación, profundidad, "brillo")
+     ═════════════════════════════════════════════════════════════════ */
+
+  --shadow-xs:   0 1px 2px  rgba(242, 90, 217, 0.04);
+  --shadow-sm:   0 2px 8px  rgba(242, 90, 217, 0.06);
+  --shadow-md:   0 4px 16px rgba(242, 90, 217, 0.08);
+  --shadow-lg:   0 8px 30px rgba(242, 90, 217, 0.10);
+  --shadow-xl:   0 12px 40px rgba(242, 90, 217, 0.14);
+  --shadow-2xl:  0 20px 60px rgba(242, 90, 217, 0.16);
+
+  --shadow-gold-sm:  0 2px 8px  rgba(246, 227, 107, 0.20);
+  --shadow-gold-md:  0 4px 16px rgba(246, 227, 107, 0.25);
+  --shadow-gold-lg:  0 8px 24px rgba(246, 227, 107, 0.30);
+
+  --shadow-card:     0 4px 20px rgba(17, 17, 17, 0.06);
+  --shadow-elevated: 0 8px 30px rgba(17, 17, 17, 0.10);
+  --shadow-modal:    0 20px 50px rgba(17, 17, 17, 0.20);
+  --shadow-inset:    inset 0 2px 4px rgba(17, 17, 17, 0.04);
+
+  /* ═════════════════════════════════════════════════════════════════
+     6. Z-INDEX (escala consistente)
+     ═════════════════════════════════════════════════════════════════ */
+
+  --z-base:      0;
+  --z-dropdown:  50;
+  --z-sticky:    100;
+  --z-fixed:     200;
+  --z-overlay:   300;
+  --z-modal:     400;
+  --z-popover:   500;
+  --z-tooltip:   600;
+  --z-toast:     700;
+  --z-max:       999;
+
+  /* ═════════════════════════════════════════════════════════════════
+     7. TRANSICIONES Y ANIMACIONES
+     ═════════════════════════════════════════════════════════════════ */
+
+  --duration-instant:   0ms;
+  --duration-fast:      150ms;
+  --duration-normal:    250ms;
+  --duration-slow:      400ms;
+  --duration-slower:    600ms;
+
+  --ease-linear:        linear;
+  --ease-in:            cubic-bezier(0.4, 0, 1, 1);
+  --ease-out:           cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out:        cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce:        cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring:        cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  --transition-fast:    all var(--duration-fast) var(--ease-out);
+  --transition-normal:  all var(--duration-normal) var(--ease-out);
+  --transition-slow:    all var(--duration-slow) var(--ease-in-out);
+  --transition-bounce:  all var(--duration-normal) var(--ease-bounce);
+  --transition-spring:all var(--duration-normal) var(--ease-spring);
+
+  /* ── Keyframes globales (referencia, aplicar en CSS inline o clases) ── */
+  --animate-fade-in:      fadeIn var(--duration-normal) var(--ease-out);
+  --animate-slide-up:     slideUp var(--duration-normal) var(--ease-out);
+  --animate-scale-in:     scaleIn var(--duration-normal) var(--ease-bounce);
+  --animate-shimmer:      shimmer 2s linear infinite;
+  --animate-pulse-glow:   pulseGlow 2s ease-in-out infinite;
+  --animate-bounce-soft:  bounceSoft 2s ease-in-out infinite;
+
+  /* ═════════════════════════════════════════════════════════════════
+     8. SUPERFICIES (backgrounds, glassmorphism, overlays)
+     ═════════════════════════════════════════════════════════════════ */
+
+  --surface-base:       var(--color-bg-main);
+  --surface-card:       var(--color-white);
+  --surface-card-alt:   var(--color-white-soft);
+  --surface-elevated:   var(--color-white);
+  --surface-overlay:    rgba(17, 17, 17, 0.45);
+  --surface-overlay-strong: rgba(17, 17, 17, 0.70);
+  --surface-scrim:      rgba(17, 17, 17, 0.55);
+
+  --glass-bg:           rgba(255, 255, 255, 0.80);
+  --glass-bg-strong:    rgba(255, 255, 255, 0.95);
+  --glass-border:       rgba(242, 90, 217, 0.18);
+  --glass-border-light: rgba(255, 255, 255, 0.30);
+  --glass-blur:         blur(16px) saturate(1.2);
+  --glass-blur-strong:  blur(24px) saturate(1.4);
+
+  /* ═════════════════════════════════════════════════════════════════
+     9. COMPONENTES (tokens de estilo reutilizables)
+     ═════════════════════════════════════════════════════════════════ */
+
+  /* ── Botón Primario (CTA) ── */
+  --btn-primary-bg:       var(--gradient-primary);
+  --btn-primary-color:    var(--color-white);
+  --btn-primary-shadow:   0 6px 20px rgba(242, 90, 217, 0.35);
+  --btn-primary-shadow-hover: 0 8px 28px rgba(242, 90, 217, 0.45);
+  --btn-primary-radius:   var(--radius-pill);
+  --btn-primary-padding:  var(--space-3) var(--space-6);
+  --btn-primary-font:     var(--font-body);
+  --btn-primary-weight:   var(--font-semibold);
+  --btn-primary-size:     var(--text-sm);
+
+  /* ── Botón Outline ── */
+  --btn-outline-bg:       transparent;
+  --btn-outline-color:    var(--color-primary);
+  --btn-outline-border:   1.5px solid var(--color-primary-300);
+  --btn-outline-radius:   var(--radius-pill);
+  --btn-outline-shadow-hover: 0 4px 12px rgba(242, 90, 217, 0.15);
+
+  /* ── Botón Gold (premium, destacado) ── */
+  --btn-gold-bg:          var(--gradient-gold);
+  --btn-gold-color:       var(--color-black);
+  --btn-gold-shadow:      var(--shadow-gold-md);
+  --btn-gold-shadow-hover: var(--shadow-gold-lg);
+  --btn-gold-radius:      var(--radius-pill);
+
+  /* ── Product Card ── */
+  --card-bg:              var(--color-white);
+  --card-radius:          var(--radius-xl);
+  --card-padding:         var(--space-3);
+  --card-shadow:          var(--shadow-card);
+  --card-shadow-hover:    var(--shadow-elevated);
+  --card-border:          1px solid rgba(242, 90, 217, 0.08);
+  --card-image-radius:    var(--radius-lg);
+  --card-transition:      var(--transition-normal);
+
+  /* ── Navbar ── */
+  --navbar-height:          64px;
+  --navbar-bg:              var(--glass-bg);
+  --navbar-blur:            var(--glass-blur);
+  --navbar-border:          1px solid var(--glass-border);
+  --navbar-shadow:          var(--shadow-sm);
+
+  /* ── Badge ── */
+  --badge-sale-bg:          var(--gradient-sale);
+  --badge-sale-color:       var(--color-white);
+  --badge-new-bg:           var(--color-gold);
+  --badge-new-color:        var(--color-black);
+  --badge-live-bg:          var(--gradient-live);
+  --badge-live-color:       var(--color-white);
+  --badge-radius:           var(--radius-sm);
+  --badge-padding:          0.25rem 0.6rem;
+  --badge-font:             var(--text-xs);
+  --badge-weight:           var(--font-bold);
+
+  /* ── Hero Section ── */
+  --hero-min-height:        70vh;
+  --hero-gradient:          var(--gradient-hero);
+  --hero-text-color:        var(--color-white);
+  --hero-accent-color:      var(--color-gold);
+
+  /* ── Banner Promocional ── */
+  --banner-radius:          var(--radius-2xl);
+  --banner-padding:         var(--space-6);
+  --banner-gradient:        var(--gradient-primary);
+  --banner-text:            var(--color-white);
+
+  /* ── Input / Form ── */
+  --input-bg:               var(--color-white);
+  --input-border:           1.5px solid var(--color-gray-200);
+  --input-border-focus:     1.5px solid var(--color-primary-300);
+  --input-radius:           var(--radius-lg);
+  --input-padding:          var(--space-3) var(--space-4);
+  --input-placeholder:      var(--color-gray-400);
+  --input-focus-ring:       0 0 0 3px rgba(242, 90, 217, 0.12);
+  --input-error-border:     1.5px solid var(--color-error);
+  --input-error-ring:       0 0 0 3px rgba(255, 75, 92, 0.12);
+
+  /* ── Modal ── */
+  --modal-bg:               var(--color-white);
+  --modal-radius:           var(--radius-2xl);
+  --modal-shadow:           var(--shadow-modal);
+  --modal-overlay:          var(--surface-overlay);
+  --modal-padding:          var(--space-6);
+  --modal-max-width:        520px;
+
+  /* ── Tab / Filter ── */
+  --tab-bg:                 transparent;
+  --tab-bg-active:          var(--color-primary-soft);
+  --tab-color:              var(--color-gray-600);
+  --tab-color-active:       var(--color-primary);
+  --tab-border-active:      2px solid var(--color-primary);
+  --tab-radius:             var(--radius-pill);
+  --tab-padding:            var(--space-2) var(--space-4);
+
+  /* ── Carrito / Checkout ── */
+  --cart-bg:                var(--color-white);
+  --cart-radius:            var(--radius-xl);
+  --cart-shadow:            var(--shadow-lg);
+  --checkout-step-active:   var(--color-primary);
+  --checkout-step-inactive: var(--color-gray-300);
+  --checkout-accent:        var(--color-gold);
+
+  /* ═════════════════════════════════════════════════════════════════
+     10. TOKENS DE RESPONSIVE / BREAKPOINTS
+     ═════════════════════════════════════════════════════════════════ */
+
+  --screen-sm:   640px;
+  --screen-md:   768px;
+  --screen-lg:   1024px;
+  --screen-xl:   1280px;
+  --screen-2xl:  1536px;
+
+  --container-sm:   100%;
+  --container-md:   720px;
+  --container-lg:   960px;
+  --container-xl:   1140px;
+  --container-padding: var(--space-4);
+
+  /* ═════════════════════════════════════════════════════════════════
+     11. TOKENS ESPECIALES (live shopping, stories, marquesina)
+     ═════════════════════════════════════════════════════════════════ */
+
+  --live-badge-bg:          var(--gradient-live);
+  --live-badge-pulse:       rgba(255, 75, 92, 0.4);
+  --live-border:            2px solid var(--color-red);
+  --marquee-bg:             var(--color-black);
+  --marquee-text:           var(--color-gold);
+  --marquee-gradient:       linear-gradient(90deg, #111 0%, #2A2A2A 50%, #111 100%);
+  --story-ring:             linear-gradient(135deg, #F25AD9, #FF4B5C, #F6E36B);
+  --story-ring-live:        linear-gradient(135deg, #FF4B5C, #FF8B5C);
+
+  /* ═════════════════════════════════════════════════════════════════
+     12. MISC / UTILIDADES
+     ═════════════════════════════════════════════════════════════════ */
+
+  --max-width-content:      1200px;
+  --max-width-narrow:       680px;
+  --header-height:            64px;
+  --bottom-nav-height:        64px;
+  --safe-area-top:            env(safe-area-inset-top);
+  --safe-area-bottom:         env(safe-area-inset-bottom);
+  --safe-area-left:           env(safe-area-inset-left);
+  --safe-area-right:          env(safe-area-inset-right);
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   UTILIDADES CSS RÁPIDAS (clases de una línea para uso inline)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Fondos de marca */
+.bg-brand        { background: var(--color-primary); }
+.bg-brand-soft   { background: var(--color-primary-soft); }
+.bg-gold         { background: var(--color-gold); }
+.bg-gold-soft    { background: var(--color-gold-soft); }
+.bg-cream        { background: var(--color-bg-cream); }
+.bg-blush        { background: var(--color-bg-alt); }
+
+/* Texto de marca */
+.text-brand      { color: var(--color-primary); }
+.text-brand-dark { color: var(--color-primary-dark); }
+.text-gold       { color: var(--color-gold-dark); }
+.text-red        { color: var(--color-red); }
+.text-denim      { color: var(--color-denim); }
+
+/* Gradientes utilitarios */
+.gradient-brand  { background: var(--gradient-primary); }
+.gradient-gold   { background: var(--gradient-gold); }
+.gradient-hero   { background: var(--gradient-hero); }
+
+/* Sombras de marca */
+.shadow-brand    { box-shadow: var(--shadow-md); }
+.shadow-gold     { box-shadow: var(--shadow-gold-md); }
+.shadow-card     { box-shadow: var(--shadow-card); }
+
+/* Bordes redondeados de marca */
+.rounded-brand   { border-radius: var(--radius-xl); }
+.rounded-pill    { border-radius: var(--radius-pill); }
