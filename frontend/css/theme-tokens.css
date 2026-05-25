@@ -434,6 +434,60 @@
   --safe-area-bottom:         env(safe-area-inset-bottom);
   --safe-area-left:           env(safe-area-inset-left);
   --safe-area-right:          env(safe-area-inset-right);
+
+  /* ═════════════════════════════════════════════════════════════════
+     13. LEGACY ALIASES — compatibilidad con style.css, admin-theme.css,
+     admin-dashboard.css y paneles admin existentes.
+     NO ELIMINAR hasta que todos los CSS legacy sean migrados.
+     ═════════════════════════════════════════════════════════════════ */
+  --primary-color:          var(--color-primary);
+  --primary-light:          var(--color-primary-light);
+  --secondary-color:        var(--color-secondary);
+  --accent-color:           var(--color-accent);
+  --accent-soft:            var(--color-accent-soft);
+  --rose-deep:              var(--lilac-deep);
+  --logo-dot-color:         var(--color-primary);
+  --hero-text:              var(--color-white);
+  --hero-soft-bg:           var(--color-primary);
+  --hero-soft-text:         var(--color-white);
+  --hero-soft-border:       transparent;
+  --bg-color:               var(--color-bg-main);
+  --card-bg:                var(--color-white);
+  --white:                  var(--color-white);
+  --border-color:           var(--color-gray-200);
+  --border-radius:          var(--radius-xl);
+  --border-radius-btn:      var(--radius-pill);
+  --shadow-soft:            var(--shadow-md);
+  --shadow-card:            var(--shadow-card);
+  --text-dark:              var(--color-secondary);
+  --text-gray:              var(--text-light);
+  --transition:             var(--transition-normal);
+  --font-headings:          var(--font-heading);
+  --font-logo:              var(--font-logo);
+  --font-display:           var(--font-display);
+  --font-body:              var(--font-body);
+  --fs-logo:                var(--text-3xl);
+  --fs-h1:                  var(--text-5xl);
+  --fs-h2:                  var(--text-3xl);
+  --fs-h3:                  var(--text-2xl);
+  --fs-h4:                  var(--text-xl);
+  --fs-body:                var(--text-base);
+  --fs-small:               var(--text-sm);
+  --fs-tiny:                var(--text-xs);
+  --ls-logo:                var(--tracking-wider);
+  --gold-primary:           var(--color-gold);
+  --gold-deep:              var(--color-gold-dark);
+  --gold-light:             var(--color-gold-light);
+  --gold-gradient:          var(--gradient-gold);
+  --gold-gradient-shine:    var(--gradient-gold);
+  --gold-text-gradient:     var(--gradient-gold);
+  --dark-overlay:           var(--surface-overlay);
+  --dark-overlay-strong:    var(--surface-overlay-strong);
+  --glass-bg:               var(--glass-bg);
+  --glass-border:           var(--glass-border);
+  --shadow-premium:         var(--shadow-premium);
+  --shadow-elevated:        var(--shadow-elevated);
+  --shadow-gold:            var(--shadow-gold-lg);
 }
 
 /* ════════════════════════════════════════════════════════════════════
