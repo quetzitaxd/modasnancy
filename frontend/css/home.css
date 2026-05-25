@@ -314,22 +314,43 @@
     overflow: hidden;
     margin-bottom: 0.3rem;
 }
+
+/* Rating row: stars + sold */
 .product-temu__rating {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.25rem;
     margin-bottom: 0.35rem;
+    min-height: 16px;
 }
+.product-temu__stars {
+    display: flex !important;
+    align-items: center;
+    gap: 0.1rem;
+}
+.product-temu__stars svg,
 .product-temu__rating svg {
-    width: 12px;
-    height: 12px;
-    color: #F6E36B;  /* gold star */
+    width: 12px !important;
+    height: 12px !important;
+    color: #F6E36B;
     fill: #F6E36B;
+    display: inline-block !important;
+    max-width: none !important;
 }
 .product-temu__sold {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
     font-size: 0.6rem;
     color: var(--color-gray-500);
-    margin-left: auto;
+    flex-shrink: 0;
+}
+.product-temu__sold svg {
+    width: 10px !important;
+    height: 10px !important;
+    display: inline-block !important;
+    max-width: none !important;
 }
 
 /* Price row */
@@ -338,18 +359,21 @@
     align-items: baseline;
     gap: 0.35rem;
     flex-wrap: wrap;
+    margin-bottom: 0.2rem;
 }
 .product-temu__price {
     font-size: var(--fs-body);
     font-weight: 700;
     color: var(--color-red);
 }
-.product-temu__price--original {
+.product-temu__price--original,
+.product-temu__price-old {
     font-size: 0.65rem;
     color: var(--color-gray-400);
     text-decoration: line-through;
 }
-.product-temu__discount {
+.product-temu__discount,
+.product-temu__price-discount {
     font-size: 0.6rem;
     color: var(--color-red);
     background: var(--color-red-soft);
@@ -379,8 +403,10 @@
     font-weight: 500;
 }
 .product-temu__shipping svg {
-    width: 12px;
-    height: 12px;
+    width: 12px !important;
+    height: 12px !important;
+    display: inline-block !important;
+    max-width: none !important;
 }
 
 /* Wholesaler tag */
@@ -390,9 +416,7 @@
     margin-top: 0.2rem;
 }
 
-/* ═────────────────────────────────────────────────────────────────
-   EXTRA CARD ELEMENTS (urgency, actions, cart button, etc.)
-   ═────────────────────────────────────────────────────────────────*/
+/* --- EXTRA CARD ELEMENTS (urgency, actions, cart button, etc.) --- */
 .product-temu__actions {
     display: flex;
     align-items: center;
@@ -414,6 +438,13 @@
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(242, 90, 217, 0.25);
     transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.product-temu__cart-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+    display: inline-block !important;
+    max-width: none !important;
 }
 .product-temu__cart-btn:hover {
     transform: scale(1.1);
@@ -433,34 +464,11 @@
     font-weight: 600;
 }
 .product-temu__urgency svg {
-    width: 12px;
-    height: 12px;
-}
-
-/* Price helpers (aliases for JS-generated markup) */
-.product-temu__price-old {
-    font-size: 0.65rem;
-    color: var(--color-gray-400);
-    text-decoration: line-through;
-}
-.product-temu__price-discount {
-    font-size: 0.6rem;
-    color: var(--color-red);
-    background: var(--color-red-soft);
-    padding: 1px 5px;
-    border-radius: 4px;
-    font-weight: 600;
-}
-
-/* Stars row */
-.product-temu__stars {
-    display: flex;
-    align-items: center;
-    gap: 0.1rem;
-}
-.product-temu__stars svg {
-    width: 12px;
-    height: 12px;
+    width: 12px !important;
+    height: 12px !important;
+    display: inline-block !important;
+    max-width: none !important;
+    flex-shrink: 0;
 }
 
 /* No results */
