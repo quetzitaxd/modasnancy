@@ -6,7 +6,7 @@
  * - Stale-While-Revalidate: HTML
  */
 
-const CACHE_NAME = 'modasnancy-cache-v18';
+const CACHE_NAME = 'modasnancy-cache-v19';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
