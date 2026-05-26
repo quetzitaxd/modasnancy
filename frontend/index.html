@@ -408,5 +408,10 @@
     <script src="/js/pwa.js"></script>
     <script src="/js/home.js?v=20260530"></script>
     <script src="/js/menu-drawer.js?v=20260530"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Cart.init().catch(console.error);
+        });
+    </script>
 </body>
 </html>

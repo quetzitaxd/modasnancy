@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error cargando productos para validación:', err);
     }
 
-    renderCheckoutCart();
     setupPaymentMethodToggle();
     setupCardFormatting();
     setupPhoneFormatting();
@@ -46,6 +45,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!form) {
         return;
     }
+
+    // Re-renderizar checkout cuando el carrito cambie desde otras vistas
+    window.addEventListener('cart:updated', () => {
+        renderCheckoutCart();
+    });
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -78,9 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (removedCount > 0) {
-            localStorage.setItem('modasnancy_cart', JSON.stringify(validCart));
-            updateCartCount();
-            renderCheckoutCart();
+            window.Cart.setItems(validCart);
             const errorMsg = document.getElementById('error-message');
             if (errorMsg) {
                 errorMsg.textContent = `${removedCount} producto(s) ya no está(n) disponible(s) y fue(ron) removido(s) del carrito.`;
@@ -222,8 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Éxito
-            localStorage.removeItem('modasnancy_cart');
-            updateCartCount();
+            window.Cart.clear();
 
             const checkoutContent = document.getElementById('checkout-content');
             const successMessage = document.getElementById('success-message');
@@ -396,8 +397,7 @@ async function retryPayment(orderId) {
         }
 
         // Éxito
-        localStorage.removeItem('modasnancy_cart');
-        updateCartCount();
+        window.Cart.clear();
         const checkoutContent = document.getElementById('checkout-content');
         const successMessage = document.getElementById('success-message');
         if (checkoutContent) checkoutContent.style.display = 'none';
@@ -470,271 +470,4 @@ function makeImage(src, fallback, alt) {
     return img;
 }
 
-function calculateTotal(cart) {
-    const qtyByProduct = {};
-    cart.forEach(item => {
-        const pid = item.product_id || item.sku;
-        if (!qtyByProduct[pid]) qtyByProduct[pid] = 0;
-        qtyByProduct[pid] += (Number(item.quantity) || 0);
-    });
 
-    return cart.reduce((sum, item) => {
-        // Encontrar datos frescos del producto
-        const fresh = freshProducts.find(p => p.id === item.product_id);
-
-        const price = safeMoney(fresh ? fresh.price : item?.price);
-        const wholesale_enabled = fresh ? fresh.wholesale_enabled : item?.wholesale_enabled;
-        const wholesale_min_qty = fresh ? fresh.wholesale_min_qty : item?.wholesale_min_qty;
-        const wholesale_discount_percent = fresh ? fresh.wholesale_discount_percent : item?.wholesale_discount_percent;
-        const bundle_2x_enabled = fresh ? fresh.bundle_2x_enabled : item?.bundle_2x_enabled;
-        const bundle_2x_price = fresh ? fresh.bundle_2x_price : item?.bundle_2x_price;
-
-        const qty = Number(item?.quantity);
-        const quantity = Number.isFinite(qty) && qty > 0 ? qty : 1;
-
-        const pid = item.product_id || item.sku;
-        const totalProductQty = qtyByProduct[pid] || 0;
-
-        let finalPrice = price;
-        if (wholesale_enabled && totalProductQty >= wholesale_min_qty && wholesale_discount_percent > 0) {
-            finalPrice = price * (1 - (wholesale_discount_percent / 100));
-        } else if (bundle_2x_enabled && bundle_2x_price > 0 && totalProductQty >= 2) {
-            const pairs = Math.floor(totalProductQty / 2);
-            const singles = totalProductQty % 2;
-            const totalBundlePrice = (pairs * bundle_2x_price) + (singles * price);
-            finalPrice = totalBundlePrice / totalProductQty;
-        }
-
-        return sum + (finalPrice * quantity);
-    }, 0);
-}
-
-function renderCheckoutCart() {
-    const cart = getCart();
-
-    const checkoutContent = document.getElementById('checkout-content');
-    const emptyCart = document.getElementById('empty-cart');
-
-    if (cart.length === 0) {
-        if (checkoutContent) {
-            checkoutContent.style.display = 'none';
-        }
-        if (emptyCart) {
-            emptyCart.style.display = 'block';
-        }
-        return;
-    }
-
-    if (checkoutContent) {
-        checkoutContent.style.display = 'grid';
-    }
-    if (emptyCart) {
-        emptyCart.style.display = 'none';
-    }
-
-    const container = document.getElementById('cart-items');
-    if (!container) {
-        return;
-    }
-
-    container.textContent = '';
-
-    cart.forEach((item, index) => {
-        const price = safeMoney(item?.price);
-        const qty = Number(item?.quantity);
-        const quantity = Number.isFinite(qty) && qty > 0 ? qty : 1;
-
-        const row = document.createElement('div');
-        row.className = 'cart-item';
-
-        const image = makeImage(item?.image, 'https://via.placeholder.com/80x100?text=Img', item?.name);
-
-        const details = document.createElement('div');
-        details.className = 'cart-item-details';
-
-        const head = document.createElement('div');
-        head.style.display = 'flex';
-        head.style.justifyContent = 'space-between';
-        head.style.marginBottom = '0.5rem';
-
-        const title = document.createElement('div');
-        title.className = 'cart-item-title';
-        title.textContent = safeText(item?.name) || 'Producto';
-
-        const priceLabel = document.createElement('div');
-        priceLabel.style.fontWeight = '600';
-        priceLabel.style.color = 'var(--accent-color)';
-        
-        // Wholesale logic for display
-        const qtyByProduct = {};
-        cart.forEach(it => {
-            const pid = it.product_id || it.sku;
-            if (!qtyByProduct[pid]) qtyByProduct[pid] = 0;
-            qtyByProduct[pid] += (Number(it.quantity) || 0);
-        });
-
-        const pid = item.product_id || item.sku;
-        const totalProductQty = qtyByProduct[pid] || 0;
-
-        // Datos frescos para el renderizado visual
-        const fresh = freshProducts.find(p => p.id === item.product_id);
-        const currentPrice = safeMoney(fresh ? fresh.price : price);
-        const currentWholesaleEnabled = fresh ? fresh.wholesale_enabled : item.wholesale_enabled;
-        const currentWholesaleMin = fresh ? fresh.wholesale_min_qty : item.wholesale_min_qty;
-        const currentWholesalePercent = fresh ? fresh.wholesale_discount_percent : item.wholesale_discount_percent;
-        const currentSaleEnabled = fresh ? fresh.sale_enabled : item.sale_enabled;
-        const currentOriginalPrice = safeMoney(fresh ? fresh.original_price : item.original_price);
-        const currentBundleEnabled = fresh ? fresh.bundle_2x_enabled : item.bundle_2x_enabled;
-        const currentBundlePrice = fresh ? fresh.bundle_2x_price : item.bundle_2x_price;
-
-        const isWholesale = currentWholesaleEnabled && totalProductQty >= currentWholesaleMin && currentWholesalePercent > 0;
-        const isBundle = currentBundleEnabled && currentBundlePrice > 0 && totalProductQty >= 2;
-
-        if (isWholesale) {
-            const discountedPrice = currentPrice * (1 - (currentWholesalePercent / 100));
-            priceLabel.innerHTML = `<span style="text-decoration: line-through; color: #999; font-size: 0.8rem; margin-right: 0.5rem;">Q${currentPrice.toFixed(2)}</span> Q${discountedPrice.toFixed(2)}`;
-
-            const badge = document.createElement('div');
-            badge.style.fontSize = '0.7rem';
-            badge.style.background = '#e84393';
-            badge.style.color = 'white';
-            badge.style.padding = '2px 6px';
-            badge.style.borderRadius = '4px';
-            badge.style.display = 'inline-block';
-            badge.style.marginTop = '4px';
-            badge.textContent = `-${currentWholesalePercent}% Mayorista`;
-            priceLabel.appendChild(badge);
-        } else if (isBundle) {
-            const pairs = Math.floor(totalProductQty / 2);
-            const singles = totalProductQty % 2;
-            const totalBundlePrice = (pairs * currentBundlePrice) + (singles * currentPrice);
-            const avgPrice = totalBundlePrice / totalProductQty;
-            priceLabel.innerHTML = `<span style="text-decoration: line-through; color: #999; font-size: 0.8rem; margin-right: 0.5rem;">Q${currentPrice.toFixed(2)}</span> Q${avgPrice.toFixed(2)}`;
-
-            const badge = document.createElement('div');
-            badge.style.fontSize = '0.7rem';
-            badge.style.background = '#fde68a';
-            badge.style.color = '#b45309';
-            badge.style.padding = '2px 6px';
-            badge.style.borderRadius = '4px';
-            badge.style.display = 'inline-block';
-            badge.style.marginTop = '4px';
-            badge.textContent = 'Oferta 2x';
-            priceLabel.appendChild(badge);
-        } else if (currentSaleEnabled && currentOriginalPrice > 0 && currentOriginalPrice !== currentPrice) {
-            priceLabel.innerHTML = `<span style="text-decoration: line-through; color: #999; font-size: 0.8rem; margin-right: 0.5rem;">Q${currentOriginalPrice.toFixed(2)}</span> Q${currentPrice.toFixed(2)}`;
-
-            const badge = document.createElement('div');
-            badge.style.fontSize = '0.7rem';
-            badge.style.background = '#d63031';
-            badge.style.color = 'white';
-            badge.style.padding = '2px 6px';
-            badge.style.borderRadius = '4px';
-            badge.style.display = 'inline-block';
-            badge.style.marginTop = '4px';
-            badge.textContent = 'Oferta';
-            priceLabel.appendChild(badge);
-        } else {
-            priceLabel.textContent = `Q${currentPrice.toFixed(2)}`;
-        }
-
-        head.appendChild(title);
-        head.appendChild(priceLabel);
-
-        const meta = document.createElement('div');
-        meta.className = 'cart-item-meta';
-        const sizeLabel = (safeText(item?.size) || 'Unica').toUpperCase();
-        const colorLabel = safeText(item?.color_name).toUpperCase();
-        meta.textContent = colorLabel ? `Talla: ${sizeLabel} | Color: ${colorLabel}` : `Talla: ${sizeLabel}`;
-
-        const actions = document.createElement('div');
-        actions.className = 'cart-item-actions';
-
-        const qtyControls = document.createElement('div');
-        qtyControls.className = 'qty-controls';
-
-        const minusBtn = document.createElement('button');
-        minusBtn.type = 'button';
-        minusBtn.className = 'qty-btn';
-        minusBtn.innerHTML = '<i class="fas fa-minus" style="font-size:10px"></i>';
-        minusBtn.addEventListener('click', () => updateCheckoutQty(index, -1));
-
-        const qtyLabel = document.createElement('span');
-        qtyLabel.style.fontSize = '0.95rem';
-        qtyLabel.style.fontWeight = '600';
-        qtyLabel.style.width = '24px';
-        qtyLabel.style.textAlign = 'center';
-        qtyLabel.textContent = String(quantity);
-
-        const plusBtn = document.createElement('button');
-        plusBtn.type = 'button';
-        plusBtn.className = 'qty-btn';
-        plusBtn.innerHTML = '<i class="fas fa-plus" style="font-size:10px"></i>';
-        plusBtn.addEventListener('click', () => updateCheckoutQty(index, 1));
-
-        qtyControls.appendChild(minusBtn);
-        qtyControls.appendChild(qtyLabel);
-        qtyControls.appendChild(plusBtn);
-
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'remove-item-btn';
-        removeBtn.style.fontSize = '0.9rem';
-        removeBtn.innerHTML = '<i class="far fa-trash-alt"></i> Eliminar';
-        removeBtn.addEventListener('click', () => removeCheckoutItem(index));
-
-        actions.appendChild(qtyControls);
-        actions.appendChild(removeBtn);
-
-        details.appendChild(head);
-        details.appendChild(meta);
-        details.appendChild(actions);
-
-        row.appendChild(image);
-        row.appendChild(details);
-
-        container.appendChild(row);
-    });
-
-    const totalText = `Q${calculateTotal(cart).toFixed(2)}`;
-    const subtotalEl = document.getElementById('checkout-subtotal');
-    const totalEl = document.getElementById('checkout-total');
-    if (subtotalEl) {
-        subtotalEl.textContent = totalText;
-    }
-    if (totalEl) {
-        totalEl.textContent = totalText;
-    }
-
-    const disclaimerEl = document.getElementById('checkout-price-disclaimer');
-    if (!disclaimerEl) {
-        const totalRow = totalEl?.parentElement;
-        if (totalRow) {
-            const disc = document.createElement('div');
-            disc.id = 'checkout-price-disclaimer';
-            disc.style.cssText = 'font-size:0.7rem;color:#94a3b8;margin-top:0.3rem;';
-            disc.textContent = 'Los precios se confirman al momento de procesar el pedido.';
-            totalRow.appendChild(disc);
-        }
-    }
-};
-
-function updateCheckoutQty(index, delta) {
-    const cart = getCart();
-    if (!cart[index]) {
-        return;
-    }
-
-    cart[index].quantity = Number(cart[index].quantity || 0) + delta;
-    if (cart[index].quantity <= 0) {
-        cart.splice(index, 1);
-    }
-
-    saveCart(cart);
-};
-
-function removeCheckoutItem(index) {
-    const cart = getCart();
-    cart.splice(index, 1);
-    saveCart(cart);
-};

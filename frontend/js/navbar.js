@@ -150,7 +150,7 @@
         const openCart = () => {
             cartSidebar.classList.add('open');
             cartOverlay.classList.add('show');
-            renderCartSidebar();
+            if (window.Cart) window.Cart.renderSidebar();
         };
         const closeCart = () => {
             cartSidebar.classList.remove('open');
@@ -165,75 +165,4 @@
     }
 })();
 
-/**
- * Renderiza el contenido del sidebar del carrito.
- */
-function renderCartSidebar() {
-    const container = document.getElementById('cart-sidebar-items');
-    const totalEl = document.getElementById('cart-sidebar-total');
-    if (!container || !totalEl) return;
 
-    const cart = getCart();
-    container.innerHTML = '';
-
-    if (cart.length === 0) {
-        container.innerHTML = '<div class="cart-empty">Tu bolsa esta vacia.</div>';
-        totalEl.textContent = `${CURRENCY_CONFIG.SYMBOL}0.00`;
-        return;
-    }
-
-    let total = 0;
-    const qtyByProduct = {};
-    cart.forEach((item) => {
-        const pid = item.product_id || item.sku;
-        qtyByProduct[pid] = (qtyByProduct[pid] || 0) + (Number(item.quantity) || 0);
-    });
-
-    cart.forEach((item, index) => {
-        const pid = item.product_id || item.sku;
-        const totalProductQty = qtyByProduct[pid] || 0;
-        const price = Number(item.price) || 0;
-        const qty = Number(item.quantity) || 1;
-
-        let finalPrice = price;
-        if (item.wholesale_enabled && totalProductQty >= item.wholesale_min_qty && item.wholesale_discount_percent > 0) {
-            finalPrice = price * (1 - item.wholesale_discount_percent / 100);
-        } else if (item.bundle_2x_enabled && item.bundle_2x_price > 0 && totalProductQty >= 2) {
-            const pairs = Math.floor(totalProductQty / 2);
-            const singles = totalProductQty % 2;
-            const totalBundle = pairs * item.bundle_2x_price + singles * price;
-            finalPrice = totalBundle / totalProductQty;
-        }
-
-        const itemTotal = finalPrice * qty;
-        total += itemTotal;
-
-        const row = document.createElement('div');
-        row.className = 'cart-item';
-        row.innerHTML = `
-            <img src="${safeImageUrl(item.image, IMAGE_FALLBACK)}" alt="${safeText(item.name)}" class="cart-item__img" loading="lazy">
-            <div class="cart-item__details">
-                <div class="cart-item__name">${safeText(item.name)}</div>
-                <div class="cart-item__meta">Talla: ${(item.size || 'Unica').toUpperCase()}${item.color_name ? ` | Color: ${item.color_name}` : ''}</div>
-                <div class="cart-item__price">${formatMoney(finalPrice)}</div>
-                <div class="cart-item__actions">
-                    <div class="qty-controls">
-                        <button class="qty-btn" type="button" aria-label="Disminuir cantidad" onclick="updateCartQty(${index}, -1); renderCartSidebar();">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <span class="qty-value" aria-label="Cantidad ${qty}">${qty}</span>
-                        <button class="qty-btn" type="button" aria-label="Aumentar cantidad" onclick="updateCartQty(${index}, 1); renderCartSidebar();">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                    </div>
-                    <button class="cart-item__remove" type="button" onclick="removeFromCart(${index}); renderCartSidebar();">Eliminar</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(row);
-    });
-
-    totalEl.textContent = formatMoney(total);
-}
-
-window.renderCartSidebar = renderCartSidebar;

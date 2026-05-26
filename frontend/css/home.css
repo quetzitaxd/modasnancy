@@ -200,12 +200,18 @@
     height: 100%;
     object-fit: cover;
 }
+.cat-circle__img img.cat-circle__icon-svg {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    transform: none;
+    border-radius: 50%;
+}
 .cat-circle__icon-svg {
-    width: 30px;
-    height: 30px;
+    width: 72px;
+    height: 72px;
     display: block;
     filter: drop-shadow(0 1px 2px rgba(242, 90, 217, 0.12));
-    transform: translateY(2px);
 }
 .cat-circle__label {
     font-size: 0.65rem;

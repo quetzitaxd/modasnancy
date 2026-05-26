@@ -50,9 +50,17 @@
         </a>
     </nav>
 
+    <script src="/js/config.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/ui.js"></script>
     <script src="/js/navbar.js?v=20260507c"></script>
-    <script src="/js/app.js?v=20260507c"></script>
     <script src="/js/notifications.js?v=20260507c"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Cart.init().catch(console.error);
+        });
+    </script>
     <script src="/js/menu-drawer.js?v=1"></script>
 </body>
 </html>

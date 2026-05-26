@@ -347,6 +347,10 @@
     </nav>
 
     <script src="/js/config.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/navbar.js"></script>
     <script src="/js/pwa.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -387,5 +391,10 @@
         })();
     </script>
     <script src="/js/menu-drawer.js?v=1"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Cart.init().catch(console.error);
+        });
+    </script>
 </body>
 </html>

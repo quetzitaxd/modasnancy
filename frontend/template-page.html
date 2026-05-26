@@ -43,6 +43,11 @@
     <script src="/js/navbar.js"></script>
     <script src="/js/footer.js"></script>
     <script src="/js/pwa.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Cart.init().catch(console.error);
+        });
+    </script>
     <!-- PAGE-SPECIFIC SCRIPT HERE -->
 </body>
 </html>

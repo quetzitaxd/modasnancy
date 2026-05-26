@@ -141,23 +141,13 @@ async function addTemuToCart(encodedId) {
         const firstImage = product.images?.[0] || '';
         const variant = product.variants?.[0];
 
-        addToCart({
+        window.Cart.add({
             product_id: product.id,
             sku: variant?.sku || product.id,
-            name: product.name,
-            price: product.price,
             size: variant?.size || 'Unica',
             color_name: variant?.color_name || '',
-            color_hex: variant?.color_hex || '',
             image: firstImage,
             quantity: 1,
-            sale_enabled: product.sale_enabled,
-            original_price: product.original_price,
-            wholesale_enabled: product.wholesale_enabled,
-            wholesale_min_qty: product.wholesale_min_qty,
-            wholesale_discount_percent: product.wholesale_discount_percent,
-            bundle_2x_enabled: product.bundle_2x_enabled,
-            bundle_2x_price: product.bundle_2x_price
         });
     } catch (err) {
         showToast('Error al agregar al carrito', 'error');
