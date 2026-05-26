@@ -56,6 +56,31 @@ async function loadPackages() {
     }
 }
 
+function buildPackageLink(code) {
+    return `${window.location.origin}/live.html?codigo=${encodeURIComponent(code)}`;
+}
+
+async function copyPackageLink(code) {
+    const url = buildPackageLink(code);
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = url;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+        if (typeof showToast === 'function') showToast('Link copiado al portapapeles', 'success');
+    } catch {
+        if (typeof showToast === 'function') showToast('No se pudo copiar el link', 'error');
+    }
+}
+
 function renderPackagesTable() {
     const tbody = document.getElementById('packages-tbody');
     const cards = document.getElementById('packages-cards');
@@ -99,6 +124,7 @@ function renderPackagesTable() {
                     <div class="order-actions">
                         <button type="button" class="btn btn-outline" style="padding:0.4rem 0.55rem;" onclick="editPackage(${pkg.id})"><i class="fas fa-edit"></i> Editar</button>
                         <button type="button" class="btn btn-outline" style="padding:0.4rem 0.55rem; color:${isActive?'#d63031':'#388e3c'}; border-color:${isActive?'#fecaca':'#bbf7d0'};" onclick="togglePackageStatus(${pkg.id}, ${isActive ? 0 : 1})">${isActive ? 'Desactivar' : 'Activar'}</button>
+                        <button type="button" class="btn btn-outline" style="padding:0.4rem 0.55rem; color:#7c3aed; border-color:#ddd6fe;" onclick="copyPackageLink('${escapeHtml(pkg.code)}')"><i class="fas fa-link"></i> Link</button>
                         <button type="button" class="btn btn-outline" style="padding:0.4rem 0.55rem; color:#d63031; border-color:#fecaca;" onclick="deletePackage(${pkg.id})"><i class="fas fa-trash"></i></button>
                     </div>
                 </td>
@@ -120,6 +146,7 @@ function renderPackagesTable() {
                 <div class="mobile-card-actions">
                     <button class="btn btn-outline" onclick="editPackage(${pkg.id})"><i class="fas fa-edit"></i> Editar</button>
                     <button class="btn btn-outline" style="color:${isActive?'#d63031':'#388e3c'}; border-color:${isActive?'#fecaca':'#bbf7d0'};" onclick="togglePackageStatus(${pkg.id}, ${isActive ? 0 : 1})">${isActive ? 'Desactivar' : 'Activar'}</button>
+                    <button class="btn btn-outline" style="color:#7c3aed; border-color:#ddd6fe;" onclick="copyPackageLink('${escapeHtml(pkg.code)}')"><i class="fas fa-link"></i> Link</button>
                     <button class="btn btn-outline" style="color:#d63031; border-color:#fecaca;" onclick="deletePackage(${pkg.id})"><i class="fas fa-trash"></i></button>
                 </div>
             `;
@@ -291,3 +318,4 @@ window.editPackage = editPackage;
 window.togglePackageStatus = togglePackageStatus;
 window.deletePackage = deletePackage;
 window.handlePackageImagePreview = handlePackageImagePreview;
+window.copyPackageLink = copyPackageLink;

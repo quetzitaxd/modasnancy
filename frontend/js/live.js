@@ -32,22 +32,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Pre-cargar paquete desde link directo (e.g. live.html?codigo=ABC)
+    const params = new URLSearchParams(window.location.search);
+    const codeFromUrl = params.get('codigo');
+    if (codeFromUrl) {
+        addPackageByCodeRaw(safeText(codeFromUrl));
+    }
 });
 
 // ─── Gestión de paquetes ───────────────────────────────────────────────────
 
-async function addPackageByCode() {
-    const input = document.getElementById('package-code-input');
-    const code = safeText(input.value);
+async function addPackageByCodeRaw(code) {
     if (!code) return;
 
     // Verificar si ya esta agregado
     const existing = addedPackages.find((p) => p.code === code);
     if (existing) {
         existing.quantity += 1;
-        input.value = '';
         renderPackagesList();
         updateTotals();
+        if (typeof showToast === 'function') showToast(`Paquete "${escapeHtml(code)}" agregado desde link`, 'success');
         return;
     }
 
@@ -55,10 +60,12 @@ async function addPackageByCode() {
         const pkg = await getLivePackage(code);
         if (!pkg) {
             showError(`Paquete "${code}" no encontrado`);
+            if (typeof showToast === 'function') showToast(`Paquete "${escapeHtml(code)}" no encontrado`, 'error');
             return;
         }
         if (pkg.stock_quantity <= 0) {
             showError(`Paquete "${code}" agotado`);
+            if (typeof showToast === 'function') showToast(`Paquete "${escapeHtml(code)}" agotado`, 'error');
             return;
         }
         addedPackages.push({
@@ -68,13 +75,22 @@ async function addPackageByCode() {
             image_url: pkg.image_url,
             quantity: 1
         });
-        input.value = '';
         hideError();
         renderPackagesList();
         updateTotals();
+        if (typeof showToast === 'function') showToast(`Paquete "${escapeHtml(pkg.name)}" agregado desde link`, 'success');
     } catch (err) {
         showError(err.message || `Error buscando paquete "${code}"`);
+        if (typeof showToast === 'function') showToast(`Error buscando paquete "${escapeHtml(code)}"`, 'error');
     }
+}
+
+async function addPackageByCode() {
+    const input = document.getElementById('package-code-input');
+    const code = safeText(input.value);
+    if (!code) return;
+    await addPackageByCodeRaw(code);
+    if (input) input.value = '';
 }
 
 function removePackage(index) {
@@ -399,6 +415,7 @@ function setupFormSubmit() {
 
 // Exponer funciones globales para inline handlers
 window.addPackageByCode = addPackageByCode;
+window.addPackageByCodeRaw = addPackageByCodeRaw;
 window.removePackage = removePackage;
 window.changePackageQty = changePackageQty;
 window.setPackageQty = setPackageQty;
