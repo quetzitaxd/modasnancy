@@ -215,3 +215,10 @@ module.exports = {
     getHistory,
     sendToAll
 };
+
+// Prueba de inicializacion al cargar el modulo para mostrar estado en los logs
+if (initFirebase()) {
+    console.log('[Notifications] Firebase esta listo para enviar notificaciones push.');
+} else {
+    console.warn('[Notifications] Firebase no se pudo inicializar. Las notificaciones push estaran deshabilitadas hasta que se configure correctamente el archivo de cuenta de servicio.');
+}
