@@ -100,6 +100,10 @@
                     <i class="fas fa-clipboard-list"></i>
                     <span>Auditoría</span>
                 </button>
+                <button class="admin-sidebar-item" data-target="apps">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Apps</span>
+                </button>
             </div>
             <div class="admin-sidebar-footer">
                 <span id="admin-name-sidebar" style="color: var(--text-gray); font-size: 0.85rem;"></span>
@@ -116,6 +120,7 @@
                 <button class="tab-btn" data-target="usuarios">Usuarios</button>
                 <button class="tab-btn" data-target="clientes">Clientes</button>
                 <button class="tab-btn" data-target="auditoria">Auditoría</button>
+                <button class="tab-btn" data-target="apps">Apps</button>
             </div>
 
             <div id="dashboard" class="tab-pane active">
@@ -518,6 +523,80 @@
                         </div>
                         <div class="mobile-cards" id="movements-cards"></div>
                     </div>
+                </div>
+            </div>
+
+            <div id="apps" class="tab-pane">
+                <div class="header-actions">
+                    <h3 style="margin:0;">Notificaciones Push</h3>
+                    <button class="btn btn-outline" onclick="loadNotificationStats(); loadNotificationHistory();"><i class="fas fa-sync"></i> Actualizar</button>
+                </div>
+
+                <!-- Stats -->
+                <div class="dash-kpi-grid" style="margin-bottom: 1.5rem;">
+                    <div class="dash-kpi-card">
+                        <div class="dash-kpi-icon" style="background:#e8f4fd;color:#2b6cb0;"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="dash-kpi-value" id="notif-registered-devices">0</div>
+                        <div class="dash-kpi-label">Dispositivos Registrados</div>
+                    </div>
+                </div>
+
+                <!-- Formulario de envío -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h4 style="margin:0 0 1.2rem 0; display:flex; align-items:center; gap:0.5rem;"><i class="fas fa-paper-plane" style="color:var(--secondary-color);"></i> Enviar Notificación</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Título</label>
+                            <input type="text" id="notif-title" placeholder="Ej: ¡Estamos en vivo!">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Tipo</label>
+                            <select id="notif-type" onchange="updateNotifTypeHint()">
+                                <option value="promo">Nueva Promoción</option>
+                                <option value="live">Únete al Live</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mensaje</label>
+                        <textarea id="notif-body" rows="3" placeholder="Ej: Únete a nuestro live de Facebook para ver las ofertas del día."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Link (URL al abrir la notificación)</label>
+                        <input type="text" id="notif-link" placeholder="https://...">
+                        <small id="notif-type-hint" style="color: var(--text-gray); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                            <i class="fas fa-info-circle"></i> Opcional. Para promociones puede ser el enlace al producto; para live, el enlace de Facebook.
+                        </small>
+                    </div>
+                    <div id="notif-error" class="error-message" style="display:none;"></div>
+                    <div id="notif-success" class="success-message" style="display:none;"></div>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="btn btn-primary" onclick="sendNotification()"><i class="fas fa-paper-plane"></i> Enviar a todos los dispositivos</button>
+                    </div>
+                </div>
+
+                <!-- Historial -->
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div style="padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-color);">
+                        <h4 style="margin:0; display:flex; align-items:center; gap:0.5rem;"><i class="fas fa-history" style="color:var(--text-gray);"></i> Historial de Envíos</h4>
+                    </div>
+                    <div class="table-container desktop-only">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Destinatarios</th>
+                                    <th>Exitosos</th>
+                                    <th>Fallidos</th>
+                                    <th>Enviado por</th>
+                                </tr>
+                            </thead>
+                            <tbody id="notif-history-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="mobile-cards" id="notif-history-cards"></div>
                 </div>
             </div>
 
@@ -1092,6 +1171,7 @@
 
     <script src="/js/admin.js?v=20260505-sale"></script>
     <script src="/js/admin-packages.js?v=20260521-3"></script>
+    <script src="/js/admin-notifications.js?v=20260526"></script>
     <script src="/js/notifications.js"></script>
 </body>
 </html>

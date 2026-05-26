@@ -19,6 +19,7 @@ const auditService = require('./audit-service');
 const customersService = require('./customers-service');
 const dashboardService = require('./dashboard-service');
 const packagesService = require('./packages-service');
+const notificationsService = require('./notifications-service');
 const db = require('./db');
 
 const app = express();
@@ -1045,6 +1046,88 @@ app.get('/api/audit', auth.requireAdmin, async (req, res) => {
         return res.json(result);
     } catch (err) {
         return res.status(500).json({ error: err.message || 'Error al cargar auditoria' });
+    }
+});
+
+// ─── Push Notifications endpoints ─────────────────────────────────────────────
+
+// Registro de token (público, desde la app)
+app.post('/api/push-tokens', async (req, res) => {
+    try {
+        const token = toSafeString(req.body?.token);
+        const platform = toSafeString(req.body?.platform);
+
+        if (!token) {
+            return res.status(400).json({ error: 'Token es requerido' });
+        }
+
+        await notificationsService.registerToken(token, platform);
+        return res.json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error registrando token' });
+    }
+});
+
+// Eliminación de token (público, desde la app)
+app.delete('/api/push-tokens', async (req, res) => {
+    try {
+        const token = toSafeString(req.body?.token);
+
+        if (!token) {
+            return res.status(400).json({ error: 'Token es requerido' });
+        }
+
+        await notificationsService.removeToken(token);
+        return res.json({ success: true });
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error eliminando token' });
+    }
+});
+
+// Estadísticas de dispositivos (admin)
+app.get('/api/notifications/stats', auth.requireAdmin, async (req, res) => {
+    try {
+        const count = await notificationsService.getTokenCount();
+        return res.json({ registeredDevices: count });
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error obteniendo estadisticas' });
+    }
+});
+
+// Historial de notificaciones enviadas (admin)
+app.get('/api/notifications/history', auth.requireAdmin, async (req, res) => {
+    try {
+        const limit = req.query?.limit ? parsePositiveInt(req.query.limit, 'limit') : 50;
+        const history = await notificationsService.getHistory(limit);
+        return res.json(history);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error obteniendo historial' });
+    }
+});
+
+// Enviar notificación masiva (admin)
+app.post('/api/notifications/send', auth.requireAdmin, async (req, res) => {
+    try {
+        const title = toSafeString(req.body?.title);
+        const body = toSafeString(req.body?.body);
+        const type = toSafeString(req.body?.type);
+        const link = toSafeString(req.body?.link);
+
+        if (!title || !body) {
+            return res.status(400).json({ error: 'Titulo y mensaje son requeridos' });
+        }
+
+        const result = await notificationsService.sendToAll({
+            title,
+            body,
+            type,
+            link,
+            sentBy: req.user?.username || req.user?.name || 'admin'
+        });
+
+        return res.json(result);
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'Error enviando notificaciones' });
     }
 });
 

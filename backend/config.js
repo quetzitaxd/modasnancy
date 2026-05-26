@@ -129,6 +129,11 @@ const CUBOPAGO = {
     TIMEOUT_MS: 60000
 };
 
+// ── Firebase Cloud Messaging ──────────────────────────────────────────────
+const FIREBASE = {
+    SERVICE_ACCOUNT_PATH: toSafeString(process.env.FIREBASE_SERVICE_ACCOUNT_PATH) || null
+};
+
 // ── Allowed Values ──────────────────────────────────────────────────────────
 const ALLOWED = {
     ORDER_STATUSES: new Set(['pendiente', 'confirmado', 'enviado'])
@@ -144,6 +149,7 @@ module.exports = {
     UPLOAD,
     RATE_LIMITS,
     CUBOPAGO,
+    FIREBASE,
     ALLOWED,
     PATHS: {
         DATA_DIR,

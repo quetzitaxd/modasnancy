@@ -24,7 +24,7 @@ modasnancy.com/
 │   ├── server.js         # Entry point Express
 │   ├── config.js         # Config central (marca, moneda, envíos, CuboPago)
 │   ├── db.js             # Pool de conexiones MariaDB
-│   ├── *-service.js      # Lógica de negocio (products, orders, payments, packages, etc.)
+│   ├── *-service.js      # Lógica de negocio (products, orders, payments, packages, notifications, etc.)
 │   ├── scripts/          # Migraciones y utilidades DB
 │   └── tests/            # Tests unitarios
 ├── frontend/             # Sitio público + paneles admin

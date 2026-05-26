@@ -45,6 +45,12 @@ build/
 # --- Infra / VPS docs ---
 vps.txt
 
+# --- Firebase credentials ---
+google-services.json
+GoogleService-Info.plist
+modasnancy-app-firebase-adminsdk-*.json
+*firebase-adminsdk*.json
+
 # --- Android Studio IDE ---
 android/.idea/misc.xml
 android/.idea/deviceManager.xml
