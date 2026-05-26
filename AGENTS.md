@@ -143,6 +143,16 @@ modasnancy.com/
 - **Pedidos live:** Se guardan en `orders` con `source = 'live'` y aparecen en el panel de pedidos con badge morado "Live".
 - **Stock:** Al confirmar el pedido se descuenta stock de `live_packages`; al cancelar se restaura automáticamente.
 
+### Notificaciones Push (FCM)
+- **Firebase Cloud Messaging (FCM):** Servicio de notificaciones push masivas para Android e iOS.
+- **Plugin:** `@capacitor/push-notifications` para el registro nativo de tokens desde la app.
+- **Panel Admin (pestaña "Apps"):** Permite enviar notificaciones masivas a todos los dispositivos registrados. Tipos soportados: `"live"` (Únete al Live) y `"promo"` (Nueva Promoción).
+- **Tablas:** `push_tokens` almacena tokens FCM por dispositivo; `sent_notifications` guarda historial de envíos con estadísticas de éxito/fallo.
+- **Backend:** `notifications-service.js` inicializa Firebase Admin SDK y maneja envío multicast (batches de 500 tokens), limpieza automática de tokens inválidos, y persistencia de historial.
+- **Configuración:** Requiere archivo de cuenta de servicio de Firebase (JSON) y variable `FIREBASE_SERVICE_ACCOUNT_PATH` en `.env`.
+- **iOS:** El código JS/backend ya es compatible. Requiere configuración adicional nativa (APNs, certificados). Ver `docs/IOS_SETUP.md`.
+- **Nota de seguridad:** El archivo de cuenta de servicio (`modasnancy-app-firebase-adminsdk-*.json`) y `google-services.json` están en `.gitignore` y **no deben commitearse**.
+
 ---
 
 ## 5. Cómo Levantar el Proyecto (Local)
@@ -200,4 +210,4 @@ node scripts/download-images.js      # Descarga placeholders si faltan
 
 ---
 
-*Última actualización: 2026-05-22 (consolidacion catalogo en home + sidebar categorias)*
+*Última actualización: 2026-05-26 (implementacion sistema de notificaciones push FCM con panel admin Apps)*
