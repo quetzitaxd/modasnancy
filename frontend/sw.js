@@ -6,7 +6,7 @@
  * - Stale-While-Revalidate: HTML
  */
 
-const CACHE_NAME = 'modasnancy-cache-v19';
+const CACHE_NAME = 'modasnancy-cache-v20';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -21,10 +21,10 @@ const STATIC_ASSETS = [
   '/css/home.css?v=20260530',
   '/css/admin-theme.css',
   '/css/admin-dashboard.css',
-  '/js/config.js',
-  '/js/api.js',
-  '/js/cart.js',
-  '/js/ui.js',
+  '/js/config.js?v=20260530',
+  '/js/api.js?v=20260530',
+  '/js/cart.js?v=20260530',
+  '/js/ui.js?v=20260530',
   '/js/home.js?v=20260530',
   '/js/live.js',
   '/js/pwa.js',
