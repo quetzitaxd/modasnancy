@@ -24,9 +24,19 @@ function initFirebase() {
         return false;
     }
 
-    const absolutePath = path.isAbsolute(serviceAccountPath)
-        ? serviceAccountPath
-        : path.resolve(__dirname, '..', serviceAccountPath);
+    let absolutePath = serviceAccountPath;
+    if (!path.isAbsolute(serviceAccountPath)) {
+        // Dentro del contenedor Docker, el archivo suele estar en el WORKDIR (/app)
+        const cwdPath = path.resolve(process.cwd(), serviceAccountPath);
+        const parentPath = path.resolve(__dirname, '..', serviceAccountPath);
+        if (fs.existsSync(cwdPath)) {
+            absolutePath = cwdPath;
+        } else if (fs.existsSync(parentPath)) {
+            absolutePath = parentPath;
+        } else {
+            absolutePath = cwdPath;
+        }
+    }
 
     if (!fs.existsSync(absolutePath)) {
         console.warn(`[Notifications] Archivo de cuenta de servicio no encontrado: ${absolutePath}. Push notifications deshabilitadas.`);

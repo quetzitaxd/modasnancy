@@ -26,6 +26,7 @@ services:
       - .env
     volumes:
       - ./data:/app/data
+      - ./modasnancy-app-firebase-adminsdk-fbsvc-6bed089c1d.json:/app/modasnancy-app-firebase-adminsdk-fbsvc-6bed089c1d.json:ro
     networks:
       - nginx_proxy_manager_default
       - modasnancy-net
