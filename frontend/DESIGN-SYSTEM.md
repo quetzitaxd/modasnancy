@@ -401,7 +401,6 @@ Antes de publicar cualquier página nueva:
 | `frontend/checkout.html` | Checkout (usa tokens) |
 | `frontend/live.html` | Live shopping (usa tokens) |
 | `frontend/admin.html` | Panel admin (usa tokens admin) |
-| `frontend/sw.js` | Actualizar cache version tras cambios CSS |
 
 ---
 

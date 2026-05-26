@@ -58,10 +58,6 @@ if (isNativeApp) {
     };
 }
 
-const PWA_CONFIG = {
-    CACHE_VERSION: 'v1',
-    OFFLINE_PAGE: '/offline.html'
-};
 
 const CART_CONFIG = {
     STORAGE_KEY: 'modasnancy_cart',
@@ -109,7 +105,6 @@ window.BRAND_CONFIG = BRAND_CONFIG;
 window.CURRENCY_CONFIG = CURRENCY_CONFIG;
 window.SHIPPING_CONFIG = SHIPPING_CONFIG;
 window.API_CONFIG = API_CONFIG;
-window.PWA_CONFIG = PWA_CONFIG;
 window.CART_CONFIG = CART_CONFIG;
 window.formatMoney = formatMoney;
 window.safeText = safeText;

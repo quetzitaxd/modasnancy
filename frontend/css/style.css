@@ -762,55 +762,6 @@ p { margin-bottom: 1rem; }
 .toast svg { flex-shrink: 0; color: var(--primary-color); }
 .toast--error svg { color: var(--color-red); }
 
-/* ── OFFLINE / UPDATE BADGES ─────────────────────────────────────────────── */
-.offline-badge {
-    position: fixed;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-denim);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: var(--fs-small);
-    font-weight: 600;
-    z-index: 990;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    animation: slideDown 0.3s ease;
-}
-.offline-badge.online { background: var(--color-success); }
-.update-banner {
-    position: fixed;
-    bottom: calc(72px + env(safe-area-inset-bottom));
-    left: 1rem;
-    right: 1rem;
-    background: var(--primary-color);
-    color: white;
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    z-index: 980;
-    box-shadow: 0 8px 24px rgba(242, 90, 217, 0.3);
-    font-size: var(--fs-small);
-}
-.update-banner button {
-    background: white;
-    color: var(--primary-color);
-    padding: 0.4rem 0.8rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: var(--fs-small);
-    white-space: nowrap;
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translate(-50%, -12px); }
-    to { opacity: 1; transform: translate(-50%, 0); }
-}
-
 /* ── FOOTER ──────────────────────────────────────────────────────────────── */
 .site-footer {
     background: white;
