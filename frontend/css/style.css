@@ -10,6 +10,7 @@ html {
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 body {
     font-family: var(--font-body);
@@ -20,6 +21,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100dvh;
+    overflow-x: hidden;
     padding-bottom: calc(64px + env(safe-area-inset-bottom)); /* espacio para bottom nav */
 }
 img, picture, video, canvas, svg {
