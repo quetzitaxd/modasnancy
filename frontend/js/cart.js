@@ -72,12 +72,33 @@ window.Cart = {
     return `${item.product_id}${CART_KEY_SEPARATOR}${item.size}${CART_KEY_SEPARATOR}${item.color_name}`;
   },
 
+  _getProductQtyInCart(productId) {
+    return this._items
+      .filter((i) => String(i.product_id) === String(productId))
+      .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+  },
+
   add(item) {
     const key = this.makeKey(item);
     const existing = this._items.find((i) => this.makeKey(i) === key);
+    const addQty = Math.max(1, Number(item.quantity) || 1);
+
+    // Stock validation
+    const fresh = this.findProduct(item.product_id);
+    if (fresh && typeof fresh.total_stock !== 'undefined') {
+      const totalStock = Number(fresh.total_stock) || 0;
+      const currentQty = this._getProductQtyInCart(item.product_id);
+      const newTotal = currentQty + addQty;
+      if (newTotal > totalStock) {
+        if (typeof window.showToast === 'function') {
+          window.showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+        }
+        return;
+      }
+    }
 
     if (existing) {
-      existing.quantity = Math.max(1, (existing.quantity || 0) + (item.quantity || 1));
+      existing.quantity = Math.max(1, (existing.quantity || 0) + addQty);
     } else {
       this._items.push({
         product_id: item.product_id,
@@ -85,7 +106,7 @@ window.Cart = {
         size: item.size || 'Unica',
         color_name: item.color_name || '',
         image: item.image || '',
-        quantity: Math.max(1, item.quantity || 1),
+        quantity: addQty,
       });
     }
 
@@ -103,12 +124,29 @@ window.Cart = {
     const item = this._items.find((i) => this.makeKey(i) === cartKey);
     if (!item) return;
 
-    item.quantity = (item.quantity || 0) + delta;
-    if (item.quantity <= 0) {
+    const newQty = (item.quantity || 0) + delta;
+    if (newQty <= 0) {
       this.remove(cartKey);
       return;
     }
 
+    // Stock validation (only when increasing)
+    if (delta > 0) {
+      const fresh = this.findProduct(item.product_id);
+      if (fresh && typeof fresh.total_stock !== 'undefined') {
+        const totalStock = Number(fresh.total_stock) || 0;
+        const currentQty = this._getProductQtyInCart(item.product_id);
+        const newTotal = currentQty + delta;
+        if (newTotal > totalStock) {
+          if (typeof window.showToast === 'function') {
+            window.showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+          }
+          return;
+        }
+      }
+    }
+
+    item.quantity = newQty;
     this.save();
     this._dispatch();
   },

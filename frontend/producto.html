@@ -844,6 +844,16 @@
                 return;
             }
 
+            const totalStock = Number(product.total_stock) || 0;
+            const cartItems = window.getCart ? window.getCart() : [];
+            const currentQty = cartItems
+                .filter((i) => String(i.product_id) === String(product.id))
+                .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+            if (currentQty + 1 > totalStock) {
+                showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+                return;
+            }
+
             addToCart({
                 product_id: product.id,
                 sku: selectedVariant ? selectedVariant.sku : product.id,
@@ -961,6 +971,16 @@
                 if (!product) { showToast('Producto no encontrado', 'error'); return; }
                 const totalStock = Number(product.total_stock) || 0;
                 if (totalStock === 0) { showToast('Producto agotado', 'error'); return; }
+
+                const cartItems = window.getCart ? window.getCart() : [];
+                const currentQty = cartItems
+                    .filter((i) => String(i.product_id) === String(product.id))
+                    .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+                if (currentQty + 1 > totalStock) {
+                    showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+                    return;
+                }
+
                 const firstImage = product.images?.[0] || '';
                 const variant = product.variants?.[0];
                 addToCart({
