@@ -291,7 +291,7 @@
         // Checkout logic
         let freshProducts = [];
         let currentPaymentMethod = 'efectivo';
-        let shippingCost = 0;
+        let shippingCost = 25;
         let receiptFile = null;
         const TRANSFER_DISCOUNT_PERCENT = 4;
 
@@ -394,7 +394,7 @@
                 ds.innerHTML = itemsHtml + `
                     <div style="display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.9rem;"><span>Subtotal</span><span>${formatMoney(subtotal)}</span></div>
                     ${isTransfer ? `<div style="display:flex;justify-content:space-between;padding:0.35rem 0;font-size:0.9rem;color:#52c41a;"><span>Descuento (-4%)</span><span>-${formatMoney(discount)}</span></div>` : ''}
-                    <div style="display:flex;justify-content:space-between;padding:0.35rem 0;font-size:0.9rem;"><span>Envio</span><span>${shippingCost === 0 ? 'Gratis' : formatMoney(shippingCost)}</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:0.35rem 0;font-size:0.9rem;"><span>Envio</span><span>${formatMoney(shippingCost)}</span></div>
                     <div style="display:flex;justify-content:space-between;padding:0.75rem 0;margin-top:0.5rem;border-top:2px solid rgba(242,90,217,0.12);font-size:1.1rem;font-weight:700;"><span>Total</span><span>${formatMoney(total)}</span></div>
                     <button class="btn btn--primary" type="button" onclick="document.getElementById('order-form').dispatchEvent(new Event('submit'))" style="width:100%;margin-top:1rem;height:48px;border-radius:12px;">Confirmar Pedido</button>
                 `;

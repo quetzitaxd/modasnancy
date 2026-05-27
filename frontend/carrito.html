@@ -374,7 +374,7 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             <span>Carrito</span>
             <span class="bottom-nav-temu__badge" data-cart-count style="display:none;">0</span>
-            <span class="bottom-nav-temu__tag">Envio gratis</span>
+
         </a>
     </nav>
 
@@ -522,17 +522,9 @@
             totalEl.textContent = formatMoney(subtotal);
 
             // Shipping progress
-            const threshold = SHIPPING_CONFIG.CAPITAL_FREE_THRESHOLD;
-            const progress = Math.min((subtotal / threshold) * 100, 100);
-            const remaining = Math.max(threshold - subtotal, 0);
             shippingEl.innerHTML = `
                 <div class="cart-shipping__text">
-                    ${remaining > 0
-                        ? `Te faltan <strong>${formatMoney(remaining)}</strong> para envio gratis en capital`
-                        : '<strong>Envio gratis!</strong> Tu compra califica para envio gratis en capital'}
-                </div>
-                <div class="cart-shipping__bar">
-                    <div class="cart-shipping__bar-fill" style="width:${progress}%"></div>
+                    Envio fijo de <strong>${formatMoney(SHIPPING_CONFIG.CAPITAL_COST)}</strong> a toda Guatemala
                 </div>
             `;
 
@@ -541,11 +533,11 @@
             const de = document.getElementById('cart-desktop-summary-empty');
             const bc = document.getElementById('btn-checkout-desktop');
             if (dt) {
-                const envio = subtotal >= threshold ? 0 : SHIPPING_CONFIG.CAPITAL_COST;
+                const envio = SHIPPING_CONFIG.CAPITAL_COST;
                 const total = subtotal + envio;
                 dt.innerHTML = `
                     <div class="cart-summary-row"><span>Subtotal</span><span>${formatMoney(subtotal)}</span></div>
-                    <div class="cart-summary-row"><span>Envio</span><span>${envio === 0 ? 'Gratis' : formatMoney(envio)}</span></div>
+                    <div class="cart-summary-row"><span>Envio</span><span>${formatMoney(envio)}</span></div>
                     <div class="cart-summary-row total"><span>Total</span><span>${formatMoney(total)}</span></div>
                 `;
             }
