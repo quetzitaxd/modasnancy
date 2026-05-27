@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="/css/desktop-layout.css">
     <style>
         * { box-sizing: border-box; }
+        html { overflow-x: hidden; }
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
@@ -23,6 +24,7 @@
             color: #4a3540;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* ── Topbar ── */
@@ -80,6 +82,7 @@
             text-decoration: none;
             transition: opacity 0.2s;
             box-shadow: 0 4px 15px rgba(194,24,89,0.25);
+            max-width: 100vw;
         }
         .live-facebook-banner:hover { opacity: 0.95; }
         .live-facebook-banner__icon {
@@ -124,6 +127,7 @@
             width: 100%;
             overflow: hidden;
             line-height: 0;
+            max-width: 100vw;
         }
         .live-portada img {
             width: 100%;
@@ -320,6 +324,7 @@
         }
         .add-package-row input {
             flex: 1;
+            min-width: 0;
             padding: 0.75rem 1rem;
             border: 1.5px solid #F8BBD0;
             border-radius: 12px;
@@ -507,7 +512,7 @@
             flex-shrink: 0;
             padding: 0.7rem 0.4rem;
         }
-        .phone-row input { flex: 1; }
+        .phone-row input { flex: 1; min-width: 0; }
 
         /* ── Payment ── */
         .payment-options { display: flex; flex-direction: column; gap: 0.55rem; }
