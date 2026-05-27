@@ -754,11 +754,13 @@
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
+    pointer-events: none;
     transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: -4px 0 24px rgba(0,0,0,0.12);
 }
 .cart-drawer.open {
     transform: translateX(0);
+    pointer-events: auto;
 }
 
 /* Header */
