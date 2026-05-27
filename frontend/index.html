@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/css/theme-tokens.css">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="/css/desktop-layout.css">
     <style>
         /* Sidebar de categorias */
         .cat-sidebar {
@@ -145,6 +146,41 @@
     </style>
 </head>
 <body style="background:var(--color-bg-main);">
+
+    <!-- DESKTOP HEADER -->
+    <div class="desktop-header-wrap desktop-only">
+        <header class="desktop-header">
+            <a href="/" class="desktop-header__logo">
+                <img src="/assets/brand/logo.png" alt="Modas Nancy">
+                <span>Modas Nancy</span>
+            </a>
+            <form class="desktop-header__search" action="/" method="get" onsubmit="event.preventDefault(); const q=this.querySelector('input').value.trim(); if(q){window.location.href='/?q='+encodeURIComponent(q);}else{window.location.href='/';}">
+                <input type="text" name="q" placeholder="Buscar productos..." aria-label="Buscar">
+                <button type="submit" aria-label="Buscar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+            </form>
+            <nav class="desktop-header__nav">
+                <a href="/" class="active" aria-label="Inicio">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Inicio</span>
+                </a>
+                <a href="/live.html" aria-label="Live Shopping">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <span>Live</span>
+                </a>
+                <a href="/carrito.html" onclick="event.preventDefault(); openCartDrawer();" aria-label="Carrito" style="position:relative;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span>Carrito</span>
+                    <span class="desktop-header__cart-badge" data-cart-count style="display:none;">0</span>
+                </a>
+                <button type="button" aria-label="Menu" onclick="if(window.openMenuSidebar)window.openMenuSidebar()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <span>Menu</span>
+                </button>
+            </nav>
+        </header>
+    </div>
 
     <!-- TOP MARQUEE BAR -->
     <div class="top-marquee-bar" id="top-marquee">
@@ -304,76 +340,100 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </div>
             </div>
-            <a href="/carrito.html" style="position: relative; color: var(--color-gray-800); text-decoration: none; flex-shrink: 0; display: flex; align-items: center;">
+            <a href="/carrito.html" onclick="event.preventDefault(); openCartDrawer();" style="position: relative; color: var(--color-gray-800); text-decoration: none; flex-shrink: 0; display: flex; align-items: center;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 <span class="bottom-nav-temu__badge" data-cart-count style="display:none; position: absolute; top: -4px; right: -4px; background: var(--color-primary); color: white; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 700;">0</span>
             </a>
         </div>
     </header>
 
-    <!-- CATEGORY CIRCLES -->
-    <section class="cat-circles" aria-label="Categorias populares">
-        <div class="cat-circle cat-circle--all" data-category="all">
-            <div class="cat-circle__img"><img src="/assets/icons/categories/todos.svg" alt="Todos" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Todos</span>
-        </div>
-        <div class="cat-circle" data-category="sale">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F9, #FDE0F3); border-color: rgba(242,90,217,0.2);"><img src="/assets/icons/categories/ofertas.svg" alt="Ofertas" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Ofertas</span>
-        </div>
-        <div class="cat-circle" data-category="ropa">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F5, #FDE0F0); border-color: rgba(255,75,92,0.15);"><img src="/assets/icons/categories/ropa.svg" alt="Ropa" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Ropa</span>
-        </div>
-        <div class="cat-circle" data-category="vestidos">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #F3E5F5, #FDE0F3); border-color: rgba(206,147,216,0.2);"><img src="/assets/icons/categories/vestidos.svg" alt="Vestidos" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Vestidos</span>
-        </div>
-        <div class="cat-circle" data-category="blusas">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF8E1, #FFECB3); border-color: rgba(246,227,107,0.3);"><img src="/assets/icons/categories/blusas.svg" alt="Blusas" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Blusas</span>
-        </div>
-        <div class="cat-circle" data-category="faldas">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F9, #F8B6EA); border-color: rgba(242,90,217,0.2);"><img src="/assets/icons/categories/faldas.svg" alt="Faldas" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Faldas</span>
-        </div>
-        <div class="cat-circle" data-category="pantalones">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-color: rgba(100,181,246,0.2);"><img src="/assets/icons/categories/pants.svg" alt="Pants" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Pants</span>
-        </div>
-        <div class="cat-circle" data-category="accesorios">
-            <div class="cat-circle__img" style="background: linear-gradient(135deg, #FCE4EC, #F8BBD0); border-color: rgba(236,64,122,0.2);"><img src="/assets/icons/categories/accesorios.svg" alt="Accesorios" class="cat-circle__icon-svg"></div>
-            <span class="cat-circle__label">Accesorios</span>
-        </div>
-    </section>
+    <!-- DESKTOP LAYOUT WRAPPER -->
+    <div class="home-desktop-layout">
+        <!-- DESKTOP SIDEBAR CATEGORIES -->
+        <aside class="home-desktop-sidebar desktop-only">
+            <div class="home-desktop-sidebar__title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                Categorias
+            </div>
+            <ul class="home-desktop-sidebar__list">
+                <li><button class="active" onclick="applyCategoryFilter('all', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Todos los productos</button></li>
+                <li><button onclick="applyCategoryFilter('sale', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> Ofertas</button></li>
+                <li><button onclick="applyCategoryFilter('new', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Nuevos</button></li>
+                <li><button onclick="applyCategoryFilter('vestidos', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg> Vestidos</button></li>
+                <li><button onclick="applyCategoryFilter('blusas', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg> Blusas</button></li>
+                <li><button onclick="applyCategoryFilter('faldas', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg> Faldas</button></li>
+                <li><button onclick="applyCategoryFilter('pantalones', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg> Pants</button></li>
+                <li><button onclick="applyCategoryFilter('accesorios', this); document.querySelectorAll('.home-desktop-sidebar__list button').forEach(b=>b.classList.remove('active')); this.classList.add('active');"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Accesorios</button></li>
+            </ul>
+        </aside>
 
-    <!-- URGENCY BANNER -->
-    <div class="urgency-banner">
-        <div class="urgency-banner__track">
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
-            <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+        <div class="home-desktop-main">
+            <!-- CATEGORY CIRCLES -->
+            <section class="cat-circles" aria-label="Categorias populares">
+                <div class="cat-circle cat-circle--all" data-category="all">
+                    <div class="cat-circle__img"><img src="/assets/icons/categories/todos.svg" alt="Todos" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Todos</span>
+                </div>
+                <div class="cat-circle" data-category="sale">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F9, #FDE0F3); border-color: rgba(242,90,217,0.2);"><img src="/assets/icons/categories/ofertas.svg" alt="Ofertas" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Ofertas</span>
+                </div>
+                <div class="cat-circle" data-category="ropa">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F5, #FDE0F0); border-color: rgba(255,75,92,0.15);"><img src="/assets/icons/categories/ropa.svg" alt="Ropa" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Ropa</span>
+                </div>
+                <div class="cat-circle" data-category="vestidos">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #F3E5F5, #FDE0F3); border-color: rgba(206,147,216,0.2);"><img src="/assets/icons/categories/vestidos.svg" alt="Vestidos" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Vestidos</span>
+                </div>
+                <div class="cat-circle" data-category="blusas">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF8E1, #FFECB3); border-color: rgba(246,227,107,0.3);"><img src="/assets/icons/categories/blusas.svg" alt="Blusas" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Blusas</span>
+                </div>
+                <div class="cat-circle" data-category="faldas">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #FFF0F9, #F8B6EA); border-color: rgba(242,90,217,0.2);"><img src="/assets/icons/categories/faldas.svg" alt="Faldas" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Faldas</span>
+                </div>
+                <div class="cat-circle" data-category="pantalones">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border-color: rgba(100,181,246,0.2);"><img src="/assets/icons/categories/pants.svg" alt="Pants" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Pants</span>
+                </div>
+                <div class="cat-circle" data-category="accesorios">
+                    <div class="cat-circle__img" style="background: linear-gradient(135deg, #FCE4EC, #F8BBD0); border-color: rgba(236,64,122,0.2);"><img src="/assets/icons/categories/accesorios.svg" alt="Accesorios" class="cat-circle__icon-svg"></div>
+                    <span class="cat-circle__label">Accesorios</span>
+                </div>
+            </section>
+
+            <!-- URGENCY BANNER -->
+            <div class="urgency-banner">
+                <div class="urgency-banner__track">
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                    <span class="urgency-banner__text">⚡ ¡Apúrese qué sé termina! ⚡</span>
+                </div>
+            </div>
+
+            <main id="main-content">
+                <!-- ACTIVE FILTER BAR -->
+                <div class="active-filter-bar" id="active-filter-bar" style="display:none;">
+                    Mostrando: <strong id="active-filter-name">Todos</strong>
+                    <button onclick="clearCategoryFilter()">Limpiar</button>
+                </div>
+
+                <!-- PRODUCT GRID -->
+                <section aria-label="Productos">
+                    <div id="loading" class="loader" style="padding:2rem; background:white; margin:0.5rem; border-radius:8px;">
+                        <div class="loader__spinner"></div>
+                    </div>
+                    <div id="products-grid" class="products-temu"></div>
+                </section>
+            </main>
         </div>
     </div>
-
-    <main id="main-content">
-        <!-- ACTIVE FILTER BAR -->
-        <div class="active-filter-bar" id="active-filter-bar" style="display:none;">
-            Mostrando: <strong id="active-filter-name">Todos</strong>
-            <button onclick="clearCategoryFilter()">Limpiar</button>
-        </div>
-
-        <!-- PRODUCT GRID -->
-        <section aria-label="Productos">
-            <div id="loading" class="loader" style="padding:2rem; background:white; margin:0.5rem; border-radius:8px;">
-                <div class="loader__spinner"></div>
-            </div>
-            <div id="products-grid" class="products-temu"></div>
-        </section>
-    </main>
+    <!-- END DESKTOP LAYOUT WRAPPER -->
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav-temu" aria-label="Navegacion">
@@ -389,7 +449,7 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
             <span>Live</span>
         </a>
-        <a href="/carrito.html" class="bottom-nav-temu__item" aria-label="Carrito" style="position:relative;">
+        <a href="/carrito.html" onclick="event.preventDefault(); openCartDrawer();" class="bottom-nav-temu__item" aria-label="Carrito" style="position:relative;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             <span>Carrito</span>
             <span class="bottom-nav-temu__badge" data-cart-count style="display:none;">0</span>
@@ -399,10 +459,55 @@
 
     <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
+    <!-- DESKTOP FOOTER -->
+    <footer class="desktop-footer desktop-only">
+        <div class="desktop-footer__grid">
+            <div class="desktop-footer__col">
+                <div class="desktop-footer__logo">
+                    <img src="/assets/brand/logo.png" alt="Modas Nancy">
+                    <span style="font-family:var(--font-headings); color:#fff; font-weight:700;">Modas Nancy</span>
+                </div>
+                <p style="font-size:0.85rem; color:#888; margin-top:0.75rem; line-height:1.5;">Boutique de moda femenina en Guatemala. Elegancia, calidad y los mejores precios.</p>
+            </div>
+            <div class="desktop-footer__col">
+                <h4>Tienda</h4>
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/?filter=sale">Ofertas</a></li>
+                    <li><a href="/live.html">Live Shopping</a></li>
+                    <li><a href="/carrito.html" onclick="event.preventDefault(); openCartDrawer();">Carrito</a></li>
+                </ul>
+            </div>
+            <div class="desktop-footer__col">
+                <h4>Ayuda</h4>
+                <ul>
+                    <li><a href="/envios.html">Envios</a></li>
+                    <li><a href="/devoluciones.html">Devoluciones</a></li>
+                    <li><a href="/faq.html">Preguntas frecuentes</a></li>
+                    <li><a href="/tallas.html">Guia de tallas</a></li>
+                </ul>
+            </div>
+            <div class="desktop-footer__col">
+                <h4>Contacto</h4>
+                <ul>
+                    <li><a href="mailto:soporte@modasnancy.com">soporte@modasnancy.com</a></li>
+                    <li><a href="tel:+50200000000">+502 0000 0000</a></li>
+                    <li><a href="/nosotros.html">Quienes somos</a></li>
+                    <li><a href="/privacidad.html">Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="desktop-footer__bottom">
+            <span> Modas Nancy. Todos los derechos reservados.</span>
+            <span>Hecho con en Guatemala</span>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     <script src="/js/config.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/cart.js"></script>
+    <script src="/js/cart-drawer.js"></script>
     <script src="/js/ui.js"></script>
     <script src="/js/push-notifications.js?v=20260526"></script>
     <script src="/js/home.js"></script>

@@ -183,6 +183,26 @@ function updateTotals() {
             discountRow.style.display = 'none';
         }
     }
+
+    const desktopSummary = document.getElementById('live-desktop-summary');
+    if (desktopSummary) {
+        let itemsHtml = '';
+        if (addedPackages.length > 0) {
+            itemsHtml = '<div style="margin-bottom:1rem;">' + addedPackages.map(p => `
+                <div style="display:flex;justify-content:space-between;padding:0.35rem 0;font-size:0.85rem;color:var(--color-gray-700);border-bottom:1px solid rgba(242,90,217,0.06);">
+                    <span>${escapeHtml(p.name)} x${p.quantity}</span>
+                    <span>${formatMoney(p.price * p.quantity)}</span>
+                </div>
+            `).join('') + '</div>';
+        }
+        desktopSummary.innerHTML = itemsHtml + `
+            <div class="cart-summary-row"><span>Subtotal</span><span>${formatMoney(subtotal)}</span></div>
+            ${isTransfer && discount > 0 ? `<div class="cart-summary-row"><span style="color:var(--color-success);">Descuento (-4%)</span><span style="color:var(--color-success);">-${formatMoney(discount)}</span></div>` : ''}
+            <div class="cart-summary-row"><span>Envio</span><span>${formatMoney(SHIPPING_COST)}</span></div>
+            <div class="cart-summary-row total"><span>Total</span><span>${formatMoney(total)}</span></div>
+            <button class="btn btn--primary" type="button" onclick="document.getElementById('live-form').dispatchEvent(new Event('submit'))">Confirmar Pedido</button>
+        `;
+    }
 }
 
 // ─── Form helpers ──────────────────────────────────────────────────────────
@@ -397,12 +417,16 @@ function setupFormSubmit() {
 
                 document.getElementById('form-view').style.display = 'none';
                 document.getElementById('live-bottom').style.display = 'none';
+                const ds = document.getElementById('live-desktop-summary-panel');
+                if (ds) ds.style.display = 'none';
                 document.getElementById('success-view').style.display = 'block';
                 document.getElementById('success-title').textContent = 'Pago Aprobado!';
                 document.getElementById('success-detail').textContent = 'Tu pago con tarjeta fue procesado exitosamente.';
             } else {
                 document.getElementById('form-view').style.display = 'none';
                 document.getElementById('live-bottom').style.display = 'none';
+                const ds = document.getElementById('live-desktop-summary-panel');
+                if (ds) ds.style.display = 'none';
                 document.getElementById('success-view').style.display = 'block';
             }
         } catch (err) {
