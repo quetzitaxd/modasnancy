@@ -746,7 +746,32 @@
             const colors = [...new Set(variants.map((v) => v.color_name).filter(Boolean))];
             const sizes = [...new Set(variants.map((v) => v.size).filter(Boolean))];
 
-            if (colors.length > 0) {
+            // Availability badge container
+            let availBadge = document.getElementById('variant-availability-badge');
+            if (!availBadge) {
+                availBadge = document.createElement('div');
+                availBadge.id = 'variant-availability-badge';
+                availBadge.style.cssText = 'margin-top:0.5rem;font-size:0.8rem;font-weight:700;min-height:1.2rem;';
+                const sizesSection = document.getElementById('sizes-section');
+                if (sizesSection && sizesSection.nextElementSibling) {
+                    sizesSection.parentNode.insertBefore(availBadge, sizesSection.nextElementSibling);
+                } else if (document.getElementById('colors-section')) {
+                    const colorsSection = document.getElementById('colors-section');
+                    if (colorsSection.nextElementSibling) {
+                        colorsSection.parentNode.insertBefore(availBadge, colorsSection.nextElementSibling);
+                    }
+                }
+            }
+
+            function isColorAvailable(color) {
+                if (!selectedSize) return variants.some((v) => v.color_name === color && (Number(v.stock) || 0) > 0);
+                return variants.some((v) => v.color_name === color && v.size === selectedSize && (Number(v.stock) || 0) > 0);
+            }
+            function isSizeAvailable(size) {
+                if (!selectedColor) return variants.some((v) => v.size === size && (Number(v.stock) || 0) > 0);
+                return variants.some((v) => v.size === size && v.color_name === selectedColor && (Number(v.stock) || 0) > 0);
+            }
+            function renderColorChips() {
                 const colorsSection = document.getElementById('colors-section');
                 const colorsEl = document.getElementById('color-options');
                 colorsSection.style.display = 'block';
@@ -757,17 +782,24 @@
                     chip.className = 'variant-chip';
                     chip.type = 'button';
                     chip.innerHTML = `${variant?.color_hex ? `<span class="color-dot" style="background:${variant.color_hex}"></span>` : ''} ${color}`;
+                    const available = isColorAvailable(color);
+                    if (!available) {
+                        chip.disabled = true;
+                        chip.style.opacity = '0.35';
+                        chip.style.cursor = 'not-allowed';
+                    }
+                    if (selectedColor === color) chip.classList.add('active');
                     chip.addEventListener('click', () => {
+                        if (!available) return;
                         selectedColor = color;
-                        colorsEl.querySelectorAll('.variant-chip').forEach((c) => c.classList.remove('active'));
-                        chip.classList.add('active');
+                        renderColorChips();
+                        renderSizeChips();
                         updateSelectedVariant(variants);
                     });
                     colorsEl.appendChild(chip);
                 });
             }
-
-            if (sizes.length > 0) {
+            function renderSizeChips() {
                 const sizesSection = document.getElementById('sizes-section');
                 const sizesEl = document.getElementById('size-options');
                 sizesSection.style.display = 'block';
@@ -777,15 +809,26 @@
                     chip.className = 'variant-chip';
                     chip.type = 'button';
                     chip.textContent = size.toUpperCase();
+                    const available = isSizeAvailable(size);
+                    if (!available) {
+                        chip.disabled = true;
+                        chip.style.opacity = '0.35';
+                        chip.style.cursor = 'not-allowed';
+                    }
+                    if (selectedSize === size) chip.classList.add('active');
                     chip.addEventListener('click', () => {
+                        if (!available) return;
                         selectedSize = size;
-                        sizesEl.querySelectorAll('.variant-chip').forEach((c) => c.classList.remove('active'));
-                        chip.classList.add('active');
+                        renderColorChips();
+                        renderSizeChips();
                         updateSelectedVariant(variants);
                     });
                     sizesEl.appendChild(chip);
                 });
             }
+
+            if (colors.length > 0) renderColorChips();
+            if (sizes.length > 0) renderSizeChips();
 
             // Cart buttons
             const btn = document.getElementById('btn-add-cart');
@@ -820,6 +863,24 @@
                 const matchSize = !selectedSize || v.size === selectedSize;
                 return matchColor && matchSize;
             });
+            const badge = document.getElementById('variant-availability-badge');
+            if (!badge) return;
+            if (!selectedVariant) {
+                badge.textContent = 'Selecciona talla y color';
+                badge.style.color = '#6b7280';
+                return;
+            }
+            const stock = Number(selectedVariant.stock) || 0;
+            if (stock === 0) {
+                badge.textContent = 'Agotado';
+                badge.style.color = '#d63031';
+            } else if (stock < 10) {
+                badge.textContent = `\u00daltimas ${stock} unidades disponibles`;
+                badge.style.color = '#e67e22';
+            } else {
+                badge.textContent = 'Disponible';
+                badge.style.color = '#27ae60';
+            }
         }
 
         function handleAddToCart(product, variants, colors, sizes, images) {
@@ -844,13 +905,20 @@
                 return;
             }
 
-            const totalStock = Number(product.total_stock) || 0;
+            // Validar stock por variante seleccionada, no por producto total
+            const variantStock = selectedVariant ? (Number(selectedVariant.stock) || 0) : (Number(product.total_stock) || 0);
+            const variantSku = selectedVariant ? selectedVariant.sku : product.id;
+            if (variantStock === 0) {
+                showToast('Variante agotada', 'error');
+                return;
+            }
+
             const cartItems = window.getCart ? window.getCart() : [];
             const currentQty = cartItems
-                .filter((i) => String(i.product_id) === String(product.id))
+                .filter((i) => String(i.sku) === String(variantSku))
                 .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
-            if (currentQty + 1 > totalStock) {
-                showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+            if (currentQty + 1 > variantStock) {
+                showToast(`Solo hay ${variantStock} unidad${variantStock !== 1 ? 'es' : ''} disponible${variantStock !== 1 ? 's' : ''}`, 'error');
                 return;
             }
 

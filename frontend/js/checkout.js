@@ -90,6 +90,41 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // Validar stock por variante antes de enviar
+        const skuToFreshVariant = {};
+        if (Array.isArray(freshProducts)) {
+            freshProducts.forEach((p) => {
+                if (Array.isArray(p.variants)) {
+                    p.variants.forEach((v) => {
+                        skuToFreshVariant[v.sku] = v;
+                    });
+                }
+            });
+        }
+
+        const qtyBySku = {};
+        validCart.forEach((item) => {
+            qtyBySku[item.sku] = (qtyBySku[item.sku] || 0) + (Number(item.quantity) || 0);
+        });
+
+        for (const [sku, qty] of Object.entries(qtyBySku)) {
+            const freshVariant = skuToFreshVariant[sku];
+            const stock = freshVariant ? (Number(freshVariant.stock) || 0) : 0;
+            if (qty > stock) {
+                const errorMsg = document.getElementById('error-message');
+                if (errorMsg) {
+                    errorMsg.textContent = `No hay suficiente stock para ${freshVariant ? safeText(freshVariant.product_name || sku) : sku}. Solo quedan ${stock} unidad${stock !== 1 ? 'es' : ''}. Reduce la cantidad o elimina el producto.`;
+                    errorMsg.style.display = 'block';
+                }
+                const btn = document.getElementById('btn-submit');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = currentPaymentMethod === 'cubopago' ? 'Pagar Ahora' : 'Confirmar Pedido';
+                }
+                return;
+            }
+        }
+
         const btn = document.getElementById('btn-submit');
         const errorMsg = document.getElementById('error-message');
 

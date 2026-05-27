@@ -98,7 +98,7 @@ function renderTemuCard(product, index) {
             ${urgencyHtml}
             <div class="product-temu__actions">
                 <span style="font-size:0.6rem; color:#999;">${isOutOfStock ? 'Agotado' : 'En stock'}</span>
-                <button class="product-temu__cart-btn" type="button" aria-label="Agregar al carrito" ${isOutOfStock ? 'disabled style="opacity:0.4;"' : ''} onclick="event.stopPropagation(); addTemuToCart('${encodeURIComponent(product.id)}')">
+                <button class="product-temu__cart-btn" type="button" aria-label="Agregar al carrito" ${isOutOfStock ? 'disabled style="opacity:0.4;"' : ''} onclick="event.stopPropagation(); handleHomeCartClick('${encodeURIComponent(product.id)}')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 </button>
             </div>
@@ -129,37 +129,265 @@ function renderTemuGrid(products, containerId, emptyMessage) {
     });
 }
 
-async function addTemuToCart(encodedId) {
+function hasRealVariants(product) {
+    if (!Array.isArray(product?.variants) || product.variants.length === 0) return false;
+    if (product.variants.length > 1) return true;
+    const v = product.variants[0];
+    const size = String(v?.size || '').toLowerCase();
+    const color = String(v?.color_name || '').toLowerCase();
+    // Si la unica variante es generica, tratar como sin variantes reales
+    if (size === 'unica' && (color === 'estandar' || color === '' || color === 'unico')) return false;
+    return true;
+}
+
+async function handleHomeCartClick(encodedId) {
     const id = decodeURIComponent(encodedId);
     try {
         const product = await getProduct(id);
         if (!product) { showToast('Producto no encontrado', 'error'); return; }
 
-        const totalStock = Number(product.total_stock) || 0;
-        if (totalStock === 0) { showToast('Producto agotado', 'error'); return; }
-
-        const cartItems = window.getCart ? window.getCart() : [];
-        const currentQty = cartItems
-            .filter((i) => String(i.product_id) === String(product.id))
-            .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
-        if (currentQty + 1 > totalStock) {
-            showToast(`Solo hay ${totalStock} unidad${totalStock !== 1 ? 'es' : ''} disponible${totalStock !== 1 ? 's' : ''}`, 'error');
+        if (hasRealVariants(product)) {
+            openVariantModal(product);
             return;
         }
 
-        const firstImage = product.images?.[0] || '';
+        // Producto sin variantes reales: agregar directo validando stock de la unica variante
         const variant = product.variants?.[0];
+        const variantStock = typeof variant?.stock === 'number' ? Number(variant.stock) || 0 : Number(product.total_stock) || 0;
+        if (variantStock === 0) { showToast('Producto agotado', 'error'); return; }
+
+        const cartItems = window.getCart ? window.getCart() : [];
+        const currentQty = cartItems
+            .filter((i) => String(i.sku) === String(variant?.sku || product.id))
+            .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+        if (currentQty + 1 > variantStock) {
+            showToast(`Solo hay ${variantStock} unidad${variantStock !== 1 ? 'es' : ''} disponible${variantStock !== 1 ? 's' : ''}`, 'error');
+            return;
+        }
 
         window.Cart.add({
             product_id: product.id,
             sku: variant?.sku || product.id,
             size: variant?.size || 'Unica',
             color_name: variant?.color_name || '',
-            image: firstImage,
+            image: product.images?.[0] || '',
             quantity: 1,
         });
     } catch (err) {
         showToast('Error al agregar al carrito', 'error');
+    }
+}
+
+function openVariantModal(product) {
+    // Remover modal previo si existe
+    closeVariantModal();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'variant-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:flex-end;justify-content:center;';
+    if (window.innerWidth >= 768) {
+        overlay.style.alignItems = 'center';
+    }
+
+    const panel = document.createElement('div');
+    panel.id = 'variant-modal-panel';
+    panel.style.cssText = 'background:#fff;width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:1.25rem;box-shadow:0 -4px 24px rgba(0,0,0,0.15);max-height:85vh;overflow-y:auto;position:relative;';
+    if (window.innerWidth >= 768) {
+        panel.style.borderRadius = '20px';
+        panel.style.maxHeight = '80vh';
+    }
+
+    const firstImage = product.images?.[0] || PRODUCT_FALLBACK;
+    const variants = Array.isArray(product.variants) ? product.variants : [];
+
+    // Extraer colores y tallas unicos
+    const colors = [...new Set(variants.map((v) => v.color_name).filter(Boolean))];
+    const sizes = [...new Set(variants.map((v) => v.size).filter(Boolean))];
+
+    let selectedColor = '';
+    let selectedSize = '';
+
+    function getSelectedVariant() {
+        return variants.find((v) => {
+            const matchColor = !colors.length || !selectedColor || v.color_name === selectedColor;
+            const matchSize = !sizes.length || !selectedSize || v.size === selectedSize;
+            return matchColor && matchSize;
+        });
+    }
+
+    function updateAvailability() {
+        const v = getSelectedVariant();
+        const avail = document.getElementById('variant-modal-avail');
+        const btn = document.getElementById('variant-modal-add');
+        if (!v) {
+            if (avail) { avail.textContent = 'Selecciona talla y color'; avail.style.color = '#666'; }
+            if (btn) btn.disabled = true;
+            return;
+        }
+        const stock = Number(v.stock) || 0;
+        if (stock === 0) {
+            if (avail) { avail.textContent = 'Agotado'; avail.style.color = '#d63031'; }
+            if (btn) btn.disabled = true;
+        } else if (stock < 10) {
+            if (avail) { avail.textContent = `\u00daltimas ${stock} unidades disponibles`; avail.style.color = '#e67e22'; }
+            if (btn) btn.disabled = false;
+        } else {
+            if (avail) { avail.textContent = 'Disponible'; avail.style.color = '#27ae60'; }
+            if (btn) btn.disabled = false;
+        }
+    }
+
+    function buildChip(text, isColor, hex, isSelected, isDisabled, onClick) {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.style.cssText = 'padding:0.5rem 1rem;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all .15s;min-height:40px;display:inline-flex;align-items:center;gap:0.35rem;font-family:inherit;color:#374151;';
+        if (isColor && hex) {
+            chip.innerHTML = `<span style="width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);display:inline-block;background:${hex};"></span> ${safeText(text)}`;
+        } else {
+            chip.textContent = safeText(text).toUpperCase();
+        }
+        if (isSelected) {
+            chip.style.borderColor = '#f25ad9';
+            chip.style.background = '#f25ad9';
+            chip.style.color = '#fff';
+        }
+        if (isDisabled) {
+            chip.disabled = true;
+            chip.style.opacity = '0.35';
+            chip.style.cursor = 'not-allowed';
+        } else {
+            chip.addEventListener('click', () => onClick(text));
+        }
+        return chip;
+    }
+
+    function renderSelectors() {
+        const colorWrap = document.getElementById('variant-modal-colors');
+        const sizeWrap = document.getElementById('variant-modal-sizes');
+        if (colorWrap) {
+            colorWrap.innerHTML = '';
+            colors.forEach((color) => {
+                const variantForColor = variants.find((v) => v.color_name === color);
+                const hex = variantForColor?.color_hex || '#d1a3a4';
+                const isSelected = selectedColor === color;
+                // Deshabilitar si TODAS las variantes de este color (con la talla seleccionada) estan agotadas
+                let anyAvailable = false;
+                if (!selectedSize) {
+                    anyAvailable = variants.some((v) => v.color_name === color && (Number(v.stock) || 0) > 0);
+                } else {
+                    anyAvailable = variants.some((v) => v.color_name === color && v.size === selectedSize && (Number(v.stock) || 0) > 0);
+                }
+                const isDisabled = !anyAvailable;
+                colorWrap.appendChild(buildChip(color, true, hex, isSelected, isDisabled, (c) => {
+                    selectedColor = c;
+                    renderSelectors();
+                    updateAvailability();
+                }));
+            });
+        }
+        if (sizeWrap) {
+            sizeWrap.innerHTML = '';
+            sizes.forEach((size) => {
+                const isSelected = selectedSize === size;
+                // Deshabilitar si TODAS las variantes de esta talla (con el color seleccionado) estan agotadas
+                let anyAvailable = false;
+                if (!selectedColor) {
+                    anyAvailable = variants.some((v) => v.size === size && (Number(v.stock) || 0) > 0);
+                } else {
+                    anyAvailable = variants.some((v) => v.size === size && v.color_name === selectedColor && (Number(v.stock) || 0) > 0);
+                }
+                const isDisabled = !anyAvailable;
+                sizeWrap.appendChild(buildChip(size, false, null, isSelected, isDisabled, (s) => {
+                    selectedSize = s;
+                    renderSelectors();
+                    updateAvailability();
+                }));
+            });
+        }
+    }
+
+    panel.innerHTML = `
+        <button type="button" id="variant-modal-close" style="position:absolute;top:0.75rem;right:0.75rem;width:32px;height:32px;border-radius:50%;border:none;background:#f3f4f6;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6b7280;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:1rem;padding-right:2rem;">
+            <img src="${safeImageUrl(firstImage, PRODUCT_FALLBACK)}" alt="${safeText(product.name)}" style="width:64px;height:64px;object-fit:cover;border-radius:12px;background:#f9fafb;flex-shrink:0;" onerror="this.src='${PRODUCT_FALLBACK}'">
+            <div>
+                <div style="font-size:0.9rem;font-weight:700;color:#111827;line-height:1.3;">${safeText(product.name)}</div>
+                <div style="font-size:0.85rem;font-weight:700;color:#f25ad9;margin-top:0.2rem;">${formatMoney(product.price)}</div>
+            </div>
+        </div>
+        ${colors.length ? `
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem;font-weight:700;color:#374151;margin-bottom:0.5rem;">Color</div>
+            <div id="variant-modal-colors" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+        </div>` : ''}
+        ${sizes.length ? `
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem;font-weight:700;color:#374151;margin-bottom:0.5rem;">Talla</div>
+            <div id="variant-modal-sizes" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+        </div>` : ''}
+        <div style="display:flex;align-items:center;gap:0.5rem;margin:0.75rem 0;">
+            <span id="variant-modal-avail" style="font-size:0.8rem;font-weight:600;">Selecciona talla y color</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+            <button type="button" id="variant-modal-add" disabled style="flex:1;height:44px;border-radius:999px;border:none;background:linear-gradient(135deg,#f25ad9,#d633c9);color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 4px 12px rgba(242,90,217,0.25);opacity:0.6;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity=this.disabled?'0.6':'1'">
+                Agregar al carrito
+            </button>
+            <button type="button" id="variant-modal-view" style="flex:1;height:44px;border-radius:999px;border:1.5px solid #f25ad9;background:#fff;color:#f25ad9;font-weight:700;font-size:0.9rem;cursor:pointer;">
+                Ver producto
+            </button>
+        </div>
+    `;
+
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+
+    renderSelectors();
+    updateAvailability();
+
+    document.getElementById('variant-modal-close').addEventListener('click', closeVariantModal);
+    document.getElementById('variant-modal-view').addEventListener('click', () => {
+        window.location.href = `/producto.html?id=${encodeURIComponent(product.id)}`;
+    });
+    document.getElementById('variant-modal-add').addEventListener('click', () => {
+        const v = getSelectedVariant();
+        if (!v) { showToast('Selecciona talla y color', 'error'); return; }
+        const stock = Number(v.stock) || 0;
+        if (stock === 0) { showToast('Variante agotada', 'error'); return; }
+
+        const cartItems = window.getCart ? window.getCart() : [];
+        const currentQty = cartItems
+            .filter((i) => String(i.sku) === String(v.sku))
+            .reduce((sum, i) => sum + (Number(i.quantity) || 0), 0);
+        if (currentQty + 1 > stock) {
+            showToast(`Solo hay ${stock} unidad${stock !== 1 ? 'es' : ''} disponible${stock !== 1 ? 's' : ''}`, 'error');
+            return;
+        }
+
+        window.Cart.add({
+            product_id: product.id,
+            sku: v.sku,
+            size: v.size || 'Unica',
+            color_name: v.color_name || '',
+            image: product.images?.[0] || '',
+            quantity: 1,
+        });
+        closeVariantModal();
+        showToast('Agregado al carrito');
+    });
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeVariantModal();
+    });
+}
+
+function closeVariantModal() {
+    const overlay = document.getElementById('variant-modal-overlay');
+    if (overlay) {
+        overlay.remove();
+        document.body.style.overflow = '';
     }
 }
 
@@ -357,7 +585,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.allProducts = allProducts;
 window.renderTemuGrid = renderTemuGrid;
-window.addTemuToCart = addTemuToCart;
+window.addTemuToCart = handleHomeCartClick;
+window.handleHomeCartClick = handleHomeCartClick;
 window.applyFilter = applyFilter;
 window.openCategorySidebar = openCategorySidebar;
 window.closeCategorySidebar = closeCategorySidebar;
