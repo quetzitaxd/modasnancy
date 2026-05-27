@@ -4,6 +4,8 @@
  * Mobile-first: este archivo NO afecta móviles (todo dentro de media queries min-width)
  */
 
+.desktop-catalog-title { display: none; }
+
 /* ═══════════════════════════════════════════════════════════════════
    TABLET (768px – 1023px): Centrar contenido, max-width cómodo
    ═══════════════════════════════════════════════════════════════════ */
@@ -350,10 +352,17 @@
         min-width: 0;
     }
     .home-desktop-main .cat-circles {
-        justify-content: flex-start;
-        padding: 0.5rem 0 1rem;
-        background: none;
-        border-bottom: none;
+        display: none !important;
+    }
+    .desktop-catalog-title {
+        display: block;
+        font-family: var(--font-headings);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-gray-800);
+        margin: 0 0 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(242, 90, 217, 0.12);
     }
     .home-desktop-main .trust-banner {
         border-radius: 10px;
