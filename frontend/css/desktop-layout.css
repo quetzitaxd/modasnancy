@@ -755,12 +755,15 @@
     flex-direction: column;
     transform: translateX(100%);
     pointer-events: none;
-    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    visibility: hidden;
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s 0.35s;
     box-shadow: -4px 0 24px rgba(0,0,0,0.12);
 }
 .cart-drawer.open {
     transform: translateX(0);
     pointer-events: auto;
+    visibility: visible;
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s 0s;
 }
 
 /* Header */
@@ -1025,11 +1028,15 @@
         border-radius: 16px;
         transform: translate(-50%, -50%) scale(0.92);
         opacity: 0;
+        visibility: hidden;
+        transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease, visibility 0s 0.35s;
         box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     }
     .cart-drawer.open {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
+        visibility: visible;
+        transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease, visibility 0s 0s;
     }
     .cart-drawer__header {
         border-radius: 16px 16px 0 0;
